@@ -1,12 +1,16 @@
 import express from "express";
 import dotenv from "dotenv"
-import authentificationRoutes from "./routes/authentification"
+import userAuthenticationRoutes from "./routes/userAuthentification"
+import bodyParser from "body-parser";
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
 
-app.use("/api", authentificationRoutes)
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api", userAuthenticationRoutes)
 
 
 app.listen(port, () => {
