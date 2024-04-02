@@ -4,6 +4,7 @@ import {InsertOneResult, MongoClient } from "mongodb"
 import { BAD_REQUEST, NOT_FOUND } from "../codes/errors";
 import { CREATED, OK } from "../codes/success";
 import { Hash } from "../utilities/authentification";
+import jwt from "jsonwebtoken"
 
 dotenv.config()
 const uri = process.env.REMOTE_DEV_DB_URI as string
@@ -18,7 +19,7 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
 
     try {
 
-        const { user, password }: {user: string, password: string} = await req.body;
+        const { email, password }: {email: string, password: string} = await req.body;
         const hash : Error | string = await Hash(password);
 
         if( hash instanceof Error) {
@@ -32,17 +33,17 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
         const collection = database.collection(targetCollection);
 
         // make sure user does not already exist
-        const document = await collection.findOne({user, hash});
+        const document = await collection.findOne({email, hash});
 
         if(document) {
             res.status(BAD_REQUEST).send({ message: "User already exists"})
             return;
         }
 
-        const result: InsertOneResult = await collection.insertOne({user, hash});
+        const result: InsertOneResult = await collection.insertOne({email, hash});
 
         if(result.acknowledged === true) {
-            res.status(CREATED).send({})
+            res.status(CREATED).send({id: result.insertedId})
 
 
         } else {
@@ -61,7 +62,7 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
 
 router.post(path + "/login" , async (req: Request, res: Response) => {
     try {
-        const { user, password }: {user: string, password: string} = await req.body;
+        const { email, password }: {email: string, password: string} = await req.body;
 
         const hash : Error | string = await Hash(password);
 
@@ -75,10 +76,12 @@ router.post(path + "/login" , async (req: Request, res: Response) => {
 
         const collection = database.collection(targetCollection);
 
-        const document = await collection.findOne({user, hash});
+        const document = await collection.findOne({email, hash});
 
         if(document) {
-            res.status(OK).send({ message: "Document found" , document})
+            const secret = process.env.JWT_SECRET as string;
+            const token = jwt.sign({ email, hashedPassword: hash }, secret, { expiresIn: "18h" })
+            res.status(OK).send({ message: "Document found" , token})
 
         } else {
             res.status(NOT_FOUND).send({ message: "Document not found" })
