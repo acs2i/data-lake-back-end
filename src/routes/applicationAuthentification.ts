@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import applicationAuthorization from "../middlewear/applicationMiddlewear";
 import { OK } from "../codes/success";
+import { BAD_REQUEST } from "../codes/errors";
 
 
 dotenv.config()
@@ -18,6 +19,7 @@ router.get(path + "/login", applicationAuthorization,  async (req : Request, res
       res.status(OK).json({ message: "Authorized"})
     }
     catch(err) {
+        res.status(BAD_REQUEST)
         console.log(err);
     }
 

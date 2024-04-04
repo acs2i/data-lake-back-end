@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import {InsertOneResult, MongoClient } from "mongodb"
+import {Collection, Db, Document, InsertOneResult, MongoClient, WithId } from "mongodb"
 import { BAD_REQUEST, NOT_FOUND } from "../codes/errors";
 import { CREATED, OK } from "../codes/success";
 import { Hash } from "../utilities/authentification";
@@ -26,14 +26,14 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
             throw new Error(path + "/signup")
         }
 
-        const client = new MongoClient(uri);
+        const client : MongoClient = new MongoClient(uri);
 
-        const database = client.db(DB);
+        const database : Db = client.db(DB);
 
-        const collection = database.collection(targetCollection);
+        const collection: Collection<Document> | null = database.collection(targetCollection);
 
         // make sure user does not already exist
-        const document = await collection.findOne({email, hash});
+        const document : WithId<Document> | null = await collection.findOne({email, hash});
 
         if(document) {
             res.status(BAD_REQUEST).send({ message: "User already exists"})
@@ -70,17 +70,21 @@ router.post(path + "/login" , async (req: Request, res: Response) => {
             throw new Error(path + "/signup")
         }
         
-        const client = new MongoClient(uri);
+        const client : MongoClient = new MongoClient(uri);
 
-        const database = client.db(DB);
+        const database : Db = client.db(DB);
 
-        const collection = database.collection(targetCollection);
+        const collection : Collection<Document> = database.collection(targetCollection);
 
-        const document = await collection.findOne({email, hash});
+        const document : WithId<Document> | null= await collection.findOne({email, hash});
 
         if(document) {
-            const secret = process.env.JWT_SECRET as string;
-            const token = jwt.sign({ email, hashedPassword: hash }, secret, { expiresIn: "18h" })
+            const secret: string | null | undefined = process.env.JWT_SECRET;
+            if(!(typeof secret === 'string')) {
+                throw new Error(path + "/signup, problem with JWT_SECRET")
+            }
+            const token : string = jwt.sign({ email, hashedPassword: hash }, secret, { expiresIn: "18h" })
+            
             res.status(OK).send({ message: "Document found" , token})
 
         } else {
@@ -90,7 +94,7 @@ router.post(path + "/login" , async (req: Request, res: Response) => {
 
     }
     catch(err) {
-        console.log(err);
+        console.error(err);
         res.json(BAD_REQUEST)
 
     }
