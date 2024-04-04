@@ -5,10 +5,6 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 dotenv.config()
 
 const path = "/authentification/application"
-const uri = process.env.REMOTE_DEV_DB_URI as string
-const DB = process.env.DATABASE as string
-const targetCollection = "Users" 
-
 
 export const decryptToken = async ( req: Request, res: Response, next :NextFunction) => {
 

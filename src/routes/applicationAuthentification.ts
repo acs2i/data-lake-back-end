@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import applicationAuthorization from "../middlewear/applicationMiddlewear";
+import applicationAuthorization from "../middlewears/applicationMiddlewear";
 import { OK } from "../codes/success";
 import { BAD_REQUEST } from "../codes/errors";
 

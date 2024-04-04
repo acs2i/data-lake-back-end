@@ -5,7 +5,7 @@ import cors from "cors"
 import userAuthenticationRoutes from "./routes/userAuthentification"
 import applicationAuthentification from "./routes/applicationAuthentification"
 import bodyParser from "body-parser";
-import { decryptToken } from "./middlewear/userMiddlewear";
+import { decryptToken } from "./middlewears/userMiddlewear";
 dotenv.config();
 
 const app = express();
