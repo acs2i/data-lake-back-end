@@ -61,14 +61,14 @@ const referenceSchema = new mongoose.Schema<Reference>({
     },
     history: {
         type: Schema.Types.Mixed,
-        unique: false,
+        unique: false, 
         required: false
     },
     priceId: { type: Schema.Types.ObjectId, ref: "price"},
   
 
 
-})
+},{ collection: "reference", timestamps: true} )
 
 const ReferenceModel: Model<Reference> = mongoose.model("reference", referenceSchema)
 

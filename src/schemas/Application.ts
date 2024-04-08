@@ -4,14 +4,13 @@ interface Application {
     hashedKey: string
 }
 
-const applicationSchema = new mongoose.Schema({
+const applicationSchema = new mongoose.Schema<Application>({
     hashedKey: {
         type: String,
-        unique: true,
-        required: true
+        unique: false,
+        required: false
     }
-
-})
+}, { collection: "application", timestamps: true} )
 
 
 const ApplicationModel: Model<Application> = mongoose.model("application", applicationSchema)

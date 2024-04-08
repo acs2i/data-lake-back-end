@@ -14,7 +14,6 @@ const path = "/authentification/application"
 const targetCollection = "Applications" 
 
 router.get(path + "/login", applicationAuthorization,  async (req : Request, res: Response) => {
-
     try {
       res.status(OK).json({ message: "Authorized"})
     }

@@ -4,6 +4,8 @@ import dotenv from "dotenv"
 import cors from "cors"
 import userAuthenticationRoutes from "./routes/userAuthentification"
 import applicationAuthentification from "./routes/applicationAuthentification"
+import referenceRoutes from "./routes/referenceRoutes"
+
 import bodyParser from "body-parser";
 import { decryptToken } from "./middlewears/userMiddlewear";
 import mongoose, { Mongoose } from "mongoose";
@@ -21,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/v1", userAuthenticationRoutes)  // uses token
 app.use("/api/v1", applicationAuthentification) // simple just hashes password and checks for it in db since no storage on server side
+app.use("/api/v1", referenceRoutes)
 app.use('/', decryptToken, (req: Request, res: Response) => {
 
   res.send("Got here");

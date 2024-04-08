@@ -5,7 +5,7 @@ export interface User  {
     hashedPassword: string
 }
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<User>({
     email: {
         type: String,
         unique: true,
@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 
-})
+}, { collection: "user", timestamps: true} )
 
 // nom de la collection, schema
 const UserModel: Model<User> = mongoose.model("user", userSchema);
