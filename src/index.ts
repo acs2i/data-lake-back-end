@@ -19,8 +19,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api", userAuthenticationRoutes)
-app.use("/api", applicationAuthentification)
+app.use("/api/v1", userAuthenticationRoutes)  // uses token
+app.use("/api/v1", applicationAuthentification) // simple just hashes password and checks for it in db since no storage on server side
 app.use('/', decryptToken, (req: Request, res: Response) => {
 
   res.send("Got here");

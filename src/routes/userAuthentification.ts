@@ -18,7 +18,7 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
 
     try {
 
-        const { email, password }: {email: string, password: string} = await req.body;
+        const { email, password }: { email: string, password: string} = await req.body;
         
         const hashedPassword : Error | string = await Hash(password);
 
