@@ -2,8 +2,7 @@ import {Request, Response, NextFunction } from "express"
 import { Hash } from "../utilities/Authentification";
 import { Document } from "mongodb";
 import { UNAUTHORIZED } from "../codes/errors";
-import AuthorizationModel from "../schemas/Application"
-import ApplicationModel from "../schemas/Application";
+import AuthorizationModel from "../schemas/applicationSchema"
 
 const path = "/authentification/application"
 

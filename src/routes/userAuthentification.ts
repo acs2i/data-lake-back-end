@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import { BAD_REQUEST } from "../codes/errors";
 import { Hash } from "../utilities/Authentification";
-import UserModel from "../schemas/User"
+import UserModel from "../schemas/userSchema"
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import jwt from "jsonwebtoken"
