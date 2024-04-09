@@ -9,6 +9,7 @@ import cors from "cors"
 import referenceRoutes from "./routes/referenceRoutes"
 import uvcRoutes from "./routes/uvcRoutes"
 import supplierRoutes from "./routes/supplierRoutes"
+import priceRoutes from "./routes/priceRoutes"
 
 import bodyParser from "body-parser";
 import { decryptToken } from "./middlewears/userMiddlewear";
@@ -27,6 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use("/api/v1", userAuthenticationRoutes)  // uses token
 // app.use("/api/v1", applicationAuthentification) // simple just hashes password and checks for it in db since no storage on server side
+app.use("/api/v1", priceRoutes)
 app.use("/api/v1", referenceRoutes)
 app.use("/api/v1", uvcRoutes)
 app.use("/api/v1", supplierRoutes)
