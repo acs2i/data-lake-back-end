@@ -4,7 +4,7 @@ interface Application {
     hashedKey: string
 }
 
-const applicationSchema = new mongoose.Schema<Application>({
+export const applicationSchema = new mongoose.Schema<Application>({
     hashedKey: {
         type: String,
         unique: false,

@@ -19,7 +19,7 @@ router.get(path + "/login", applicationAuthorization,  async (req : Request, res
     }
     catch(err) {
         res.status(BAD_REQUEST)
-        console.log(err);
+        console.error(err);
     }
 
 

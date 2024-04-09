@@ -32,5 +32,6 @@ app.use('/', decryptToken, (req: Request, res: Response) => {
 app.listen(port, () => {
   
   mongoose.connect(URI).then((res: Mongoose) => console.log("Database connection has opened!"));
+  
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });

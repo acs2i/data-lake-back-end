@@ -2,10 +2,13 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import applicationAuthorization from "../middlewears/applicationMiddlewear";
 import ReferenceModel from "../schemas/referenceSchema";
-import { Document } from "mongodb";
+import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
-import mongoose from "mongoose";
+import mongoose  from "mongoose";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
+import PriceModel, { Price } from "../schemas/priceSchema";
+import { ResultReference } from "../interfaces/resultInterfaces";
+import { fetchPriceModel } from "../utilities/referenceUtilities";
 dotenv.config();
 
 
@@ -13,7 +16,7 @@ dotenv.config();
 const router = express.Router();
 const path = "/reference"
 
-// Tested 
+// Works with price workaround
 router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
@@ -45,18 +48,22 @@ router.get(path, applicationAuthorization, async (req: Request, res: Response) =
             throw new Error(path + "/reference, msg: find error")
         }
 
-        res.status(OK).json({page, limit, total: documents.length, data: documents});
+
+        const results : ResultReference[] = await fetchPriceModel(documents);
+
+
+        res.status(OK).json(results);
 
     }
     catch(err) {
         res.status(INTERNAL_SERVER_ERROR).send({})
-        console.log(err)
+        console.error(err)
     }
 
 })
 
 
-// tested
+// Works with price workaround
 router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
@@ -67,18 +74,22 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
             throw new Error(path + "/reference/:id, msg: id was: " + id)
         }
 
-        const documents: Document[] | null | undefined = await ReferenceModel.findById(id);
+        const document: Document | null | undefined = await ReferenceModel.findById(id);
 
-        if ( documents === null ||  documents === undefined) {
+
+        if ( document === null ||  document === undefined) {
             res.status(OK).json({});
+            return;
         }
 
-        res.status(OK).json(documents);
+        const results : ResultReference[] = await fetchPriceModel(document);
+
+        res.status(OK).json(results)
 
     }
     catch(err) {
         res.status(BAD_REQUEST).send({})
-        console.log(err)
+        console.error(err)
     }
 
 })
@@ -114,21 +125,27 @@ router.get(path + "/family/:family", applicationAuthorization, async (req: Reque
         const skip = (intPage - 1) * intLimit;
 
 
-        // console.log("familyu: "  ,family)
         const documents: Document[] | null | undefined = await ReferenceModel.find({family}).skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
+            throw new Error(path + "/reference/family/:family, msg: family was: " + family + " and find return a null or undefined answer")
+        } 
+
+
+        if ( documents.length === 0) {
             res.status(OK).json({});
-        } else {
-            res.status(OK).json(documents);
+            return;
+        } 
 
-        }
+        // set up results to receive both the document object, and the priceId object
+        const results : ResultReference[] = await fetchPriceModel(documents);
 
+        res.status(OK).json(results);
 
     }
     catch(err) {
         res.status(BAD_REQUEST).json({})
-        console.log(err)
+        console.error(err)
     }
 
 })

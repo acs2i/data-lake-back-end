@@ -1,6 +1,5 @@
 // This is a product
 import mongoose, { Model, Schema, Document } from "mongoose"
-
 interface ReferenceHistory {
     k: string,
     v: string,
@@ -11,13 +10,13 @@ interface ReferenceHistory {
     updated: Date
 }
 
-interface Reference extends Document {
+export interface Reference extends Document {
     k: string,
     v: string,
     family: string,         // this links to the family collection id
     colors: string[],
     size: string[],
-    priceId:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
+    priceId?:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
     history: ReferenceHistory[],
     frnPrincipal: string    // linked to the supplier k field
 }
@@ -64,7 +63,12 @@ const referenceSchema = new mongoose.Schema<Reference>({
         unique: false, 
         required: false
     },
-    priceId: { type: Schema.Types.ObjectId, ref: "price"},
+    priceId: [
+        {
+            type: Schema.Types.ObjectId,
+            pref: "price",
+        }
+    ],
   
 
 

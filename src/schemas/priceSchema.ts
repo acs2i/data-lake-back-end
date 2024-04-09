@@ -1,8 +1,11 @@
-import mongoose, { Model } from "mongoose"
+import mongoose, { Model, ObjectId } from "mongoose"
 
-interface Price {
-    price: number
+export interface Price {
+    price: number | undefined
+    // _id?: undefined | ObjectId
 }
+
+
 
 const priceSchema = new mongoose.Schema<Price>({
     price: {
@@ -11,7 +14,7 @@ const priceSchema = new mongoose.Schema<Price>({
         required: true
     }
 
-})
+}, { collection: "price", timestamps: true} )
 
 
 const PriceModel: Model<Price> = mongoose.model("price", priceSchema)
