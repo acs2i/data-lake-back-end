@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction } from "express"
-import { Hash } from "../utilities/Authentification";
+import { Hash } from "../utilities/authentificationUtilities";
 import { Document } from "mongodb";
 import { UNAUTHORIZED } from "../codes/errors";
 import AuthorizationModel from "../schemas/applicationSchema"
