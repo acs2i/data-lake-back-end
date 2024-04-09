@@ -16,7 +16,7 @@ export interface Reference extends Document {
     family: string,         // this links to the family collection id
     colors: string[],
     size: string[],
-    priceId?:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
+    priceId:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
     history: ReferenceHistory[],
     frnPrincipal: string    // linked to the supplier k field
 }
