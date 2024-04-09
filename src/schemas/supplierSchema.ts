@@ -29,7 +29,7 @@ const supplierSchema = new mongoose.Schema<Supplier>({
         unique: false
     }
 
-})
+},{ collection: "supplier", timestamps: true} )
 
 
 const SupplierSchema: Model<Supplier> = mongoose.model("supplier", supplierSchema)

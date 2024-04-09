@@ -7,12 +7,14 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { UVC } from "../interfaces/resultInterfaces";
 import { uvcFetchPriceModel, uvcGetBasedOnParam } from "../utilities/uvcUtilities";
 import UVCModel from "../schemas/uvcSchema";
+import SupplierSchema from "../schemas/supplierSchema";
+import { supplierGetBasedOnParam } from "../utilities/supplierUtilities";
 dotenv.config();
 
 const router = express.Router();
-const path = "/uvc"
+const path = "/supplier"
 
-router.get(path, applicationAuthorization, async ( req: Request, res: Response) => {
+router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -37,17 +39,14 @@ router.get(path, applicationAuthorization, async ( req: Request, res: Response) 
         const skip = (intPage - 1) * intLimit;
 
 
-        const documents: Document[] | null | undefined = await UVCModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await SupplierSchema.find().skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
-
-
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -57,7 +56,6 @@ router.get(path, applicationAuthorization, async ( req: Request, res: Response) 
 
 })
 
-// Works with price workaround
 router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
@@ -65,10 +63,10 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 
         if(id === null || id === undefined) {
             res.status(BAD_REQUEST).json({})
-            throw new Error(path + "/uvc/id/:id, msg: id was: " + id)
+            throw new Error(path + "/reference/id/:id, msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await UVCModel.findById(id);
+        const document: Document | null | undefined = await SupplierSchema.findById(id);
 
 
         if ( document === null ||  document === undefined) {
@@ -76,9 +74,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
             return;
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(document);
-
-        res.status(OK).json(results)
+        res.status(OK).json(document)
 
     }
     catch(err) {
@@ -88,26 +84,51 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 
 })
 
-router.get(path + "/k/:k", applicationAuthorization, async ( req: Request, res: Response) => {
+
+router.get(path + "/name/:name", applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
+     
+        const name: string | undefined | null = req.params.name;
+
+        if(name === null || name === undefined) {
+            throw new Error(path + "/name/:name, msg: name was: " + name)
+        }
+
+        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, name, "name")
+
+        if ( documents === null ||  documents === undefined) {
+            throw new Error(path + "/reference, msg: find error")
+        }
+
+        res.status(OK).json(documents);
+
+    }
+    catch(err) {
+        res.status(INTERNAL_SERVER_ERROR).send({})
+        console.error(err)
+    }
+
+})
+
+
+router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: Response) => {
+    try {
+
+     
         const k: string | undefined | null = req.params.k;
 
-        
         if(k === null || k === undefined) {
-            throw new Error(path + "/reference/:k, msg: k was: " + k)
+            throw new Error(path + "/k/:k, msg: k was: " + k)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, k, "k")
+        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, k, "k")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
-
-
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -117,27 +138,23 @@ router.get(path + "/k/:k", applicationAuthorization, async ( req: Request, res: 
 
 })
 
-
-router.get(path + "/color/:color", applicationAuthorization, async ( req: Request, res: Response) => {
+router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
-        const color: string | undefined | null = req.params.color;
+     
+        const v: string | undefined | null = req.params.v;
 
-        
-        if(color === null || color === undefined) {
-            throw new Error(path + "/reference/:color, msg: color was: " + color)
+        if(v === null || v === undefined) {
+            throw new Error(path + "/v/:v, msg: v was: " + v)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, color, "color")
+        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, v, "v")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
-
-
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -147,28 +164,23 @@ router.get(path + "/color/:color", applicationAuthorization, async ( req: Reques
 
 })
 
-
-router.get(path + "/size/:size", applicationAuthorization, async ( req: Request, res: Response) => {
+router.get(path + "/address/:address", applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
-        console.log("req.params", req.params) 
-        const size: string | undefined | null = req.params.size;
+     
+        const address: string | undefined | null = req.params.address;
 
-        
-        if(size === null || size === undefined) {
-            throw new Error(path + "/reference/:size, msg: size was: " + size)
+        if(address === null || address === undefined) {
+            throw new Error(path + "/address/:address, msg: address was: " + address)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, size, "size")
+        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, address, "address")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
-
-
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
