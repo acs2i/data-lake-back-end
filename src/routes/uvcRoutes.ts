@@ -1,12 +1,13 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import applicationAuthorization from "../middlewears/applicationMiddlewear";
-import { Document } from "mongodb";
+import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { UVC } from "../interfaces/resultInterfaces";
-import { uvcReferenceGetPriceDocument, uvcreferenceGetOnParam } from "../services/uvcServices";
+import { uvcGetPriceDocument, uvcGetOnParam, uvcPatchOnParam } from "../services/uvcServices";
 import UVCModel from "../schemas/uvcSchema";
+import { UpdateWriteOpResult } from "mongoose";
 dotenv.config();
 
 const router = express.Router();
@@ -40,11 +41,11 @@ router.get(path, applicationAuthorization, async ( req: Request, res: Response) 
         const documents: Document[] | null | undefined = await UVCModel.find().skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
-            throw new Error(path + "/reference, msg: find error")
+            throw new Error(path + ", msg: find error")
         }
 
 
-        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
+        const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -65,7 +66,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 
         if(id === null || id === undefined) {
             res.status(BAD_REQUEST).json({})
-            throw new Error(path + "/uvc/id/:id, msg: id was: " + id)
+            throw new Error(path + "/id/:id, msg: id was: " + id)
         }
 
         const document: Document | null | undefined = await UVCModel.findById(id);
@@ -76,7 +77,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
             return;
         }
 
-        const results : UVC[] = await uvcReferenceGetPriceDocument(document);
+        const results : UVC[] = await uvcGetPriceDocument(document);
 
         res.status(OK).json(results)
 
@@ -95,16 +96,16 @@ router.get(path + "/k/:k", applicationAuthorization, async ( req: Request, res: 
 
         
         if(k === null || k === undefined) {
-            throw new Error(path + "/reference/:k, msg: k was: " + k)
+            throw new Error(path + "/k/:k, msg: k was: " + k)
         }
 
-        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, k, "k")
+        const documents: Document[] | null | undefined = await uvcGetOnParam(req, k, "k")
 
         if ( documents === null ||  documents === undefined) {
-            throw new Error(path + "/reference, msg: find error")
+            throw new Error(path + "/k/:k, msg: find error")
         }
 
-        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
+        const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -125,16 +126,16 @@ router.get(path + "/color/:color", applicationAuthorization, async ( req: Reques
 
         
         if(color === null || color === undefined) {
-            throw new Error(path + "/reference/:color, msg: color was: " + color)
+            throw new Error(path + "/color/:color, msg: color was: " + color)
         }
 
-        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, color, "color")
+        const documents: Document[] | null | undefined = await uvcGetOnParam(req, color, "color")
 
         if ( documents === null ||  documents === undefined) {
-            throw new Error(path + "/reference, msg: find error")
+            throw new Error(path + "/color/:color, msg: find error")
         }
 
-        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
+        const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -156,16 +157,16 @@ router.get(path + "/size/:size", applicationAuthorization, async ( req: Request,
 
         
         if(size === null || size === undefined) {
-            throw new Error(path + "/reference/:size, msg: size was: " + size)
+            throw new Error(path + "/size/:size, msg: size was: " + size)
         }
 
-        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, size, "size")
+        const documents: Document[] | null | undefined = await uvcGetOnParam(req, size, "size")
 
         if ( documents === null ||  documents === undefined) {
-            throw new Error(path + "/reference, msg: find error")
+            throw new Error(path + "/size/:size, msg: find error")
         }
 
-        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
+        const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -177,6 +178,203 @@ router.get(path + "/size/:size", applicationAuthorization, async ( req: Request,
     }
 
 })
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// PATCH
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.patch(path + "/k/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/k/:id, msg: id was: " + id)
+        }
+
+        const k: string | undefined | null = req.body.k;
+
+        if(k === null || k === undefined) {
+            throw new Error(path + "/k/:id, msg: k was: " + k)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "k", k);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and k was : " + k)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+
+
+// works
+router.patch(path + "/color/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/color/:id, msg: id was: " + id)
+        }
+
+        const color: string | undefined | null = req.body.color;
+
+        if(color === null || color === undefined) {
+            throw new Error(path + "/color/:id, msg: color was: " + color)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "color", color);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and color was : " + color)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+// works
+router.patch(path + "/size/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/size/:id, msg: id was: " + id)
+        }
+
+        const size: string | undefined | null = req.body.size;
+
+        if(size === null || size === undefined) {
+            throw new Error(path + "/size/:id, msg: size was: " + size)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "size", size);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and size was : " + size)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+// works
+router.patch(path + "/ean/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/ean/:id, msg: id was: " + id)
+        }
+
+        const eans: string | undefined | null = req.body.eans;
+
+        if(eans === null || eans === undefined) {
+            throw new Error(path + "/eans/:id, msg: ean was: " + eans)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "eans", eans);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and ean was : " + eans)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+// JAKE - MUST ADD A CALL TO STORE IMAGES LATER
+router.patch(path + "/image/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/images/:id, msg: id was: " + id)
+        }
+
+        const images: string | undefined | null = req.body.images;
+
+        if(images === null || images === undefined) {
+            throw new Error(path + "/images/:id, msg: images was: " + images)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "images", images);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and image was : " + images)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+router.patch(path + "/price/:id", applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/prices/:id, msg: id was: " + id)
+        }
+
+        const prices: string | undefined | null = req.body.prices;
+
+        if(prices === null || prices === undefined) {
+            throw new Error(path + "/prices/:id, msg: prices was: " + prices)
+        }
+
+        const response: UpdateWriteOpResult = await uvcPatchOnParam("_id", id, "prices", prices);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and price was : " + prices)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+
+
 
 
 

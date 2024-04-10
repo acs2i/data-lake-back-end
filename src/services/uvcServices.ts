@@ -3,8 +3,9 @@ import { UVC } from "../interfaces/resultInterfaces";
 import PriceModel from "../schemas/priceSchema";
 import { Request } from "express";
 import UVCModel from "../schemas/uvcSchema";
+import { UpdateWriteOpResult } from "mongoose";
 
-export const uvcreferenceGetOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
+export const uvcGetOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
     const page: string | any | string[] | undefined = req.query.page;
     const limit: string | any | string[] | undefined = req.query.limit;
 
@@ -31,7 +32,7 @@ export const uvcreferenceGetOnParam = async ( req: Request, param: any, collecti
 }
 
 
-export const uvcReferenceGetPriceDocument = async (documents: Document | Document[]) : Promise<UVC[]> => {
+export const uvcGetPriceDocument = async (documents: Document | Document[]) : Promise<UVC[]> => {
 
     if( !Array.isArray(documents) ) {
         documents = [documents];
@@ -88,4 +89,11 @@ export const uvcReferenceGetPriceDocument = async (documents: Document | Documen
     return results;
 
 
+}
+
+export const uvcPatchOnParam = async (filterKey: string, filterValue: string | ObjectId, updateKey: string, updateValue: string) : Promise<UpdateWriteOpResult> => {
+    const filter = { [filterKey] : filterValue };
+    const update   = { $set: { [updateKey]: updateValue} };
+
+    return await UVCModel.updateOne(filter,update);
 }

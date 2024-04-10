@@ -31,7 +31,7 @@ interface PriceData {
     frn: string, // this connects to the k in the supplier collection,
     priceId:  Schema.Types.ObjectId | string, // this connects to the Object Id in the price collection, ObjectId is for schema, string is for result
     date: Date,
-    price: number
+    // price: number        // Kept in the price table
 }
 
 interface UVCProperty {
@@ -47,5 +47,5 @@ export interface UVC {
     images: ImageData[],
     uvcs: UVCProperty[],
     prices: PriceData | Document[] // PriceData for schema, Document[] is for request
-    _id?: number    // for end user use 
+    _id: number    // for end user use 
 }
