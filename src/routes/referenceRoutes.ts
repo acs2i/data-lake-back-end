@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import applicationAuthorization from "../middlewears/applicationMiddlewear";
 import ReferenceModel from "../schemas/referenceSchema";
-import { Document } from "mongodb";
+import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { ResultReference } from "../interfaces/resultInterfaces";
@@ -263,6 +263,186 @@ router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res
     }
 
 })
+
+router.patch(path + "/family/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/family/:id, msg: id was: " + id)
+        }
+
+        const family: string | undefined | null = req.body.family;
+
+        if(family === null || family === undefined) {
+            throw new Error(path + "/reference/family/:id, msg: family was: " + family)
+        }
+
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "family", family);
+
+        if(response instanceof Error) {
+            throw response;
+        }
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and family was : " + family)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+router.patch(path + "/color/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/color/:id, msg: id was: " + id)
+        }
+
+        const colors: string | undefined | null = req.body.colors;
+
+        if(colors === null || colors === undefined) {
+            throw new Error(path + "/reference/color/:id, msg: colors was: " + colors)
+        }
+
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "colors", colors);
+
+        if(response instanceof Error) {
+            throw response;
+        }
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and colors was : " + colors)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+router.patch(path + "/frnPrincipal/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/frnPrincipal/:id, msg: id was: " + id)
+        }
+
+        const frnPrincipal: string | undefined | null = req.body.frnPrincipal;
+
+        if(frnPrincipal === null || frnPrincipal === undefined) {
+            throw new Error(path + "/reference/frnPrincipal/:id, msg: frnPrincipal was: " + frnPrincipal)
+        }
+
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "frnPrincipal", new ObjectId(frnPrincipal));
+
+        if(response instanceof Error) {
+            throw response;
+        }
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and frnPrincipal was : " + frnPrincipal)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+router.patch(path + "/size/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/size/:id, msg: id was: " + id)
+        }
+
+        const size: string | undefined | null = req.body.size;
+
+        if(size === null || size === undefined) {
+            throw new Error(path + "/reference/size/:id, msg: size was: " + size)
+        }
+
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "size", size);
+
+        if(response instanceof Error) {
+            throw response;
+        }
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and size was : " + size)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+router.patch(path + "/priceId/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/priceId/:id, msg: id was: " + id)
+        }
+
+        const priceId: string | undefined | null = req.body.priceId;
+
+        if(priceId === null || priceId === undefined) {
+            throw new Error(path + "/reference/priceId/:id, msg: priceId was: " + priceId)
+        }
+
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "priceId", new ObjectId(priceId));
+
+        if(response instanceof Error) {
+            throw response;
+        }
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and priceId was : " + priceId)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+
 
 
 

@@ -8,7 +8,7 @@ export interface Reference extends Document {
     colors: string[],
     size: string[],
     priceId:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
-    frnPrincipal: string    // linked to the supplier k field
+    frnPrincipal: Schema.Types.ObjectId    // linked to the supplier k field
     version: number
 }
 
@@ -35,7 +35,7 @@ export const referenceSchema = new mongoose.Schema<Reference>({
         required: true
     },
     frnPrincipal: {
-        type: String,
+        type: Schema.Types.ObjectId,
         unique: false,
         required: false
     },

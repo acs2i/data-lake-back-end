@@ -150,8 +150,8 @@ export const referencePatchOnParam = async (filterKey: string, filterValue: stri
     const update   = { $set: { [updateKey]: updateValue}, $inc: { version: 1} };
     return await ReferenceModel.updateOne(filter,update);
 }
-
-export const referenceCompletePatch = async (req: Request, filterKey: string, filterValue: string, updateKey: string, updateValue: string ): Promise<UpdateWriteOpResult | Error >=> {
+// example   filterKey: _id, filterValue: 12345, updateKey: family: updateValue: Backpack
+export const referenceCompletePatch = async (req: Request, filterKey: string, filterValue: string, updateKey: string, updateValue: any ): Promise<UpdateWriteOpResult | Error >=> {
     
         const path = req.originalUrl;
         // Push old version to reference history table first
@@ -159,19 +159,19 @@ export const referenceCompletePatch = async (req: Request, filterKey: string, fi
 
         
         if(oldVersion === null || oldVersion === undefined) {
-            throw new Error(path + "/reference/k/:id, msg: currentVersion ( soon to be old ) not able to be found: " + filterKey)
+            return new Error(path + "/reference/k/:id, msg: currentVersion ( soon to be old ) not able to be found: " + filterKey)
         }
 
         // Error possibility is handled in this function
         const postedRefHistory: Document[] | Error = await referencePostRefHistory(oldVersion);
 
         if(postedRefHistory instanceof Error) {
-            throw postedRefHistory;
+            return postedRefHistory;
         }
 
         // if unable to post history for some odd reason
         if(postedRefHistory.length === 0) {
-            throw new Error(path + "/reference/k/:id, msg: received an empty array from referencepostrefhistory function with this id in url: " + filterKey)
+            return new Error(path + "/reference/k/:id, msg: received an empty array from referencepostrefhistory function with this id in url: " + filterKey)
         }
 
         const response: UpdateWriteOpResult = await referencePatchOnParam(filterKey, filterValue, updateKey, updateValue);
