@@ -6,7 +6,7 @@ import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { ResultReference } from "../interfaces/resultInterfaces";
-import { referenceGetPriceDocument, referenceGetOnParam, referencePatchOnParam } from "../services/referenceServices";
+import { referenceGetPriceDocument, referenceGetOnParam, referencePatchOnParam, referencePostRefHistory, referenceDeleteRefHistory, referenceCompletePatch } from "../services/referenceServices";
 import { UpdateWriteOpResult } from "mongoose";
 dotenv.config();
 
@@ -208,12 +208,18 @@ router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res
             throw new Error(path + "/reference/k/:id, msg: k was: " + k)
         }
 
-        const response: UpdateWriteOpResult = await referencePatchOnParam("_id", id, "k", k);
+        // Push old version to reference history table first
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "k", k);
+
+        if(response instanceof Error) {
+            throw response;
+        }
 
         if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json({})
         } else {
-            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and k was : " + k)
+            // Undo newly created version then. No await, client doesn't need to wait for this action to be completed.
+            throw new Error(path + "/k/:id, msg: Get back an update write op that was not acceptable somehow. Id was : " + id + " and k was : " + k)
         }
 
     } catch(err) {
@@ -239,7 +245,11 @@ router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res
             throw new Error(path + "/reference/v/:id, msg: v was: " + v)
         }
 
-        const response: UpdateWriteOpResult = await referencePatchOnParam("_id", id, "v", v);
+        const response : UpdateWriteOpResult | Error = await referenceCompletePatch(req, "_id", id, "v", v);
+
+        if(response instanceof Error) {
+            throw response;
+        }
 
         if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json({})
