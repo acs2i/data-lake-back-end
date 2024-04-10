@@ -32,6 +32,6 @@ const supplierSchema = new mongoose.Schema<Supplier>({
 },{ collection: "supplier", timestamps: true} )
 
 
-const SupplierSchema: Model<Supplier> = mongoose.model("supplier", supplierSchema)
+const SupplierModel: Model<Supplier> = mongoose.model("supplier", supplierSchema)
 
-export default SupplierSchema;
+export default SupplierModel;

@@ -4,7 +4,7 @@ import PriceModel from "../schemas/priceSchema";
 import { Request } from "express";
 import UVCModel from "../schemas/uvcSchema";
 
-export const uvcGetBasedOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
+export const uvcreferenceGetOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
     const page: string | any | string[] | undefined = req.query.page;
     const limit: string | any | string[] | undefined = req.query.limit;
 
@@ -31,7 +31,7 @@ export const uvcGetBasedOnParam = async ( req: Request, param: any, collectionKe
 }
 
 
-export const uvcFetchPriceModel = async (documents: Document | Document[]) : Promise<UVC[]> => {
+export const uvcReferenceGetPriceDocument = async (documents: Document | Document[]) : Promise<UVC[]> => {
 
     if( !Array.isArray(documents) ) {
         documents = [documents];

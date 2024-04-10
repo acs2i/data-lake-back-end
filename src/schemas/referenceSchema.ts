@@ -22,7 +22,7 @@ export interface Reference extends Document {
 }
 
 
-const referenceSchema = new mongoose.Schema<Reference>({
+export const referenceSchema = new mongoose.Schema<Reference>({
     k: {
         type: String,
         unique: false,

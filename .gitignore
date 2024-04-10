@@ -5,3 +5,4 @@ package-lock.json
 curls.sh
 db.md
 /src/routes/routeTests.sh
+/src/tests/

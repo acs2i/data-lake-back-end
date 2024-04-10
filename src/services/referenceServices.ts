@@ -3,8 +3,9 @@ import { Document, ObjectId } from "mongodb";
 import { ResultReference } from "../interfaces/resultInterfaces";
 import { Request } from "express";
 import ReferenceModel from "../schemas/referenceSchema";
+import { UpdateWriteOpResult } from "mongoose";
 
-export const getBasedOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
+export const referenceGetOnParam = async ( req: Request, param: any, collectionKey: string): Promise<Document[]>  => {
     const page: string | any | string[] | undefined = req.query.page;
     const limit: string | any | string[] | undefined = req.query.limit;
 
@@ -30,7 +31,7 @@ export const getBasedOnParam = async ( req: Request, param: any, collectionKey: 
 
 }
 
-export const fetchPriceModel = async (documents: Document | Document[]) : Promise<ResultReference[]> => {
+export const referenceGetPriceDocument = async (documents: Document | Document[]) : Promise<ResultReference[]> => {
 
     if( !Array.isArray(documents) ) {
         documents = [documents];
@@ -76,4 +77,11 @@ export const fetchPriceModel = async (documents: Document | Document[]) : Promis
     return results;
 
 
+}
+
+
+export const referencePatchOnParam = async (filterKey: string, filterValue: string, updateKey: string, updateValue: string) : Promise<UpdateWriteOpResult> => {
+    const filter = { [filterKey] : filterValue };
+    const update   = { $set: { [updateKey]: updateValue} };
+    return await ReferenceModel.updateOne(filter,update);
 }

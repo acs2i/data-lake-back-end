@@ -5,7 +5,7 @@ import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { UVC } from "../interfaces/resultInterfaces";
-import { uvcFetchPriceModel, uvcGetBasedOnParam } from "../utilities/uvcUtilities";
+import { uvcReferenceGetPriceDocument, uvcreferenceGetOnParam } from "../services/uvcServices";
 import UVCModel from "../schemas/uvcSchema";
 dotenv.config();
 
@@ -44,7 +44,7 @@ router.get(path, applicationAuthorization, async ( req: Request, res: Response) 
         }
 
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
+        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -76,7 +76,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
             return;
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(document);
+        const results : UVC[] = await uvcReferenceGetPriceDocument(document);
 
         res.status(OK).json(results)
 
@@ -98,13 +98,13 @@ router.get(path + "/k/:k", applicationAuthorization, async ( req: Request, res: 
             throw new Error(path + "/reference/:k, msg: k was: " + k)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, k, "k")
+        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, k, "k")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
+        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -128,13 +128,13 @@ router.get(path + "/color/:color", applicationAuthorization, async ( req: Reques
             throw new Error(path + "/reference/:color, msg: color was: " + color)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, color, "color")
+        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, color, "color")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
+        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
 
 
         res.status(OK).json(results);
@@ -159,13 +159,13 @@ router.get(path + "/size/:size", applicationAuthorization, async ( req: Request,
             throw new Error(path + "/reference/:size, msg: size was: " + size)
         }
 
-        const documents: Document[] | null | undefined = await uvcGetBasedOnParam(req, size, "size")
+        const documents: Document[] | null | undefined = await uvcreferenceGetOnParam(req, size, "size")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
         }
 
-        const results : UVC[] = await uvcFetchPriceModel(documents);
+        const results : UVC[] = await uvcReferenceGetPriceDocument(documents);
 
 
         res.status(OK).json(results);

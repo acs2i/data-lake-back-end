@@ -4,16 +4,17 @@ import applicationAuthorization from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
-import { UVC } from "../interfaces/resultInterfaces";
-import { uvcFetchPriceModel, uvcGetBasedOnParam } from "../utilities/uvcUtilities";
-import UVCModel from "../schemas/uvcSchema";
-import SupplierSchema from "../schemas/supplierSchema";
-import { supplierGetBasedOnParam } from "../utilities/supplierUtilities";
+import SupplierModel from "../schemas/supplierSchema";
+import { supplierreferenceGetOnParam } from "../services/supplierServices";
+import { supplierPatchOnParam } from "../services/supplierServices";
+import { UpdateWriteOpResult } from "mongoose";
 dotenv.config();
 
 const router = express.Router();
 const path = "/supplier"
-
+/*
+    GET
+*/
 router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
@@ -39,7 +40,7 @@ router.get(path, applicationAuthorization, async (req: Request, res: Response) =
         const skip = (intPage - 1) * intLimit;
 
 
-        const documents: Document[] | null | undefined = await SupplierSchema.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await SupplierModel.find().skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
@@ -66,7 +67,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
             throw new Error(path + "/reference/id/:id, msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await SupplierSchema.findById(id);
+        const document: Document | null | undefined = await SupplierModel.findById(id);
 
 
         if ( document === null ||  document === undefined) {
@@ -95,7 +96,7 @@ router.get(path + "/name/:name", applicationAuthorization, async (req: Request, 
             throw new Error(path + "/name/:name, msg: name was: " + name)
         }
 
-        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, name, "name")
+        const documents: Document[] | null | undefined = await supplierreferenceGetOnParam(req, name, "name")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
@@ -122,7 +123,7 @@ router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: R
             throw new Error(path + "/k/:k, msg: k was: " + k)
         }
 
-        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, k, "k")
+        const documents: Document[] | null | undefined = await supplierreferenceGetOnParam(req, k, "k")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
@@ -148,7 +149,7 @@ router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: R
             throw new Error(path + "/v/:v, msg: v was: " + v)
         }
 
-        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, v, "v")
+        const documents: Document[] | null | undefined = await supplierreferenceGetOnParam(req, v, "v")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
@@ -174,7 +175,7 @@ router.get(path + "/address/:address", applicationAuthorization, async (req: Req
             throw new Error(path + "/address/:address, msg: address was: " + address)
         }
 
-        const documents: Document[] | null | undefined = await supplierGetBasedOnParam(req, address, "address")
+        const documents: Document[] | null | undefined = await supplierreferenceGetOnParam(req, address, "address")
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(path + "/reference, msg: find error")
@@ -190,6 +191,135 @@ router.get(path + "/address/:address", applicationAuthorization, async (req: Req
 
 })
 
+
+/*
+    PATCH
+*/
+
+router.patch(path + "/name/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/name/:id, msg: id was: " + id)
+        }
+
+        const name: string | undefined | null = req.body.name;
+
+        if(name === null || name === undefined) {
+            throw new Error(path + "/reference/name/:id, msg: name was: " + name)
+        }
+
+        const response: UpdateWriteOpResult = await supplierPatchOnParam("_id", id, "name", name);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/name/:id, msg: issue with writing operation. Id was : " + id + " and name was : " + name)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+
+router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/name/:id, msg: id was: " + id)
+        }
+
+        const k: string | undefined | null = req.body.k;
+
+        if(k === null || k === undefined) {
+            throw new Error(path + "/reference/k/:id, msg: k was: " + k)
+        }
+
+        const response: UpdateWriteOpResult = await supplierPatchOnParam("_id", id, "k", k);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and k was : " + k)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/name/:id, msg: id was: " + id)
+        }
+
+        const v: string | undefined | null = req.body.v;
+
+        if(v === null || v === undefined) {
+            throw new Error(path + "/reference/v/:id, msg: v was: " + v)
+        }
+
+        const response: UpdateWriteOpResult = await supplierPatchOnParam("_id", id, "v", v);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and v was : " + v)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
+
+router.patch(path + "/address/:id", applicationAuthorization, async (req: Request, res: Response) => {
+
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/name/:id, msg: id was: " + id)
+        }
+
+        const address: string | undefined | null = req.body.address;
+
+        if(address === null || address === undefined) {
+            throw new Error(path + "/reference/address/:id, msg: address was: " + address)
+        }
+
+        const response: UpdateWriteOpResult = await supplierPatchOnParam("_id", id, "address", address);
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).json({})
+        } else {
+            throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and address was : " + address)
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
 
 
 
