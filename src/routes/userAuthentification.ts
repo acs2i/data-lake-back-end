@@ -34,7 +34,7 @@ router.post(path + "/signup", async (req : Request, res: Response) => {
         
         const newUser = new UserModel({ email, hashedPassword});
 
-        const result : Document  = await newUser.save();
+        const result : Document  = await newUser.save({ timestamps: true});
         
         res.json(result);
     } 

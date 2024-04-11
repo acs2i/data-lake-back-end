@@ -15,6 +15,11 @@ dotenv.config();
 const router = express.Router();
 const path = "/reference"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GET
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // Works with price workaround
 router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
     try {
@@ -187,10 +192,27 @@ router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: R
 
 })
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// POST
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-    PATCH
-*/
+router.post(path, applicationAuthorization, async (req: Request, res: Response) => {
+    
+    const newDocument = new ReferenceModel({ ...req.body, version: 1});
+
+    const response = await newDocument.save({timestamps: true});
+
+    if(response) {
+        res.status(OK).send(response);
+    } else {
+        throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
+    }
+
+})
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//   PATCH
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res: Response) => {
 
@@ -443,7 +465,28 @@ router.patch(path + "/priceId/:id", applicationAuthorization, async (req: Reques
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DELETE
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+router.delete(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+    
+    
+    const id: string | undefined | null = req.params.id;
+
+    if(id === null || id === undefined) {
+        throw new Error(path + "/reference/k/:id, msg: id was: " + id)
+    }
+
+    const response  = await ReferenceModel.deleteOne({ _id: id});
+    
+    if(response.acknowledged === true && response.deletedCount === 1 ) {
+        res.status(OK).send(response);
+    } else {
+        throw new Error(req.originalUrl + ", msg: delete did not work for some reason with this id: " + id )
+    }
+
+})
 
 
 

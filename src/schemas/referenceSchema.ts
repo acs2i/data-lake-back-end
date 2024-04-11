@@ -55,6 +55,7 @@ export const referenceSchema = new mongoose.Schema<Reference>({
             pref: "price",
         }
     ],
+    // VERSION WILL START AT 1
     version: {
         type: Number,
         unique: false,

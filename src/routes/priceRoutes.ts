@@ -4,7 +4,9 @@ import applicationAuthorization from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
-import PriceModel from "../schemas/priceSchema";
+import PriceModel, { Price } from "../schemas/priceSchema";
+import { Model, UpdateWriteOpResult } from "mongoose";
+
 dotenv.config();
 
 const router = express.Router();
@@ -80,5 +82,84 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 
 })
 
+
+router.post(path, applicationAuthorization, async ( req: Request, res: Response) => {
+    try {
+        const price: string | undefined | null = req.body.price;
+
+        
+        if(price === null || price === undefined) {
+            throw new Error(path + "/price, msg: post - price was: " + price)
+        }
+
+        const newDocument = new PriceModel({ price });
+
+        const response   = await newDocument.save({ timestamps: true});
+
+        if(response) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(path + "/price, msg: save did not work for some reason : " + price )
+        }
+
+    }
+    catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+})
+
+router.patch(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+    try {
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/price/id/:id, msg: id was: " + id)
+        }
+
+        const price: string | undefined | null = req.body.price;
+
+        if(price === null || price === undefined) {
+            throw new Error(path + "/price/price/:id, msg: price was: " + price)
+        }
+
+        const response : UpdateWriteOpResult = await PriceModel.updateOne({ _id: id}, { $set: { price }});
+
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(OK).send({})
+        } else {
+            throw new Error(path + "/price/:id, msg: patch price value : " + id )
+        }
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+})
+
+router.delete(path + "/:id" , applicationAuthorization, async (req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/price/id/:id, msg: id was: " + id)
+        }
+
+        const response = await PriceModel.findByIdAndDelete(id);
+        
+        if(response) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(path + "/price, msg: delete did not work for some reason : " + id )
+        }
+
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
 
 export default router;

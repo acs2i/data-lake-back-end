@@ -13,6 +13,10 @@ dotenv.config();
 const router = express.Router();
 const path = "/uvc"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// GET
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.get(path, applicationAuthorization, async ( req: Request, res: Response) => {
     try {
 
@@ -180,6 +184,27 @@ router.get(path + "/size/:size", applicationAuthorization, async ( req: Request,
 })
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+// POST
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+router.post(path, applicationAuthorization, async(req: Request, res: Response) => {
+    try {
+        const newDocument = new UVCModel({ ...req.body });
+
+        const response = newDocument.save({timestamps: true});
+    
+        if(response) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
+        }
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+})
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 // PATCH
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -214,9 +239,6 @@ router.patch(path + "/k/:id", applicationAuthorization, async ( req: Request, re
 })
 
 
-
-
-// works
 router.patch(path + "/color/:id", applicationAuthorization, async ( req: Request, res: Response) => {
     try {
 
@@ -247,8 +269,6 @@ router.patch(path + "/color/:id", applicationAuthorization, async ( req: Request
 
 })
 
-
-// works
 router.patch(path + "/size/:id", applicationAuthorization, async ( req: Request, res: Response) => {
     try {
 
@@ -279,7 +299,6 @@ router.patch(path + "/size/:id", applicationAuthorization, async ( req: Request,
 
 })
 
-// works
 router.patch(path + "/ean/:id", applicationAuthorization, async ( req: Request, res: Response) => {
     try {
 
@@ -373,6 +392,34 @@ router.patch(path + "/price/:id", applicationAuthorization, async ( req: Request
 })
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// DELETE
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.delete(path + "/:id" , applicationAuthorization, async (req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/uvc/:id, msg: id was: " + id)
+        }
+
+        const response = await UVCModel.deleteOne({ _id: id});
+        
+        if(response) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(path + "/uvc, msg: delete did not work for some reason : " + id )
+        }
+
+
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+})
 
 
 

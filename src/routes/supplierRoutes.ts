@@ -8,13 +8,15 @@ import SupplierModel from "../schemas/supplierSchema";
 import { supplierreferenceGetOnParam } from "../services/supplierServices";
 import { supplierPatchOnParam } from "../services/supplierServices";
 import { UpdateWriteOpResult } from "mongoose";
+import PriceModel from "../schemas/priceSchema";
 dotenv.config();
 
 const router = express.Router();
 const path = "/supplier"
-/*
-    GET
-*/
+///////////////////////////////////////////////////////////////////////////////
+// GET
+///////////////////////////////////////////////////////////////////////////////
+
 router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
     try {
 
@@ -192,6 +194,25 @@ router.get(path + "/address/:address", applicationAuthorization, async (req: Req
 })
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// POST
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+router.post(path, applicationAuthorization, async(req: Request, res: Response) => {
+    try {
+        const newDocument = new SupplierModel({ ...req.body });
+
+        const response = newDocument.save({timestamps: true});
+    
+        if(response) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
+        }
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+})
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // PATCH
@@ -322,7 +343,37 @@ router.patch(path + "/address/:id", applicationAuthorization, async (req: Reques
 
 })
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// DELETE
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+router.delete(path + "/:id", applicationAuthorization, async(req: Request, res: Response) => {
+    
 
+    try {
+            
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/k/:id, msg: id was: " + id)
+        }
+
+        const response = await SupplierModel.deleteOne({ _id: id});
+
+        if(response.acknowledged === true && response.deletedCount === 1 ) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(req.originalUrl + ", msg: delete did not work for some reason with this id: " + id )
+        }
+    
+    } catch(err) {
+        res.status(BAD_REQUEST).send({})
+        console.error(err)
+    }
+
+
+
+
+})
 
 
 export default router;
