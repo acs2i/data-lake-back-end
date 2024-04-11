@@ -12,7 +12,6 @@ import supplierRoutes from "./routes/supplierRoutes"
 import priceRoutes from "./routes/priceRoutes"
 
 import bodyParser from "body-parser";
-import { decryptToken } from "./middlewears/userMiddlewear";
 import mongoose, { Mongoose } from "mongoose";
 dotenv.config();
 
@@ -34,10 +33,10 @@ app.use("/api/v1", uvcRoutes)
 app.use("/api/v1", supplierRoutes)
 
 
-app.use('/', decryptToken, (req: Request, res: Response) => {
+// app.use('/', decryptToken, (req: Request, res: Response) => {
 
-  res.send("Got here");
-})
+//   res.send("Got here");
+// })
 
 app.listen(port, () => {
   

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import applicationAuthorization from "../middlewears/applicationMiddlewear";
+import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
@@ -12,7 +12,7 @@ dotenv.config();
 const router = express.Router();
 const path = "/price"
 
-router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -54,7 +54,7 @@ router.get(path, applicationAuthorization, async (req: Request, res: Response) =
 
 })
 
-router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -83,7 +83,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 })
 
 
-router.post(path, applicationAuthorization, async ( req: Request, res: Response) => {
+router.post(path, authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
         const price: string | undefined | null = req.body.price;
 
@@ -109,7 +109,7 @@ router.post(path, applicationAuthorization, async ( req: Request, res: Response)
     }
 })
 
-router.patch(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const id: string | undefined | null = req.params.id;
 
@@ -137,7 +137,7 @@ router.patch(path + "/:id", applicationAuthorization, async (req: Request, res: 
     }
 })
 
-router.delete(path + "/:id" , applicationAuthorization, async (req: Request, res: Response) => {
+router.delete(path + "/:id" , authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

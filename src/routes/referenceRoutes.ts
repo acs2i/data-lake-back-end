@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import applicationAuthorization from "../middlewears/applicationMiddlewear";
+import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import ReferenceModel from "../schemas/referenceSchema";
 import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
@@ -21,7 +21,7 @@ const path = "/reference"
 
 
 // Works with price workaround
-router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -67,7 +67,7 @@ router.get(path, applicationAuthorization, async (req: Request, res: Response) =
 })
 
 // Works with price workaround
-router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -97,7 +97,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 
 })
 
-router.get(path + "/family/:family", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/family/:family", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const family: string | undefined | null = req.params.family;
@@ -132,7 +132,7 @@ router.get(path + "/family/:family", applicationAuthorization, async (req: Reque
 })
 
 // Works with price workaround
-router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/k/:k", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const k: string | undefined | null = req.params.k;
@@ -162,7 +162,7 @@ router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: R
 
 })
 
-router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const v: string | undefined | null = req.params.v;
@@ -196,7 +196,7 @@ router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: R
 // POST
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post(path, applicationAuthorization, async (req: Request, res: Response) => {
+router.post(path, authorizationMiddlewear, async (req: Request, res: Response) => {
     
     const newDocument = new ReferenceModel({ ...req.body, version: 1});
 
@@ -214,7 +214,7 @@ router.post(path, applicationAuthorization, async (req: Request, res: Response) 
 //   PATCH
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/k/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -251,7 +251,7 @@ router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res
 
 })
 
-router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/v/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -286,7 +286,7 @@ router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res
 
 })
 
-router.patch(path + "/family/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/family/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -321,7 +321,7 @@ router.patch(path + "/family/:id", applicationAuthorization, async (req: Request
 
 })
 
-router.patch(path + "/color/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/color/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -357,7 +357,7 @@ router.patch(path + "/color/:id", applicationAuthorization, async (req: Request,
 })
 
 
-router.patch(path + "/frnPrincipal/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/frnPrincipal/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -393,7 +393,7 @@ router.patch(path + "/frnPrincipal/:id", applicationAuthorization, async (req: R
 })
 
 
-router.patch(path + "/size/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/size/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -428,7 +428,7 @@ router.patch(path + "/size/:id", applicationAuthorization, async (req: Request, 
 
 })
 
-router.patch(path + "/priceId/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/priceId/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -469,7 +469,7 @@ router.patch(path + "/priceId/:id", applicationAuthorization, async (req: Reques
 // DELETE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.delete(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.delete(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     
     
     const id: string | undefined | null = req.params.id;

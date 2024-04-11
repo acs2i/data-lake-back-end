@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import applicationAuthorization from "../middlewears/applicationMiddlewear";
+import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import { OK } from "../codes/success";
 import { BAD_REQUEST } from "../codes/errors";
 
@@ -13,7 +13,7 @@ const router = express.Router();
 const path = "/authentification/application"
 const targetCollection = "Applications" 
 
-router.get(path + "/login", applicationAuthorization,  async (req : Request, res: Response) => {
+router.get(path + "/login", authorizationMiddlewear,  async (req : Request, res: Response) => {
     try {
       res.status(OK).json({ message: "Authorized"})
     }

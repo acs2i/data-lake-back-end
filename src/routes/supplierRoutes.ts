@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import applicationAuthorization from "../middlewears/applicationMiddlewear";
+import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
@@ -17,7 +17,7 @@ const path = "/supplier"
 // GET
 ///////////////////////////////////////////////////////////////////////////////
 
-router.get(path, applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -59,7 +59,7 @@ router.get(path, applicationAuthorization, async (req: Request, res: Response) =
 
 })
 
-router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -88,7 +88,7 @@ router.get(path + "/:id", applicationAuthorization, async (req: Request, res: Re
 })
 
 
-router.get(path + "/name/:name", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/name/:name", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
      
@@ -115,7 +115,7 @@ router.get(path + "/name/:name", applicationAuthorization, async (req: Request, 
 })
 
 
-router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/k/:k", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
      
@@ -141,7 +141,7 @@ router.get(path + "/k/:k", applicationAuthorization, async (req: Request, res: R
 
 })
 
-router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
      
@@ -167,7 +167,7 @@ router.get(path + "/v/:v", applicationAuthorization, async (req: Request, res: R
 
 })
 
-router.get(path + "/address/:address", applicationAuthorization, async (req: Request, res: Response) => {
+router.get(path + "/address/:address", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
      
@@ -197,7 +197,7 @@ router.get(path + "/address/:address", applicationAuthorization, async (req: Req
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // POST
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-router.post(path, applicationAuthorization, async(req: Request, res: Response) => {
+router.post(path, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
         const newDocument = new SupplierModel({ ...req.body });
 
@@ -218,7 +218,7 @@ router.post(path, applicationAuthorization, async(req: Request, res: Response) =
 // PATCH
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.patch(path + "/name/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/name/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -250,7 +250,7 @@ router.patch(path + "/name/:id", applicationAuthorization, async (req: Request, 
 })
 
 
-router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/k/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -281,7 +281,7 @@ router.patch(path + "/k/:id", applicationAuthorization, async (req: Request, res
 
 })
 
-router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/v/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -312,7 +312,7 @@ router.patch(path + "/v/:id", applicationAuthorization, async (req: Request, res
 
 })
 
-router.patch(path + "/address/:id", applicationAuthorization, async (req: Request, res: Response) => {
+router.patch(path + "/address/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -346,7 +346,7 @@ router.patch(path + "/address/:id", applicationAuthorization, async (req: Reques
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // DELETE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-router.delete(path + "/:id", applicationAuthorization, async(req: Request, res: Response) => {
+router.delete(path + "/:id", authorizationMiddlewear, async(req: Request, res: Response) => {
     
 
     try {
