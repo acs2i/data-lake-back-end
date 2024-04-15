@@ -15,11 +15,21 @@ export interface Reference extends Document {
     priceId:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
     frnPrincipal: Schema.Types.ObjectId    // linked to the supplier k field,
     uvcs: Schema.Types.ObjectId[],
-    version: number
+    version: number,
+    reference: string,
+    name: string
 }
 
 
 export const referenceSchema = new mongoose.Schema<Reference>({
+    reference: {
+        type: String,
+        required: true,
+    },
+    name: {
+        type: String,
+        required: true
+    },
     k: {
         type: String,
         unique: false,
@@ -46,11 +56,11 @@ export const referenceSchema = new mongoose.Schema<Reference>({
     productCollection: {
         type: String,
       },
-    colors: {
-        type: [String],
-        unique: false,
-        required: true
-    },
+    // colors: {
+    //     type: [String],
+    //     unique: false,
+    //     required: true
+    // },
     frnPrincipal: {
         type: Schema.Types.ObjectId,
         unique: false,
@@ -61,16 +71,16 @@ export const referenceSchema = new mongoose.Schema<Reference>({
         unique: false,
         required: false,
     }],    // objectid(12345566)
-    size: {
-        type: [String],
-        unique: false,
-        required: true,
-        validate: {
-            validator: (value: string[]) => {
-                value.length > 0 ? true : false
-            },
-        }
-    },
+    // size: {
+    //     type: [String],
+    //     unique: false,
+    //     required: true,
+    //     validate: {
+    //         validator: (value: string[]) => {
+    //             value.length > 0 ? true : false
+    //         },
+    //     }
+    // },
     priceId: [
         {
             type: Schema.Types.ObjectId,
