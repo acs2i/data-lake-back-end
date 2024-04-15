@@ -198,17 +198,16 @@ router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Re
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post(path, authorizationMiddlewear, async (req: Request, res: Response) => {
-    
-    // pull out the uvc
+
     const {uvc} = req.body;
 
     const newUvc: Document = await new UVCModel({...uvc});
 
-    if(!newUvc.isNew) {
+    if(!newUvc) {
         throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
     }   
 
-    const uvcId: number = newUvc._id;
+    const uvcId: number = newUvc._id as number;
 
     const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
 
@@ -216,7 +215,7 @@ router.post(path, authorizationMiddlewear, async (req: Request, res: Response) =
 
     const response = await newDocument.save({timestamps: true});
 
-    if(response.isNew) {
+    if(response) {
         res.status(OK).send(response);
     } else {
         throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
