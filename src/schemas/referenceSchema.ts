@@ -24,11 +24,11 @@ export interface Reference extends Document {
 export const referenceSchema = new mongoose.Schema<Reference>({
     reference: {
         type: String,
-        required: true,
+        required: false,
     },
     name: {
         type: String,
-        required: true
+        required: false,
     },
     k: {
         type: String,

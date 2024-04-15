@@ -7,7 +7,7 @@ import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { ResultReference } from "../interfaces/resultInterfaces";
 import { referenceGetPriceDocument, referenceGetOnParam, referencePatchOnParam, referencePostRefHistory, referenceDeleteRefHistory, referenceCompletePatch } from "../services/referenceServices";
-import { UpdateWriteOpResult } from "mongoose";
+import { Schema, UpdateWriteOpResult } from "mongoose";
 import UVCModel from "../schemas/uvcSchema";
 dotenv.config();
 
@@ -207,7 +207,9 @@ router.post(path, authorizationMiddlewear, async (req: Request, res: Response) =
         throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
     }   
 
-    const uvcId: number = newUvc._id as number;
+    const savedUvc = await newUvc.save({timestamps: true});
+
+    const uvcId  = savedUvc._id;
 
     const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
 
@@ -216,7 +218,7 @@ router.post(path, authorizationMiddlewear, async (req: Request, res: Response) =
     const response = await newDocument.save({timestamps: true});
 
     if(response) {
-        res.status(OK).send(response);
+        res.status(OK).json(response);
     } else {
         throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
     }

@@ -13,7 +13,7 @@ const UVCSchema = new mongoose.Schema<UVC>({
     code: {
         type: String,
         unique: false,
-        required: true
+        required: false
     },
     color: {
         type: [String],
