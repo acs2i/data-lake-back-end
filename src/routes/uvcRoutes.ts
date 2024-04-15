@@ -5,7 +5,7 @@ import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { UVC } from "../interfaces/resultInterfaces";
-import { uvcGetPriceDocument, uvcGetOnParam, uvcPatchOnParam } from "../services/uvcServices";
+import {  uvcGetOnParam, uvcPatchOnParam } from "../services/uvcServices";
 import UVCModel from "../schemas/uvcSchema";
 import { UpdateWriteOpResult } from "mongoose";
 dotenv.config();
@@ -49,10 +49,10 @@ router.get(path, authorizationMiddlewear, async ( req: Request, res: Response) =
         }
 
 
-        const results : UVC[] = await uvcGetPriceDocument(documents);
+        // const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -81,9 +81,9 @@ router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Res
             return;
         }
 
-        const results : UVC[] = await uvcGetPriceDocument(document);
+        // const results : UVC[] = await uvcGetPriceDocument(document);
 
-        res.status(OK).json(results)
+        res.status(OK).json(document)
 
     }
     catch(err) {
@@ -109,10 +109,10 @@ router.get(path + "/k/:k", authorizationMiddlewear, async ( req: Request, res: R
             throw new Error(path + "/k/:k, msg: find error")
         }
 
-        const results : UVC[] = await uvcGetPriceDocument(documents);
+        // const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -139,10 +139,10 @@ router.get(path + "/color/:color", authorizationMiddlewear, async ( req: Request
             throw new Error(path + "/color/:color, msg: find error")
         }
 
-        const results : UVC[] = await uvcGetPriceDocument(documents);
+        // const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -170,10 +170,10 @@ router.get(path + "/size/:size", authorizationMiddlewear, async ( req: Request, 
             throw new Error(path + "/size/:size, msg: find error")
         }
 
-        const results : UVC[] = await uvcGetPriceDocument(documents);
+        // const results : UVC[] = await uvcGetPriceDocument(documents);
 
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
