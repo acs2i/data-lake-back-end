@@ -8,6 +8,7 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { ResultReference } from "../interfaces/resultInterfaces";
 import { referenceGetPriceDocument, referenceGetOnParam, referencePatchOnParam, referencePostRefHistory, referenceDeleteRefHistory, referenceCompletePatch } from "../services/referenceServices";
 import { UpdateWriteOpResult } from "mongoose";
+import UVCModel from "../schemas/uvcSchema";
 dotenv.config();
 
 
@@ -198,11 +199,24 @@ router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Re
 
 router.post(path, authorizationMiddlewear, async (req: Request, res: Response) => {
     
-    const newDocument = new ReferenceModel({ ...req.body, version: 1});
+    // pull out the uvc
+    const {uvc} = req.body;
+
+    const newUvc: Document = await new UVCModel({...uvc});
+
+    if(!newUvc.isNew) {
+        throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
+    }   
+
+    const uvcId: number = newUvc._id;
+
+    const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
+
+    const newDocument: Document = new ReferenceModel(newRef);
 
     const response = await newDocument.save({timestamps: true});
 
-    if(response) {
+    if(response.isNew) {
         res.status(OK).send(response);
     } else {
         throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )

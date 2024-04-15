@@ -41,11 +41,16 @@ interface UVCProperty {
 
 export interface UVC {
     k: string,
-    color: string,
-    size: string,
+    color: string[],
+    code: string,
+    // color: string,
+    // size: string,
+    size: string[],
+
     eans: string[],
     images: ImageData[],
     uvcs: UVCProperty[],
-    prices: PriceData | Document[] // PriceData for schema, Document[] is for request
+    prices: number[],
+    // prices: PriceData | Document[] // PriceData for schema, Document[] is for request
     _id: number    // for end user use 
 }

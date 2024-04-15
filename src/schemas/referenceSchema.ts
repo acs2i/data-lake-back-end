@@ -4,11 +4,17 @@ import mongoose, { Model, Schema, Document } from "mongoose"
 export interface Reference extends Document {
     k: string,
     v: string,
-    family: string,         // this links to the family collection id
+    family: string[],         // this links to the family collection id
+    subFamily: string[],         // this links to the family collection id,
+    brand: string,
+    productCollection: string,
+    status: number,
+    imgPath: string,
     colors: string[],
     size: string[],
     priceId:  Schema.Types.ObjectId; // this is tarif, it is suppose to be a unique number that links to the other schema
-    frnPrincipal: Schema.Types.ObjectId    // linked to the supplier k field
+    frnPrincipal: Schema.Types.ObjectId    // linked to the supplier k field,
+    uvcs: Schema.Types.ObjectId[],
     version: number
 }
 
@@ -25,10 +31,21 @@ export const referenceSchema = new mongoose.Schema<Reference>({
         required: false
     },
     family: {
-        type: String,
+        type: [String],
         unique: false,
-        required: false
+        required: false,
+        default: []
     },
+    subFamily: {
+        type: [String],
+        default: []
+    },
+    brand: {
+        type: String,
+    },
+    productCollection: {
+        type: String,
+      },
     colors: {
         type: [String],
         unique: false,
@@ -39,6 +56,11 @@ export const referenceSchema = new mongoose.Schema<Reference>({
         unique: false,
         required: false
     },
+    uvcs : [{
+        type: Schema.Types.ObjectId,
+        unique: false,
+        required: false,
+    }],    // objectid(12345566)
     size: {
         type: [String],
         unique: false,
@@ -55,13 +77,23 @@ export const referenceSchema = new mongoose.Schema<Reference>({
             pref: "price",
         }
     ],
+    status: {
+        type: Number,
+        unique: false,
+        required: false,
+        default: 0
+    },
+    imgPath: {
+        type: String,
+        default: ""
+    },
     // VERSION WILL START AT 1
     version: {
         type: Number,
         unique: false,
         required: true
     }
-  
+
 
 
 },{ collection: "reference", timestamps: true} )

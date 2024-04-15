@@ -10,16 +10,26 @@ const UVCSchema = new mongoose.Schema<UVC>({
         unique: false,
         required: false
     },
-    color: {
+    code: {
         type: String,
+        unique: false,
+        required: true
+    },
+    color: {
+        type: [String],
         unique: false,
         required: false
     },
     size: {
-        type: String,
+        type: [String],
         unique: false,
         required: false 
     },
+    // size: {
+    //     type: String,
+    //     unique: false,
+    //     required: false 
+    // },
     eans: {
         type: [String],
         unique: false,
@@ -36,10 +46,15 @@ const UVCSchema = new mongoose.Schema<UVC>({
         unique: false
     },
     prices: {
-        type: Schema.Types.Mixed,
+        type: [Number],
         required: false,
         unique: false
     }
+    // prices: {
+    //     type: Schema.Types.Mixed,
+    //     required: false,
+    //     unique: false
+    // }
 
 }, { collection: "uvc", timestamps: true})
 
