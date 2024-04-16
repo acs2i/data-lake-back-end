@@ -13,10 +13,12 @@ import priceRoutes from "./routes/priceRoutes"
 import familyRoutes from "./routes/familyRoutes"
 import subFamilyRoutes from "./routes/subFamilyRoutes"
 import brandRoutes from "./routes/brandRoutes"
+import collectionRoutes from "./routes/collectionRoutes"
 
 
 import bodyParser from "body-parser";
 import mongoose, { Mongoose } from "mongoose";
+import authorizationMiddlewear from "./middlewears/applicationMiddlewear";
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string
@@ -31,13 +33,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use("/api/v1", userAuthenticationRoutes)  // uses token
 // app.use("/api/v1", applicationAuthentification) // simple just hashes password and checks for it in db since no storage on server side
-app.use(v1, priceRoutes)
-app.use(v1, referenceRoutes)
-app.use(v1, uvcRoutes)
-app.use(v1, supplierRoutes)
-app.use(v1, familyRoutes)
-app.use(v1, subFamilyRoutes)
-app.use(v1, brandRoutes)
+app.use(v1, authorizationMiddlewear, priceRoutes)
+app.use(v1, authorizationMiddlewear, referenceRoutes)
+app.use(v1, authorizationMiddlewear, uvcRoutes)
+app.use(v1, authorizationMiddlewear, supplierRoutes)
+app.use(v1, authorizationMiddlewear, familyRoutes)
+app.use(v1, authorizationMiddlewear, subFamilyRoutes)
+app.use(v1, authorizationMiddlewear, brandRoutes)
+app.use(v1, authorizationMiddlewear, collectionRoutes)
+
 
 app.listen(port, () => {
   

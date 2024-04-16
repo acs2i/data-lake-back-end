@@ -12,7 +12,7 @@ dotenv.config();
 const router = express.Router();
 const path = "/price"
 
-router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path,  async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -54,7 +54,7 @@ router.get(path, authorizationMiddlewear, async (req: Request, res: Response) =>
 
 })
 
-router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/:id",  async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -83,7 +83,7 @@ router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Res
 })
 
 
-router.post(path, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.post(path,  async ( req: Request, res: Response) => {
     try {
         const price: string | undefined | null = req.body.price;
 
@@ -109,7 +109,7 @@ router.post(path, authorizationMiddlewear, async ( req: Request, res: Response) 
     }
 })
 
-router.patch(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.patch(path + "/:id",  async (req: Request, res: Response) => {
     try {
         const id: string | undefined | null = req.params.id;
 
@@ -137,7 +137,7 @@ router.patch(path + "/:id", authorizationMiddlewear, async (req: Request, res: R
     }
 })
 
-router.delete(path + "/:id" , authorizationMiddlewear, async (req: Request, res: Response) => {
+router.delete(path + "/:id" ,  async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

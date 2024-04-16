@@ -13,7 +13,7 @@ const router = express.Router();
 const path = "/authentification/application"
 const targetCollection = "Applications" 
 
-router.get(path + "/login", authorizationMiddlewear,  async (req : Request, res: Response) => {
+router.get(path + "/login",   async (req : Request, res: Response) => {
     try {
       res.status(OK).json({ message: "Authorized"})
     }

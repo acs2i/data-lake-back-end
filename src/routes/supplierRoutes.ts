@@ -17,7 +17,7 @@ const path = "/supplier"
 // GET
 ///////////////////////////////////////////////////////////////////////////////
 
-router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path,  async (req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -59,7 +59,7 @@ router.get(path, authorizationMiddlewear, async (req: Request, res: Response) =>
 
 })
 
-router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/:id",  async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -88,7 +88,7 @@ router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Res
 })
 
 
-router.get(path + "/name/:name", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/name/:name",  async (req: Request, res: Response) => {
     try {
 
      
@@ -115,7 +115,7 @@ router.get(path + "/name/:name", authorizationMiddlewear, async (req: Request, r
 })
 
 
-router.get(path + "/k/:k", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/k/:k",  async (req: Request, res: Response) => {
     try {
 
      
@@ -141,7 +141,7 @@ router.get(path + "/k/:k", authorizationMiddlewear, async (req: Request, res: Re
 
 })
 
-router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/v/:v",  async (req: Request, res: Response) => {
     try {
 
      
@@ -167,7 +167,7 @@ router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Re
 
 })
 
-router.get(path + "/address/:address", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/address/:address",  async (req: Request, res: Response) => {
     try {
 
      
@@ -197,7 +197,7 @@ router.get(path + "/address/:address", authorizationMiddlewear, async (req: Requ
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // POST
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-router.post(path, authorizationMiddlewear, async(req: Request, res: Response) => {
+router.post(path,  async(req: Request, res: Response) => {
     try {
         const newDocument = new SupplierModel({ ...req.body });
 
@@ -218,7 +218,7 @@ router.post(path, authorizationMiddlewear, async(req: Request, res: Response) =>
 // PATCH
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.patch(path + "/name/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.patch(path + "/name/:id",  async (req: Request, res: Response) => {
 
     try {
 
@@ -250,7 +250,7 @@ router.patch(path + "/name/:id", authorizationMiddlewear, async (req: Request, r
 })
 
 
-router.patch(path + "/k/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.patch(path + "/k/:id",  async (req: Request, res: Response) => {
 
     try {
 
@@ -281,7 +281,7 @@ router.patch(path + "/k/:id", authorizationMiddlewear, async (req: Request, res:
 
 })
 
-router.patch(path + "/v/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.patch(path + "/v/:id",  async (req: Request, res: Response) => {
 
     try {
 
@@ -312,7 +312,7 @@ router.patch(path + "/v/:id", authorizationMiddlewear, async (req: Request, res:
 
 })
 
-router.patch(path + "/address/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.patch(path + "/address/:id",  async (req: Request, res: Response) => {
 
     try {
 
@@ -346,7 +346,7 @@ router.patch(path + "/address/:id", authorizationMiddlewear, async (req: Request
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // DELETE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-router.delete(path + "/:id", authorizationMiddlewear, async(req: Request, res: Response) => {
+router.delete(path + "/:id",  async(req: Request, res: Response) => {
     
 
     try {

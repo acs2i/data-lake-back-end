@@ -17,7 +17,7 @@ const path = "/uvc"
 // GET
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.get(path, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.get(path,  async ( req: Request, res: Response) => {
     try {
 
         const page: string | any | string[] | undefined = req.query.page;
@@ -63,7 +63,7 @@ router.get(path, authorizationMiddlewear, async ( req: Request, res: Response) =
 })
 
 // Works with price workaround
-router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.get(path + "/:id",  async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -93,7 +93,7 @@ router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Res
 
 })
 
-router.get(path + "/k/:k", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.get(path + "/k/:k",  async ( req: Request, res: Response) => {
     try {
 
         const k: string | undefined | null = req.params.k;
@@ -123,7 +123,7 @@ router.get(path + "/k/:k", authorizationMiddlewear, async ( req: Request, res: R
 })
 
 
-router.get(path + "/color/:color", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.get(path + "/color/:color",  async ( req: Request, res: Response) => {
     try {
 
         const color: string | undefined | null = req.params.color;
@@ -153,7 +153,7 @@ router.get(path + "/color/:color", authorizationMiddlewear, async ( req: Request
 })
 
 
-router.get(path + "/size/:size", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.get(path + "/size/:size",  async ( req: Request, res: Response) => {
     try {
 
         console.log("req.params", req.params) 
@@ -186,7 +186,7 @@ router.get(path + "/size/:size", authorizationMiddlewear, async ( req: Request, 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // POST
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-router.post(path, authorizationMiddlewear, async(req: Request, res: Response) => {
+router.post(path,  async(req: Request, res: Response) => {
     try {
         const newDocument = new UVCModel({ ...req.body });
 
@@ -208,7 +208,7 @@ router.post(path, authorizationMiddlewear, async(req: Request, res: Response) =>
 // PATCH
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.patch(path + "/k/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/k/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -239,7 +239,7 @@ router.patch(path + "/k/:id", authorizationMiddlewear, async ( req: Request, res
 })
 
 
-router.patch(path + "/color/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/color/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -269,7 +269,7 @@ router.patch(path + "/color/:id", authorizationMiddlewear, async ( req: Request,
 
 })
 
-router.patch(path + "/size/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/size/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -299,7 +299,7 @@ router.patch(path + "/size/:id", authorizationMiddlewear, async ( req: Request, 
 
 })
 
-router.patch(path + "/ean/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/ean/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -331,7 +331,7 @@ router.patch(path + "/ean/:id", authorizationMiddlewear, async ( req: Request, r
 
 
 // JAKE - MUST ADD A CALL TO STORE IMAGES LATER
-router.patch(path + "/image/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/image/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -361,7 +361,7 @@ router.patch(path + "/image/:id", authorizationMiddlewear, async ( req: Request,
 
 })
 
-router.patch(path + "/price/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.patch(path + "/price/:id",  async ( req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
@@ -396,7 +396,7 @@ router.patch(path + "/price/:id", authorizationMiddlewear, async ( req: Request,
 // DELETE
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.delete(path + "/:id" , authorizationMiddlewear, async (req: Request, res: Response) => {
+router.delete(path + "/:id" ,  async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
