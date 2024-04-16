@@ -10,13 +10,15 @@ import referenceRoutes from "./routes/referenceRoutes"
 import uvcRoutes from "./routes/uvcRoutes"
 import supplierRoutes from "./routes/supplierRoutes"
 import priceRoutes from "./routes/priceRoutes"
+import familyRoutes from "./routes/familyRoutes"
+import subFamilyRoutes from "./routes/subFamilyRoutes"
 
 import bodyParser from "body-parser";
 import mongoose, { Mongoose } from "mongoose";
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string
-
+const v1 = "/api/v1";
 
 const app = express();
 const port = process.env.PORT;
@@ -27,16 +29,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // app.use("/api/v1", userAuthenticationRoutes)  // uses token
 // app.use("/api/v1", applicationAuthentification) // simple just hashes password and checks for it in db since no storage on server side
-app.use("/api/v1", priceRoutes)
-app.use("/api/v1", referenceRoutes)
-app.use("/api/v1", uvcRoutes)
-app.use("/api/v1", supplierRoutes)
-
-
-// app.use('/', decryptToken, (req: Request, res: Response) => {
-
-//   res.send("Got here");
-// })
+app.use(v1, priceRoutes)
+app.use(v1, referenceRoutes)
+app.use(v1, uvcRoutes)
+app.use(v1, supplierRoutes)
+app.use(v1, familyRoutes)
+app.use(v1, subFamilyRoutes)
 
 app.listen(port, () => {
   

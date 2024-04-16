@@ -6,7 +6,7 @@ const subFamilySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    family: {
+    familyId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "family",
       required: true,
@@ -16,5 +16,5 @@ const subFamilySchema = new mongoose.Schema(
   { collection: "subFamily", timestamps: true} 
 );
 
-const subFamily = mongoose.model("subFamily", subFamilySchema);
-export default subFamily;
+const SubFamily = mongoose.model("subFamily", subFamilySchema);
+export default SubFamily;

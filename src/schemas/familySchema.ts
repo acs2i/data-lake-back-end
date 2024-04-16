@@ -1,16 +1,17 @@
-import mongoose, { Model, ObjectId } from "mongoose"
+import mongoose, { Model, ObjectId, Schema } from "mongoose"
 
 interface SubFamily {
-    default: ObjectId,
+    default: ObjectId[],
 }
 
-interface Family {
+export interface Family {
     k: string,
     type: string,
     parents: string[],
     key: string,
     name: string,
-    subFamily: 
+    subFamily:  number [] | string[] | ObjectId[]       // not best practice but lets work with it -_-
+    creatorId: ObjectId
 }
 
 const familySchema = new mongoose.Schema<Family>({
@@ -40,8 +41,12 @@ const familySchema = new mongoose.Schema<Family>({
         required: true,
       },
     subFamily: [
-        { type: mongoose.Types.ObjectId, default: [], ref: "subFamily" },
+        { type: mongoose.Types.ObjectId, default: [], ref: "subFamily", required: false },
     ],
+    creatorId: {
+        type: Schema.Types.ObjectId,
+        required: true
+    }
 
 
 }, { collection: "family", timestamps: true} )
