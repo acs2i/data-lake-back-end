@@ -31,7 +31,7 @@ router.post(path, async ( req: Request, res: Response) => {
             throw new Error("name was undefined for some reason")
         }
 
-        const creator = req.body.creator;
+        const creator = req.body.creator;       // creator object
 
         if(creator === undefined || creator === null) {
             throw new Error("creeator was undefinedfor some reason")
