@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 
 import dotenv from "dotenv"
 import cors from "cors"
@@ -12,6 +12,8 @@ import supplierRoutes from "./routes/supplierRoutes"
 import priceRoutes from "./routes/priceRoutes"
 import familyRoutes from "./routes/familyRoutes"
 import subFamilyRoutes from "./routes/subFamilyRoutes"
+import brandRoutes from "./routes/brandRoutes"
+
 
 import bodyParser from "body-parser";
 import mongoose, { Mongoose } from "mongoose";
@@ -35,6 +37,7 @@ app.use(v1, uvcRoutes)
 app.use(v1, supplierRoutes)
 app.use(v1, familyRoutes)
 app.use(v1, subFamilyRoutes)
+app.use(v1, brandRoutes)
 
 app.listen(port, () => {
   
