@@ -66,7 +66,7 @@ export const referenceSchema = new mongoose.Schema<Reference>({
         unique: false,
         required: false
     },
-    uvcs : [{
+    uvcs : [{                   // array of object ids 
         type: Schema.Types.ObjectId,
         unique: false,
         required: false,

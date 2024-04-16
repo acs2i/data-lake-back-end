@@ -11,7 +11,7 @@ const UVCSchema = new mongoose.Schema<UVC>({
         required: false
     },
     code: {
-        type: String,
+        type: [String],
         unique: false,
         required: false
     },

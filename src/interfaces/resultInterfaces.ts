@@ -42,7 +42,7 @@ interface UVCProperty {
 export interface UVC {
     k: string,
     color: string[],
-    code: string,
+    code: string[],
     // color: string,
     // size: string,
     size: string[],

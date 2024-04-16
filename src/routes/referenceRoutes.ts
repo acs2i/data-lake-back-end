@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
 import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
-import ReferenceModel from "../schemas/referenceSchema";
+import ReferenceModel, { Reference } from "../schemas/referenceSchema";
 import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
@@ -20,6 +20,7 @@ const path = "/reference"
 // GET
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// JAKE TO DO - MUST GET ALL UVCS WITH PRODUCTS
 
 // Works with price workaround
 router.get(path, authorizationMiddlewear, async (req: Request, res: Response) => {
@@ -54,10 +55,10 @@ router.get(path, authorizationMiddlewear, async (req: Request, res: Response) =>
         }
 
 
-        const results : ResultReference[] = await referenceGetPriceDocument(documents);
+        // const results : ResultReference[] = await referenceGetPriceDocument(documents);
 
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -86,9 +87,9 @@ router.get(path + "/:id", authorizationMiddlewear, async (req: Request, res: Res
             return;
         }
 
-        const results : ResultReference[] = await referenceGetPriceDocument(document);
+        // const results : ResultReference[] = await referenceGetPriceDocument(document);
 
-        res.status(OK).json(results)
+        res.status(OK).json(document)
 
     }
     catch(err) {
@@ -120,9 +121,9 @@ router.get(path + "/family/:family", authorizationMiddlewear, async (req: Reques
         } 
 
         // set up results to receive both the document object, and the priceId object
-        const results : ResultReference[] = await referenceGetPriceDocument(documents);
+        // const results : ResultReference[] = await referenceGetPriceDocument(documents);
 
-        res.status(OK).json(results);
+        res.status(OK).json(documents);
 
     }
     catch(err) {
@@ -151,9 +152,9 @@ router.get(path + "/k/:k", authorizationMiddlewear, async (req: Request, res: Re
             return;
         }
 
-        const results : ResultReference[] = await referenceGetPriceDocument(documents);
+        // const results : ResultReference[] = await referenceGetPriceDocument(documents);
 
-        res.status(OK).json(results)
+        res.status(OK).json(documents)
 
     }
     catch(err) {
@@ -181,9 +182,9 @@ router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Re
             return;
         }
 
-        const results : ResultReference[] = await referenceGetPriceDocument(documents);
+        // const results : ResultReference[] = await referenceGetPriceDocument(documents);
 
-        res.status(OK).json(results)
+        res.status(OK).json(documents)
 
     }
     catch(err) {
@@ -199,31 +200,72 @@ router.get(path + "/v/:v", authorizationMiddlewear, async (req: Request, res: Re
 
 router.post(path, authorizationMiddlewear, async (req: Request, res: Response) => {
 
-    const {uvc} = req.body;
+    try {
+        const {uvc} = req.body;
 
-    const newUvc: Document = await new UVCModel({...uvc});
-
-    if(!newUvc) {
-        throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
-    }   
-
-    const savedUvc = await newUvc.save({timestamps: true});
-
-    const uvcId  = savedUvc._id;
-
-    const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
-
-    const newDocument: Document = new ReferenceModel(newRef);
-
-    const response = await newDocument.save({timestamps: true});
-
-    if(response) {
-        res.status(OK).json(response);
-    } else {
-        throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
+        const newUvc: Document = await new UVCModel({...uvc});
+    
+        if(!newUvc) {
+            throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
+        }   
+    
+        const savedUvc = await newUvc.save({timestamps: true});
+    
+        const uvcId  = savedUvc._id;
+    
+        const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
+    
+        const newDocument: Document = new ReferenceModel(newRef);
+    
+        const response = await newDocument.save({timestamps: true});
+    
+        if(response) {
+            res.status(OK).json(response);
+        } else {
+            throw new Error(req.originalUrl + ", msg: save did not work for some reason : " + req.body )
+        }
+    }
+    catch(err){
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json({})
     }
 
+
 })
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PUT
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.put(path, authorizationMiddlewear, async( req: Request, res: Response) => {
+    try {
+        const reference: Reference | undefined |  null = req.body;
+
+        if(reference === undefined || reference === null) {
+            throw new Error(req.originalUrl + " msg: PUT reference did not work for some reason: " + req.body);
+        }   
+    
+        const {_id} = reference;
+    
+        if(_id === undefined || _id === null) {
+            throw new Error(req.originalUrl + " msg: _id was missing from req PUT request: " + _id);
+        }   
+    
+    
+        const response: UpdateWriteOpResult = await ReferenceModel.updateOne({ _id }, { $set: { ...reference} })
+
+        console.log("reponse: " ,  response)
+    
+        if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
+            res.status(200).json(response)
+        } else {
+            throw new Error(req.originalUrl + "msg: PUT  reference model update did not work for some reason. Here is the response, id: " + _id + " reference: " + reference)
+        }
+    }
+    catch(err){
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json({})
+    }
+}) 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //   PATCH
@@ -324,7 +366,7 @@ router.patch(path + "/family/:id", authorizationMiddlewear, async (req: Request,
         }
 
         if(response.acknowledged && response.matchedCount === 1 && response.modifiedCount === 1) {
-            res.status(OK).json({})
+            res.status(OK).json(req.body)
         } else {
             throw new Error(path + "/k/:id, msg: issue with writing operation. Id was : " + id + " and family was : " + family)
         }
@@ -485,21 +527,26 @@ router.patch(path + "/priceId/:id", authorizationMiddlewear, async (req: Request
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.delete(path + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
-    
-    
-    const id: string | undefined | null = req.params.id;
+    try {
+        const id: string | undefined | null = req.params.id;
 
-    if(id === null || id === undefined) {
-        throw new Error(path + "/reference/k/:id, msg: id was: " + id)
-    }
-
-    const response  = await ReferenceModel.deleteOne({ _id: id});
+        if(id === null || id === undefined) {
+            throw new Error(path + "/reference/k/:id, msg: id was: " + id)
+        }
     
-    if(response.acknowledged === true && response.deletedCount === 1 ) {
-        res.status(OK).send(response);
-    } else {
-        throw new Error(req.originalUrl + ", msg: delete did not work for some reason with this id: " + id )
+        const response  = await ReferenceModel.deleteOne({ _id: id});
+        
+        if(response.acknowledged === true && response.deletedCount === 1 ) {
+            res.status(OK).send(response);
+        } else {
+            throw new Error(req.originalUrl + ", msg: delete did not work for some reason with this id: " + id )
+        }
+    } catch(err) {
+        console.error(err)
+        res.status(INTERNAL_SERVER_ERROR).send({})
     }
+    
+
 
 })
 
