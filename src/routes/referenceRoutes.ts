@@ -200,18 +200,33 @@ router.post(path,  async (req: Request, res: Response) => {
     try {
         const {uvc} = req.body;
 
-        const newUvc: Document = await new UVCModel({...uvc});
+        /* 
+            code : "",
+            size: [],
+            color: [],
+            price: []
+        */
+        const {code, size, color, price} = uvc;
+        let newRef;
+
+        if(code === "" && size.length === 0 && color.length === 0 && price.length === 0 ) {
+            newRef = { ...req.body, uvcs: [], version: 1 };
+
+        } else {
+            const newUvc: Document = await new UVCModel({...uvc});
     
-        if(!newUvc) {
-            throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
-        }   
-    
-        const savedUvc = await newUvc.save({timestamps: true});
-    
-        const uvcId  = savedUvc._id;
-    
-        const newRef = { ...req.body, uvcs: [uvcId], version: 1 };
-    
+            if(!newUvc) {
+                throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + req.body);
+            }   
+        
+            const savedUvc = await newUvc.save({timestamps: true});
+
+            const uvcId  = savedUvc._id;
+
+            newRef = { ...req.body, uvcs: [uvcId], version: 1 };
+
+        }
+
         const newDocument: Document = new ReferenceModel(newRef);
     
         const response = await newDocument.save({timestamps: true});
