@@ -1,18 +1,19 @@
 import express, { Request, Response } from "express";
-import FamilyModel from "../schemas/familySchema";
+import FamilyModel, { Family } from "../schemas/familySchema";
 import { INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { OK } from "../codes/success";
+import { Document, Model } from "mongoose";
 const router = express.Router();
 const path = "/family"
 
 router.get(path, async (req: Request, res: Response) => {
     try {
-      const families = await FamilyModel.find().sort({name: -1});
+      const families: Document[]| null | undefined = await FamilyModel.find().sort({name: -1}).populate('subFamily');
   
       if(families === undefined || families === null) {
         throw new Error("Families could not be fetched for some reason")
       }
-  
+
       res.status(OK).json( families );
   
     } catch (err) {
