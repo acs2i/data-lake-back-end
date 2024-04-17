@@ -30,13 +30,13 @@ router.post(path, async (req: Request, res: Response) => {
         const { name, subFamily, creatorId } = req.body;
 
 
-        if(name === undefined || name === null) {
-            throw new Error("Name was null or undefined in family routes")
-        }
+        // if(name === undefined || name === null) {
+        //     throw new Error("Name was null or undefined in family routes")
+        // }
 
-        if(subFamily === undefined || subFamily === null) {
-            throw new Error("subFamily was null or undefined in family routes")
-        }
+        // if(subFamily === undefined || subFamily === null) {
+        //     throw new Error("subFamily was null or undefined in family routes")
+        // }
 
         if(creatorId === undefined || creatorId === null) {
             throw new Error("creatorId was null or undefined in family routes")
