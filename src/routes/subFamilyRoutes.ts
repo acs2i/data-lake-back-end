@@ -2,9 +2,7 @@ import express, { Request, Response } from "express";
 import { INTERNAL_SERVER_ERROR } from "../codes/errors";
 import SubFamilyModel from "../schemas/subFamilySchema";
 import { OK } from "../codes/success";
-import FamilyModel, { Family } from "../schemas/familySchema";
-import { Document } from "mongoose";
-import { ObjectId } from "mongodb";
+import FamilyModel from "../schemas/familySchema";
 
 
 const router = express.Router();

@@ -1,10 +1,8 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
-import { Document, ObjectId } from "mongodb";
+import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
-import { UVC } from "../interfaces/resultInterfaces";
 import {  uvcGetOnParam, uvcPatchOnParam } from "../services/uvcServices";
 import UVCModel from "../schemas/uvcSchema";
 import { UpdateWriteOpResult } from "mongoose";

@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
@@ -8,7 +7,7 @@ import SupplierModel from "../schemas/supplierSchema";
 import { supplierreferenceGetOnParam } from "../services/supplierServices";
 import { supplierPatchOnParam } from "../services/supplierServices";
 import { UpdateWriteOpResult } from "mongoose";
-import PriceModel from "../schemas/priceSchema";
+
 dotenv.config();
 
 const router = express.Router();

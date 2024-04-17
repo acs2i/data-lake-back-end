@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import FamilyModel from "../schemas/familySchema";
 import { INTERNAL_SERVER_ERROR } from "../codes/errors";
 import { OK } from "../codes/success";

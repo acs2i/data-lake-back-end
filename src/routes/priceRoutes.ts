@@ -1,11 +1,10 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import { Document } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
-import PriceModel, { Price } from "../schemas/priceSchema";
-import { Model, UpdateWriteOpResult } from "mongoose";
+import PriceModel  from "../schemas/priceSchema";
+import { UpdateWriteOpResult } from "mongoose";
 
 dotenv.config();
 

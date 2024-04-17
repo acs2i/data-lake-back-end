@@ -1,13 +1,11 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv"
-import authorizationMiddlewear from "../middlewears/applicationMiddlewear";
 import ReferenceModel, { Reference } from "../schemas/referenceSchema";
 import { Document, ObjectId } from "mongodb";
 import { OK } from "../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../codes/errors";
-import { ResultReference } from "../interfaces/resultInterfaces";
-import { referenceGetPriceDocument, referenceGetOnParam, referencePatchOnParam, referencePostRefHistory, referenceDeleteRefHistory, referenceCompletePatch } from "../services/referenceServices";
-import { Schema, UpdateWriteOpResult } from "mongoose";
+import { referenceGetOnParam, referenceCompletePatch } from "../services/referenceServices";
+import { UpdateWriteOpResult } from "mongoose";
 import UVCModel from "../schemas/uvcSchema";
 dotenv.config();
 
@@ -56,7 +54,6 @@ router.get(path,  async (req: Request, res: Response) => {
 
 
         // const results : ResultReference[] = await referenceGetPriceDocument(documents);
-
 
         res.status(OK).json(documents);
 
