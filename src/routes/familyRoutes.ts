@@ -23,6 +23,26 @@ router.get(path, async (req: Request, res: Response) => {
 });
 
 
+router.get(path + "/name/:name", async(req: Request, res: Response) => {
+    try {
+
+      const name : string | null | undefined = req.params.name;
+
+      if(name === undefined || name === null) {
+        throw new Error(req.originalUrl + ": msg: name was undefind or null: " + name);
+      }
+
+      const family : Document | undefined | null = await FamilyModel.findOne({name});
+
+      res.status(OK).json(family);
+
+    } catch(err) {
+      console.error(err);
+      res.status(INTERNAL_SERVER_ERROR).json({})
+    }
+})
+
+
 router.post(path, async (req: Request, res: Response) => {
 
     try {
