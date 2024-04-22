@@ -1,19 +1,20 @@
-import mongoose from "mongoose";
+import mongoose ,{ Document, Model, Schema} from "mongoose"
 
-const CollectionSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
+interface Collection extends Document {
+    YX_CODE: string  | number,
+    YX_LIBELLE: string | number
+}
+
+
+const collectionSchema = new mongoose.Schema<Collection>({
+
+    YX_CODE: {
+        type: Schema.Types.Mixed
     },
-    creatorId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-  },
-  { timestamps: true, collection: "collection" }
-);
+    YX_LIBELLE: {
+        type: Schema.Types.Mixed
+    }
+},   { timestamps: true, collection: "collection" })
 
-const CollectionModel = mongoose.model("collection", CollectionSchema);
-export default CollectionModel;
+const CollectionModel: Model<Collection> = mongoose.model<Collection>("collection", collectionSchema);
+export default CollectionModel

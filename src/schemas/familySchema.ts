@@ -1,57 +1,24 @@
-import mongoose, { Model, ObjectId, Schema } from "mongoose"
+import mongoose ,{ Document, Model} from "mongoose"
 
-interface SubFamily {
-    default: ObjectId[],
+interface Family extends Document {
+    YX_CODE: number,
+    YX_TYPE: string,
+    YX_LIBELLE: string
 }
 
-export interface Family {
-    k: string,
-    type: string,
-    parents: string[],
-    key: string,
-    name: string,
-    subFamily:  number [] | string[] | ObjectId[]       // not best practice but lets work with it -_-
-    creatorId: ObjectId
-}
 
 const familySchema = new mongoose.Schema<Family>({
-    k: {
-        type: String,
-        unique: false,
-        required: false
+
+    YX_CODE: {
+        type: Number
     },
-    type: {
-        type: String,
-        unique: false,
-        required: false
+    YX_TYPE: { 
+        type: String
     },
-    parents: {
-        type: [String],
-        unique: false,
-        required: false
-    },
-    key: {
-        type: String,
-        unique: false,
-        required: false
-    },
-    // avc front end vince
-    name: {
-        type: String,
-        required: true,
-      },
-    subFamily: [
-        { type: mongoose.Types.ObjectId, default: [], ref: "subFamily", required: false },
-    ],
-    creatorId: {
-        type: Schema.Types.ObjectId,
-        required: true
+    YX_LIBELLE: {
+        type: String
     }
+},  { timestamps: true, collection: "family" })
 
-
-}, { collection: "family", timestamps: true} )
-
-
-const FamilyModel: Model<Family> = mongoose.model("family", familySchema)
-
-export default FamilyModel;
+const FamilyModel: Model<Family> = mongoose.model<Family>("family", familySchema);
+export default FamilyModel

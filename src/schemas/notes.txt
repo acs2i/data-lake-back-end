@@ -1,0 +1,84 @@
+
+/*
+    ga_libreart1 (product) <-> YX_Code (family)
+
+    /* there is logic that translate ga_libreart2 to yx_type
+
+    ga_libreart2 (product) <-> YX_TYPE (family)
+
+    //////////////////////////////////////////////////////////////////////
+    PRODUCT
+    //////////////////////////////////////////////////////////////////////
+    1. in PRODUCT galibreart1 is the FAMILY
+
+    2. in PRODUCT galibreart2 is the FAMILY concatenated with the SOUS FAMILY  IN FAMILY TABLE
+
+    YX_TYPE: "LA1", "LA2" etc. relates to the PRODUCT table 
+    because it stands for: "ga_libreart1" (LA1), "ga_libreart2" (LA2),
+
+
+    3. in PRODUCT galibreart4 is connected to the BRAND and the brand uses YX_CODE
+    IN FAMILY TABLE
+
+    4. in PRODUCT ga_fournprinc is connected to the SUPPLIER t_tiers
+
+    5. in PRODUCT ga_codearticle is connected to UVC ga_codearticle
+
+    
+    //////////////////////////////////////////////////////////////////////
+    UVC
+    //////////////////////////////////////////////////////////////////////
+
+    1. in UVC ga_codearticle is connected to PRODUCT ga_codearticle,
+        the following fields are duplicatd
+
+    2. ga charlibre1 -  code de uvc, pas de liason
+    3. ga libelle - juste une duplication dune cle dans product
+    4. ga libcompl - juste une duplication dune cle dans product
+    5. ga poidsbrut - juste une duplication dune cle dans product
+    6. ga_libreart4 - c'est une fausse liason ( tu peux utiliser ) pour lier a collection BRAND par la cle YX_CODE
+    7. couleur - juste pour l'affichage aux utilisateur
+    8. ga_libreart1 - lié à la famille yx_code
+    9. ga_libreart2 - sous famille liason
+    10. ga_codearticle - lié à product ga_article
+    11. taille - des chiffres qui se changent par rapport aux applications qui envoient la rèquete
+    12. ga_ferme - boolean poor vrai ou faux
+    13. ga_collection - un string qui lie à la collection code, mais c'est un "one to many" relation
+
+
+    //////////////////////////////////////////////////////////////////////
+    UVC Supplier
+    //////////////////////////////////////////////////////////////////////
+
+    1. ga_article - ?????????????????????????????
+    2. ga_fournprinc - C'est une liason à la collection "SUPPLIER", sur la propriété "t_tiers"
+    3. ga_chamlibre - ????????????????????????????
+    4. ga_opcbach - ??????????????????????????????
+    5. ga_article - lié à la collection "UVC", sur la propriété "ga_codearticle"
+    6. couleur - juste pour l'affichage aux utilisateur
+    7. taille - des chiffres qui se changent par rapport aux applications qui envoient la rèquete
+
+    
+    //////////////////////////////////////////////////////////////////////
+    Collection
+    //////////////////////////////////////////////////////////////////////
+    1. code: lié aux documents dans la collection "COLLECTION",sur la propriété "ga_collection"
+        Il y a un code qui est lié aux plusieurs documents dans collections
+    2. Libellé - ?????????????????????????????????
+
+    //////////////////////////////////////////////////////////////////////
+    Collection
+    //////////////////////////////////////////////////////////////////////
+
+    1. GDI_TYPEDIM: ce champs précise entre des aspects different. Ce champ changera ce que les autres champs veulent dire. 
+        Par exemple, DI1 peut vouloir dire que l'autre champ se represent une couleur, mais DI2 peut vouloir dire taille
+    2. GDI_Libelle - donné brute
+    3. GDI_DIMOBI - donné brute
+
+
+    //////////////////////////////////////////////////////////////////////
+    Family
+    //////////////////////////////////////////////////////////////////////
+    1. yx_type - lié à soit ga_libreart1 ou ga_libreart2
+    2. yx_code - id unique?
+*/

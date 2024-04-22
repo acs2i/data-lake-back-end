@@ -1,31 +1,20 @@
-import mongoose from "mongoose";
+import mongoose ,{ Document, Model, Schema} from "mongoose"
 
-const BrandSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
+interface Brand extends Document {
+    YX_CODE: number,
+    YX_LIBELLE: string | number
+}
+
+
+const brandSchema = new mongoose.Schema<Brand>({
+
+    YX_CODE: {
+        type: Number
     },
-    creator: [
-      {
-        _id: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        username: {
-          type: String,
-          required: true,
-        },
-        email: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
-  },
-  { timestamps: true, collection: "brand" }
-);
+    YX_LIBELLE: {
+        type: Schema.Types.Mixed
+    }
+},  { timestamps: true, collection: "brand" })
 
-const BrandModel = mongoose.model("Brand", BrandSchema);
-export default BrandModel;
+const BrandModel: Model<Brand> = mongoose.model<Brand>("brand", brandSchema);
+export default BrandModel

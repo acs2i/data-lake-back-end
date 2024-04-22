@@ -1,37 +1,23 @@
-import mongoose, { Model } from "mongoose"
+import mongoose, { Document, Model } from "mongoose";
 
-interface Supplier {
-    k: string,  // linked to the  frn in uvc 
-    v: string,
-    address: string[],
-    name: string,
+interface Supplier extends Document {
+    T_TIERS: number,
+    T_LIBELLE: string,
+    T_JURIDIQUE: string,
+    T_FERME: string,            // just a boolean that determines if true or false, possible values are: "+" , "-"
+    T_TELEPHONE: string,
+    T_EMAIL: string
 }
 
 const supplierSchema = new mongoose.Schema<Supplier>({
-    k: {
-        type: String,
-        unique: false,
-        required: false
-    },
-    v: {
-        type: String,
-        unique: false,
-        required: false
-    },
-    name: {
-        type: String,
-        unique: false,
-        required: false
-    },
-    address: {
-        type: [String],
-        required: false,
-        unique: false
-    }
+    T_TIERS: {type: Number},
+    T_LIBELLE: { type: String},
+    T_JURIDIQUE: { type: String},
+    T_FERME: { type: String},           
+    T_TELEPHONE: { type: String},
+    T_EMAIL: { type: String}
+},{ timestamps: true, collection: "supplier" })
 
-},{ collection: "supplier", timestamps: true} )
+const SupplierModel: Model<Supplier> = mongoose.model<Supplier>("supplier", supplierSchema)
 
-
-const SupplierModel: Model<Supplier> = mongoose.model("supplier", supplierSchema)
-
-export default SupplierModel;
+export default SupplierModel
