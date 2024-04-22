@@ -1,0 +1,44 @@
+import express, { Request, Response } from "express"
+import BrandModel from "../../schemas/brandSchema";
+import { Document } from "mongoose";
+import { OK } from "../../codes/success";
+import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
+import { BRAND } from "./shared";
+
+const router = express.Router();
+
+
+router.post(BRAND, async (req: Request, res: Response) => {
+    try {
+        // expects brand 
+        const brand = req.body.brand;
+
+        if(!brand) {
+            throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
+        }
+
+        const newBrand: Document | null | undefined = await new BrandModel({...brand});
+
+        if(!newBrand) {
+            throw new Error(req.originalUrl + " msg: brand save did not work for some reason: " + brand);
+        }
+
+        const savedBrand: Document | null | undefined = await newBrand.save({timestamps: true});
+        
+        const _id = savedBrand._id;
+
+        const result = { ...brand, _id}
+
+        res.status(OK).json(result);
+        
+    }
+    catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
+
+
+})
+
+export default router;

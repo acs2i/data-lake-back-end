@@ -2,7 +2,7 @@ import express, { Request, Response } from "express"
 import ProductModel from "../../schemas/productSchema";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
+import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
 
 const router = express.Router();

@@ -1,8 +1,9 @@
 import express from "express";
-
 import dotenv from "dotenv"
 import cors from "cors"
-
+import bodyParser from "body-parser";
+import mongoose, { Mongoose } from "mongoose";
+import authorizationMiddlewear from "./middlewears/applicationMiddlewear";
 // import applicationAuthentification from "./routes/applicationAuthentification"
 // import userAuthenticationRoutes from "./routes/userAuthentification"
 
@@ -18,9 +19,15 @@ import cors from "cors"
 import productGetRoutes from "./routes/product/productGet";
 import productPostRoutes from "./routes/product/productPost";
 
-import bodyParser from "body-parser";
-import mongoose, { Mongoose } from "mongoose";
-import authorizationMiddlewear from "./middlewears/applicationMiddlewear";
+import brandGetRoutes from "./routes/brand/brandGet";
+import brandPostRoutes from "./routes/brand/brandPost";
+
+import collectionGetRoutes from "./routes/collection/collectionGet";
+import collectionPostRoutes from "./routes/collection/collectionPost";
+
+
+
+
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string
@@ -46,6 +53,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(v1, authorizationMiddlewear, productGetRoutes);
 app.use(v1, authorizationMiddlewear, productPostRoutes);
+
+app.use(v1, authorizationMiddlewear, brandGetRoutes);
+app.use(v1, authorizationMiddlewear, brandPostRoutes);
+
+app.use(v1, authorizationMiddlewear, collectionGetRoutes);
+app.use(v1, authorizationMiddlewear, collectionPostRoutes);
 
 
 app.listen(port, () => {
