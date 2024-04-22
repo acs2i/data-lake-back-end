@@ -15,6 +15,8 @@ import cors from "cors"
 // import brandRoutes from "./routes/brandRoutes"
 // import collectionRoutes from "./routes/collectionRoutes"
 
+import productGetRoutes from "./routes/product/productGet";
+import productPostRoutes from "./routes/product/productPost";
 
 import bodyParser from "body-parser";
 import mongoose, { Mongoose } from "mongoose";
@@ -41,6 +43,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(v1, authorizationMiddlewear, subFamilyRoutes)
 // app.use(v1, authorizationMiddlewear, brandRoutes)
 // app.use(v1, authorizationMiddlewear, collectionRoutes)
+
+app.use(v1, authorizationMiddlewear, productGetRoutes);
+app.use(v1, authorizationMiddlewear, productPostRoutes);
 
 
 app.listen(port, () => {

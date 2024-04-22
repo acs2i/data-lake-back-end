@@ -2,8 +2,8 @@ import {Request, Response, NextFunction } from "express"
 import { Hash } from "../services/authentificationServices";
 import { Document } from "mongodb";
 import {  UNAUTHORIZED } from "../codes/errors";
-import AuthorizationModel from "../schemas/applicationSchema"
 import jwt from "jsonwebtoken"
+import AccessModel from "../schemas/accessSchema";
 
 const path = "/authentification/application"
 
@@ -72,8 +72,7 @@ export const authorizationMiddlewear = async (req: Request, res: Response, next:
             throw new Error(path + ", msg: Hash problem in application authorization middlewear")
         }
     
-
-        const document : Document | null | undefined = await AuthorizationModel.findOne({ hashedKey: hashedKey})
+        const document : Document | null | undefined = await AccessModel.findOne({ CLE_CHIFFRE: hashedKey})
 
         if ( document === null ||  document === undefined) {
             throw new Error(path + "/, msg: findOne error in application authorization middlewear")

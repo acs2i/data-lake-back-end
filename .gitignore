@@ -6,3 +6,4 @@ curls.sh
 db.md
 /src/routes/routeTests.sh
 /src/tests/
+/src/routes/product/*.sh

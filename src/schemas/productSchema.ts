@@ -1,6 +1,7 @@
-import mongoose ,{ Document, Model} from "mongoose"
+import mongoose ,{ Document, Model, Schema} from "mongoose"
+import { ObjectId } from "mongoose";
 
-interface Product extends Document {
+export interface Product extends Document {
     GA_CODEARTICLE: number,     // lié à la collection "UVC" sur la clé "ga_codearticle"
     GA_LIBCOMPL: string,       // dupliqué ioci ainsi que uvc schema..
     GA_LIBELLE: string,     // dupliqué ici, ainsi que "uvc Schema"
@@ -9,6 +10,8 @@ interface Product extends Document {
     GA_LIBREART4 : number, // c'est une valeur qui lie à collection BRAND, et dans la collection BRAND, YX_CODE lie avec celle-ci.
     GA_FOURNPRINC: number, // lié à la collection "SUPPLIER" sur la clé "t_tiers"
     GA_FERME: string,       // acts as a boolean, either "X" or "-" BIG X
+    GA_VERSION?: number,
+    GA_HISTORIQUE?: ObjectId
 }
 
 
@@ -37,7 +40,14 @@ const productSchema = new mongoose.Schema<Product>({
     },
     GA_FERME: {
         type: String
-    }
+    },
+    GA_VERSION: {
+        type: Number
+    },
+    // GA_HISTORIQUE which will be added 
+    GA_HISTORIQUE: [{
+        type: Schema.Types.ObjectId
+    }]
 },  { timestamps: true, collection: "product" })
 
 
