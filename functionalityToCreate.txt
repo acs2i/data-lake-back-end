@@ -1,0 +1,41 @@
+A. l'affichage de produit
+    1. 
+        Where: l'affichage du produit
+        What: Post dimension
+            With?: id of produit
+    2. 
+        Where: L'affichage du produit
+        what: GET famille and sous famille  
+            With?: valeur passé par l'utilisateur 
+        Notes: if you choose a sub family, you gotta make it get 
+
+    3. 
+        Where: L'affichage du produit
+        what: GET fournisseur 
+            with: par la cle en product qui s'appelle GA_FOURNPRINC
+    
+    4.  
+        Where: l'affichage du produit
+        what: GET  image ???? 
+            - EXPLORE 
+            with: UVC to get it?  what is the parameter 
+
+    5. 
+        Where: L'affichage du produit
+        what: create a collection for "Type" that has value of merchandise 
+
+    6. Where: L'affichage du produit
+        what: GET marque 
+            with: use the ga_libreart4 field to get the proper marque
+
+
+    7. BASE DE DONNE:  
+        1. rewrite the dimensions to put all the dimensions into an object. This objet will be flexible 
+        where the user can add and delete the properties 
+
+B. l'affichage -> creation de dimension ( ajoute apres )
+
+C. creation de collection 
+    1. What: Get tous colelctions
+        with: nothing
+    2. 

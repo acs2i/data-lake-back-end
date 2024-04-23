@@ -7,3 +7,5 @@ db.md
 /src/routes/routeTests.sh
 /src/tests/
 /src/routes/product/*.sh
+/src/routes/brand/*.sh
+/src/routes/collection/*.sh
