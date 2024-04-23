@@ -14,7 +14,10 @@ import brandPostRoutes from "./routes/brand/brandPost";
 
 import collectionGetRoutes from "./routes/collection/collectionGet";
 import collectionPostRoutes from "./routes/collection/collectionPost";
-                                       
+
+import familyGetRoutes from "./routes/family/familyGet"
+import familyPostRoutes from "./routes/family/familyPost"
+                   
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string
@@ -35,6 +38,10 @@ app.use(v1, authorizationMiddlewear, brandPostRoutes);
 
 app.use(v1, authorizationMiddlewear, collectionGetRoutes);
 app.use(v1, authorizationMiddlewear, collectionPostRoutes);
+
+app.use(v1, authorizationMiddlewear, familyGetRoutes);
+app.use(v1, authorizationMiddlewear, familyPostRoutes);
+
 
 
 app.listen(port, () => {

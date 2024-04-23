@@ -9,3 +9,4 @@ db.md
 /src/routes/product/*.sh
 /src/routes/brand/*.sh
 /src/routes/collection/*.sh
+/src/routes/family/*.sh

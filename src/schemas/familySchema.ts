@@ -1,7 +1,7 @@
 import mongoose ,{ Document, Model} from "mongoose"
 
 interface Family extends Document {
-    YX_CODE: number,
+    YX_CODE: string,
     YX_TYPE: string,
     YX_LIBELLE: string
 }
@@ -10,7 +10,7 @@ interface Family extends Document {
 const familySchema = new mongoose.Schema<Family>({
 
     YX_CODE: {
-        type: Number
+        type: String
     },
     YX_TYPE: { 
         type: String
