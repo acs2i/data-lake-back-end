@@ -6,26 +6,28 @@ import mongoose, { Mongoose } from "mongoose";
 
 import authorizationMiddlewear from "./middlewears/applicationMiddlewear";
 
-import productGetRoutes from "./routes/product/productGet";
-import productPostRoutes from "./routes/product/productPost";
-import productPutRoutes from "./routes/product/productPut";
-import productDeleteRoutes from "./routes/product/productDelete";
-
 import brandGetRoutes from "./routes/brand/brandGet";
 import brandPostRoutes from "./routes/brand/brandPost";
 import brandPutRoutes from "./routes/brand/brandPut";
 import brandDeleteRoutes from "./routes/brand/brandDelete";
 
-
 import collectionGetRoutes from "./routes/collection/collectionGet";
 import collectionPostRoutes from "./routes/collection/collectionPost";
 import collectionPutRoutes from "./routes/collection/collectionPut";
-
 import collectionDeleteRoutes from "./routes/collection/collectionDelete";
+
+import dimensionGetRoutes from "./routes/dimension/dimensionGet";
+import dimensionPostRoutes from "./routes/dimension/dimensionPost";
 
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
 import familyPutRoutes from "./routes/family/familyPut"
+
+import productGetRoutes from "./routes/product/productGet";
+import productPostRoutes from "./routes/product/productPost";
+import productPutRoutes from "./routes/product/productPut";
+import productDeleteRoutes from "./routes/product/productDelete";
+
 
 dotenv.config();
 
@@ -39,12 +41,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(v1, authorizationMiddlewear, productGetRoutes);
-app.use(v1, authorizationMiddlewear, productPostRoutes);
-app.use(v1, authorizationMiddlewear, productPutRoutes);
-app.use(v1, authorizationMiddlewear, productDeleteRoutes);
-
-
 app.use(v1, authorizationMiddlewear, brandGetRoutes);
 app.use(v1, authorizationMiddlewear, brandPostRoutes);
 app.use(v1, authorizationMiddlewear, brandPutRoutes);
@@ -55,9 +51,17 @@ app.use(v1, authorizationMiddlewear, collectionPostRoutes);
 app.use(v1, authorizationMiddlewear, collectionPutRoutes);
 app.use(v1, authorizationMiddlewear, collectionDeleteRoutes);
 
+app.use(v1, authorizationMiddlewear, dimensionGetRoutes);
+
+
 app.use(v1, authorizationMiddlewear, familyGetRoutes);
 app.use(v1, authorizationMiddlewear, familyPostRoutes);
 app.use(v1, authorizationMiddlewear, familyPutRoutes);
+
+app.use(v1, authorizationMiddlewear, productGetRoutes);
+app.use(v1, authorizationMiddlewear, productPostRoutes);
+app.use(v1, authorizationMiddlewear, productPutRoutes);
+app.use(v1, authorizationMiddlewear, productDeleteRoutes);
 
 
 
