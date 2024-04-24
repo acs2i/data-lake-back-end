@@ -7,6 +7,54 @@ import CollectionModel from "../../schemas/collectionSchema";
 
 const router = express.Router();
 
+/* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
+router.get(COLLECTION + "/search", async( req: Request, res: Response) => {
+    try {
+        const limit: string | any | string[] | undefined = req.query.limit;
+
+        let intLimit;
+
+        if(!limit) {
+            intLimit = 1000;        
+        } else {
+            intLimit = parseInt(limit); 
+        }        
+
+        const value = req.query.value;
+
+        if(!value) {
+            throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
+        } 
+
+
+            // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
+        const documents: Document[] | null | undefined = await CollectionModel.find(
+            { 
+                $or: [
+                        {
+                            CODE: { $regex: value as string}
+                        },
+                        {
+                            LIBELLE: { $regex: value as string}
+                        }
+                    ] 
+            }
+        ).limit(intLimit);
+
+
+        if ( documents === null ||  documents === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+        res.status(OK).json(documents)
+
+    } catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
+})
+
 router.get(COLLECTION, async(req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
@@ -73,5 +121,7 @@ router.get(COLLECTION + "/:id", async (req: Request, res: Response) => {
 
 
 })
+
+
 
 export default router;  
