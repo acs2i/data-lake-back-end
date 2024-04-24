@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(BRAND, async (req: Request, res: Response) => {
     try {
         // expects brand 
-        const brand = req.body.brand;
+        const brand = req.body;
 
         if(!brand) {
             throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
@@ -36,7 +36,6 @@ router.post(BRAND, async (req: Request, res: Response) => {
         console.error(err);
         res.status(INTERNAL_SERVER_ERROR).json(err)
     }
-
 
 
 })

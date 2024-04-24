@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post(FAMILY, async (req: Request, res: Response) => {
     try {
-        const family = req.body.family;
+        const family = req.body;
 
         if(!family) {
             throw new Error(req.originalUrl + ", msg: family was falsy: " + family)

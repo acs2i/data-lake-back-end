@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(PRODUCT, async (req: Request, res: Response) => {
     try {
         // expects product 
-        const product = req.body.product;
+        const product = req.body;
 
         if(!product) {
             throw new Error(req.originalUrl + ", msg: product was falsy: " + product)

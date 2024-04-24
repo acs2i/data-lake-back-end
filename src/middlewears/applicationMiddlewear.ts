@@ -84,7 +84,7 @@ export const authorizationMiddlewear = async (req: Request, res: Response, next:
     catch(err) {
         
         console.error(err);
-        res.send(UNAUTHORIZED)
+        res.status(UNAUTHORIZED).json({})
     }
 
 
