@@ -98,7 +98,7 @@ router.get(FAMILY, async( req: Request, res: Response) => {
         const total = await FamilyModel.countDocuments({});
 
         res.status(OK).json({ data: [...documents], total})
-        
+
 
     } catch(err) {
         console.error(err);
@@ -108,6 +108,60 @@ router.get(FAMILY, async( req: Request, res: Response) => {
 })
 
 /* GET BY YX_TYPE */
+
+router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response) => {
+    try {
+
+        const YX_TYPE: string | undefined | null = req.params.YX_TYPE;
+
+        if(YX_TYPE === null || YX_TYPE === undefined) {
+            res.status(BAD_REQUEST).json({})
+            throw new Error(req.originalUrl + ", msg: YX_TYPE was: " + YX_TYPE)
+        }
+
+        const page: string | any | string[] | undefined = req.query.page;
+        const limit: string | any | string[] | undefined = req.query.limit;
+
+        let intPage;
+        let intLimit;
+
+        if(page === undefined) {
+            intPage = 1;
+        } else {
+            intPage = parseInt(page) 
+        }
+
+
+        if(limit === undefined) {
+            intLimit = 10;        
+        } else {
+            intLimit = parseInt(limit); 
+        }        
+
+        const skip = (intPage - 1) * intLimit;
+
+        const documents: Document[] | null | undefined = await FamilyModel.find({YX_TYPE}).skip(skip).limit(intLimit);
+
+
+        if ( documents === null ||  documents === undefined) {
+            res.status(OK).json({});
+            console.warn(req.originalUrl + ", msg: documents was null or undefined");
+            return;
+        }
+        
+        const total = await FamilyModel.countDocuments({YX_TYPE});
+
+        res.status(OK).json({ data: [...documents], total})
+
+    }
+    catch(err) {
+        res.status(BAD_REQUEST).json(err)
+        console.error(err)
+    }
+
+
+})
+
 
 router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
     try {
