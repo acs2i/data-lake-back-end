@@ -7,6 +7,47 @@ import { Document } from "mongoose";
 
 const router = express.Router();
 
+router.get(FAMILY, async( req: Request, res: Response) => {
+    try {
+        const page: string | any | string[] | undefined = req.query.page;
+        const limit: string | any | string[] | undefined = req.query.limit;
+
+        let intPage;
+        let intLimit;
+
+        if(page === undefined) {
+            intPage = 1;
+        } else {
+            intPage = parseInt(page) 
+        }
+
+
+        if(limit === undefined) {
+            intLimit = 10;        
+        } else {
+            intLimit = parseInt(limit); 
+        }        
+
+        const skip = (intPage - 1) * intLimit;
+
+        const documents: Document[] | null | undefined = await FamilyModel.find().skip(skip).limit(intLimit);
+
+        if ( documents === null ||  documents === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+       
+        const total = await FamilyModel.countDocuments({});
+
+        res.status(OK).json({ data: [...documents], total})
+
+
+    } catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
+})
 router.get(FAMILY + "/search", async( req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
@@ -65,47 +106,7 @@ router.get(FAMILY + "/search", async( req: Request, res: Response) => {
 })
 
 
-router.get(FAMILY, async( req: Request, res: Response) => {
-    try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
-
-        const documents: Document[] | null | undefined = await FamilyModel.find().skip(skip).limit(intLimit);
-
-        if ( documents === null ||  documents === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-       
-        const total = await FamilyModel.countDocuments({});
-
-        res.status(OK).json({ data: [...documents], total})
-
-
-    } catch(err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR).json(err)
-    }
-
-})
 
 /* GET BY YX_TYPE */
 
