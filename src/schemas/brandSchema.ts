@@ -1,18 +1,18 @@
-import mongoose ,{ Document, Model, Schema} from "mongoose"
+import mongoose ,{ Document, Model} from "mongoose"
 
 interface Brand extends Document {
-    YX_CODE: number,
-    YX_LIBELLE: string | number
+    YX_CODE: string,
+    YX_LIBELLE: string
 }
 
 
 const brandSchema = new mongoose.Schema<Brand>({
 
     YX_CODE: {
-        type: Number
+        type: String
     },
     YX_LIBELLE: {
-        type: Schema.Types.Mixed
+        type: String
     }
 },  { timestamps: true, collection: "brand" })
 

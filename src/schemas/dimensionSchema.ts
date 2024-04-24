@@ -13,3 +13,4 @@ const dimensionSchema = new mongoose.Schema<Dimension>({
 },  { timestamps: true, collection: "dimension" })
 
 const DimensionModel: Model<Dimension> = mongoose.model<Dimension>("dimension", dimensionSchema);
+export default DimensionModel

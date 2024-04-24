@@ -28,8 +28,6 @@ router.get(FAMILY + "/search", async( req: Request, res: Response) => {
             intLimit = parseInt(limit); 
         }        
 
-        const skip = (intPage - 1) * intLimit;
-
         const value = req.query.value;
 
 
@@ -103,6 +101,8 @@ router.get(FAMILY, async( req: Request, res: Response) => {
     }
 
 })
+
+/* GET BY YX_TYPE */
 
 router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
     try {
