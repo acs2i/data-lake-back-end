@@ -57,7 +57,7 @@ router.get(BRAND + "/search", async( req: Request, res: Response) => {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).send(documents)
+        res.status(OK).json(documents)
 
     } catch(err) {
         console.error(err);
