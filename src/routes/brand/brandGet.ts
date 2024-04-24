@@ -95,7 +95,9 @@ router.get(BRAND, async(req: Request, res: Response) => {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).json(documents)
+        const total = await BrandModel.countDocuments({});
+
+        res.status(OK).json({ data: [...documents], total})
     } catch(err) {
         console.error(err)
         res.status(INTERNAL_SERVER_ERROR).json(err)
