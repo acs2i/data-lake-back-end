@@ -62,7 +62,6 @@ export const authorizationMiddlewear = async (req: Request, res: Response, next:
         const key : string | string[] | undefined | null = req.headers['app-id']; // Replace 'header-name' with the name of the header you want to access
 
 
-        console.log("req header: " , req.headers)
         if(key === undefined || key === null) {
             throw new Error(path + "/, didn't receive App-Id in application authorization middlewear")
         }

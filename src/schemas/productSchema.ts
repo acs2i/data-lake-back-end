@@ -1,5 +1,8 @@
 import mongoose ,{ Document, Model, Schema} from "mongoose"
 import { ObjectId } from "mongoose";
+import { Uvc } from "./uvcSchema";
+import { Family } from "./familySchema";
+import { Brand } from "./brandSchema";
 
 export interface Product extends Document {
     GA_CODEARTICLE: string,     // lié à la collection "UVC" sur la clé "ga_codearticle"
@@ -14,7 +17,12 @@ export interface Product extends Document {
     GA_HISTORIQUE?: ObjectId[]
 }
 
-
+export interface PopulatedProduct extends Product {
+    uvc?: Uvc[] | Uvc,
+    family?: Family[] | Family,
+    subFamily?: Family[] | Family,
+    brand?: Brand[] | Brand
+}
 
 const productSchema = new mongoose.Schema<Product>({
     GA_CODEARTICLE: {

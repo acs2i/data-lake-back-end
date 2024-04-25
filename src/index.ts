@@ -2,9 +2,7 @@ import express from "express";
 import dotenv from "dotenv"
 import cors from "cors"
 import bodyParser from "body-parser";
-import mongoose, { Document, Mongoose } from "mongoose";
-
-import authorizationMiddlewear from "./middlewears/applicationMiddlewear";
+import mongoose, { Mongoose } from "mongoose";
 
 import brandGetRoutes from "./routes/brand/brandGet";
 import brandPostRoutes from "./routes/brand/brandPost";
@@ -27,9 +25,6 @@ import productGetRoutes from "./routes/product/productGet";
 import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
-import FamilyModel from "./schemas/familySchema";
-import { OK } from "./codes/success";
-import { INTERNAL_SERVER_ERROR } from "./codes/errors";
 
 
 dotenv.config();
@@ -66,47 +61,6 @@ app.use(v1, productGetRoutes);
 app.use(v1, productPostRoutes);
 app.use(v1, productPutRoutes);
 app.use(v1, productDeleteRoutes);
-
-app.use("/api/v1/gettest", authorizationMiddlewear, async(req: any, res: any) => {
-  try {
-    const page: string | any | string[] | undefined = req.query.page;
-    const limit: string | any | string[] | undefined = req.query.limit;
-
-    let intPage;
-    let intLimit;
-
-    if(page === undefined) {
-        intPage = 1;
-    } else {
-        intPage = parseInt(page) 
-    }
-
-
-    if(limit === undefined) {
-        intLimit = 10;        
-    } else {
-        intLimit = parseInt(limit); 
-    }        
-
-    const skip = (intPage - 1) * intLimit;
-
-    const documents: Document[] | null | undefined = await FamilyModel.find().skip(skip).limit(intLimit);
-
-    if ( documents === null ||  documents === undefined) {
-        throw new Error(req.originalUrl + ", msg: find error")
-    }
-
-   
-    const total = await FamilyModel.countDocuments({});
-
-    res.status(OK).json({ data: [...documents], total})
-
-
-} catch(err) {
-    console.error(err);
-    res.status(INTERNAL_SERVER_ERROR).json(err)
-}
-});
 
 
 app.listen(port, () => {

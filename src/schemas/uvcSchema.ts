@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
-interface Uvc extends Document {
+export interface Uvc extends Document {
     GA_ARTICLE: string,         // lié à product ga_article 
     GA_CHARLIBRE1: string, // pas de liason 
     GA_LIBELLE: string, // code de uvc, pas de liason? dupliqué ici, ainsi que "product Schema"

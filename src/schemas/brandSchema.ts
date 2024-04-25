@@ -1,6 +1,6 @@
 import mongoose ,{ Document, Model} from "mongoose"
 
-interface Brand extends Document {
+export interface Brand extends Document {
     YX_CODE: string,
     YX_LIBELLE: string
 }

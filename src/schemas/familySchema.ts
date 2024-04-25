@@ -1,6 +1,6 @@
 import mongoose ,{ Document, Model} from "mongoose"
 
-interface Family extends Document {
+export interface Family extends Document {
     YX_CODE: string,
     YX_TYPE: string,
     YX_LIBELLE: string
