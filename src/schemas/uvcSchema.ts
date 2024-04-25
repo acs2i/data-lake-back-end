@@ -2,17 +2,17 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 
 interface Uvc extends Document {
     GA_ARTICLE: string,         // lié à product ga_article 
-    GA_CHARLIBRE1: string | number, // pas de liason 
+    GA_CHARLIBRE1: string, // pas de liason 
     GA_LIBELLE: string, // code de uvc, pas de liason? dupliqué ici, ainsi que "product Schema"
     GA_LIBCOMPL: string,        // 
-    GA_POIDSBRUT: number,
-    GA_LIBREART4: number,
-    COULEUR: number,
-    GA_LIBREART1: number,
-    GA_LIBERART2: number,
-    GA_CODEARTICLE: number,
+    GA_POIDSBRUT: string,
+    GA_LIBREART4: string,
+    COULEUR: string,
+    GA_LIBREART1: string,
+    GA_LIBERART2: string,
+    GA_CODEARTICLE: string,
     GA_COLLECTION: string,
-    TAILLE: number,
+    TAILLE: string,
     GA_FERME: string        // stand in for boolean: values can be "X" or "-"
 }
 
@@ -21,14 +21,14 @@ const uvcSchema = new mongoose.Schema<Uvc>({
     GA_CHARLIBRE1: {type : Schema.Types.Mixed },
     GA_LIBELLE: { type: String},
     GA_LIBCOMPL: { type: String},
-    GA_POIDSBRUT: { type: Number},
-    GA_LIBREART4: { type: Number},
-    COULEUR: {type: Number},
-    GA_LIBREART1: {type: Number},
-    GA_LIBERART2: {type: Number},
-    GA_CODEARTICLE: {type: Number},
+    GA_POIDSBRUT: { type: String},
+    GA_LIBREART4: { type: String},
+    COULEUR: {type: String},
+    GA_LIBREART1: {type: String},
+    GA_LIBERART2: {type: String},
+    GA_CODEARTICLE: {type: String},
     GA_COLLECTION: { type: String},
-    TAILLE: {type: Number},
+    TAILLE: {type: String},
     GA_FERME: { type: String}  
 
 },  { timestamps: true, collection: "uvc" })
