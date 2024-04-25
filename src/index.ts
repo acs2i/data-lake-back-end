@@ -52,6 +52,7 @@ app.use(v1, authorizationMiddlewear, collectionPutRoutes);
 app.use(v1, authorizationMiddlewear, collectionDeleteRoutes);
 
 app.use(v1, authorizationMiddlewear, dimensionGetRoutes);
+app.use(v1, authorizationMiddlewear, dimensionPostRoutes);
 
 
 app.use(v1, authorizationMiddlewear, familyGetRoutes);
