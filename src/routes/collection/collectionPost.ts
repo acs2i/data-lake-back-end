@@ -4,11 +4,12 @@ import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { COLLECTION } from "./shared";
 import CollectionModel from "../../schemas/collectionSchema";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
 
-router.post(COLLECTION, async (req: Request, res: Response) => {
+router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         // expects collection 
         const collection = req.body.collection;

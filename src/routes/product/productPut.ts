@@ -4,10 +4,11 @@ import { UpdateWriteOpResult } from "mongoose";
 import { OK } from "../../codes/success";
 import ProductModel from "../../schemas/productSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(PRODUCT, async ( req: Request, res: Response) => {
+router.put(PRODUCT, authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const product = req.body;

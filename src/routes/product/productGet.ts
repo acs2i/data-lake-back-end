@@ -4,10 +4,11 @@ import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.get(PRODUCT + "/search", async( req: Request, res: Response) => {
+router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         const limit: string | any | string[] | undefined = req.query.limit;
 
@@ -54,7 +55,7 @@ router.get(PRODUCT + "/search", async( req: Request, res: Response) => {
 
 })
 
-router.get(PRODUCT, async(req: Request, res: Response) => {
+router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -94,7 +95,7 @@ router.get(PRODUCT, async(req: Request, res: Response) => {
 })
 
 
-router.get(PRODUCT + "/:id", async (req: Request, res: Response) => {
+router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

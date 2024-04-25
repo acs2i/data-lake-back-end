@@ -4,11 +4,12 @@ import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 import { Document } from "mongoose";
 import DimensionModel from "../../schemas/dimensionSchema";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
 
-router.post(DIMENSION, async (req: Request, res: Response) => {
+router.post(DIMENSION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const dimension = req.body;
         

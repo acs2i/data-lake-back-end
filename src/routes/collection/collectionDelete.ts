@@ -3,10 +3,11 @@ import { COLLECTION } from "./shared";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import CollectionModel from "../../schemas/collectionSchema";
 import { OK } from "../../codes/success";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.delete(COLLECTION + "/:id", async (req: Request, res: Response) => {
+router.delete(COLLECTION + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 

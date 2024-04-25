@@ -4,10 +4,11 @@ import { UpdateWriteOpResult } from "mongoose";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import CollectionModel from "../../schemas/collectionSchema";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(COLLECTION, async ( req: Request, res: Response) => {
+router.put(COLLECTION, authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const collection = req.body;

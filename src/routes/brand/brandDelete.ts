@@ -3,10 +3,11 @@ import { BRAND } from "./shared";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import BrandModel from "../../schemas/brandSchema";
 import { OK } from "../../codes/success";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.delete(BRAND + "/:id", async (req: Request, res: Response) => {
+router.delete(BRAND + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 

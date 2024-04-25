@@ -4,10 +4,11 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import FamilyModel from "../../schemas/familySchema";
 import { OK } from "../../codes/success";
 import { Document } from "mongoose";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.get(FAMILY, async( req: Request, res: Response) => {
+router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -48,7 +49,7 @@ router.get(FAMILY, async( req: Request, res: Response) => {
     }
 
 })
-router.get(FAMILY + "/search", async( req: Request, res: Response) => {
+router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -110,7 +111,7 @@ router.get(FAMILY + "/search", async( req: Request, res: Response) => {
 
 /* GET BY YX_TYPE */
 
-router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response) => {
+router.get(FAMILY + "/YX_TYPE/:YX_TYPE", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const YX_TYPE: string | undefined | null = req.params.YX_TYPE;
@@ -164,7 +165,7 @@ router.get(FAMILY + "/YX_TYPE/:YX_TYPE", async (req: Request, res: Response) => 
 })
 
 
-router.get(FAMILY + "/:id", async (req: Request, res: Response) => {
+router.get(FAMILY + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

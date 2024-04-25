@@ -3,10 +3,11 @@ import { PRODUCT } from "./shared";
 import ProductModel from "../../schemas/productSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.delete(PRODUCT + "/:id", async (req: Request, res: Response) => {
+router.delete(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     console.log("req:  " , req.params)
     try {

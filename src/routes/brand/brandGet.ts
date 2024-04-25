@@ -4,11 +4,12 @@ import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { BRAND } from "./shared";
 import BrandModel from "../../schemas/brandSchema";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
 /* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
-router.get(BRAND + "/search", async( req: Request, res: Response) => {
+router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -66,7 +67,7 @@ router.get(BRAND + "/search", async( req: Request, res: Response) => {
 
 })
 
-router.get(BRAND, async(req: Request, res: Response) => {
+router.get(BRAND, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -105,7 +106,7 @@ router.get(BRAND, async(req: Request, res: Response) => {
 })
 
 
-router.get(BRAND + "/:id", async (req: Request, res: Response) => {
+router.get(BRAND + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

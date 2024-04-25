@@ -4,11 +4,12 @@ import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { BRAND } from "./shared";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
 
-router.post(BRAND, async (req: Request, res: Response) => {
+router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         // expects brand 
         const brand = req.body;

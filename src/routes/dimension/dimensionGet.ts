@@ -4,11 +4,12 @@ import DimensionModel from "../../schemas/dimensionSchema";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
 
-router.get(DIMENSION, async (req: Request, res: Response) => {
+router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const page: string | any | string[] | undefined = req.query.page;
         const limit: string | any | string[] | undefined = req.query.limit;
@@ -48,7 +49,7 @@ router.get(DIMENSION, async (req: Request, res: Response) => {
     }
 })
 
-router.get(DIMENSION + "/:id", async (req: Request, res: Response) => {
+router.get(DIMENSION + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;

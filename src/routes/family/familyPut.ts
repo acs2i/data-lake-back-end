@@ -4,10 +4,11 @@ import { UpdateWriteOpResult } from "mongoose";
 import FamilyModel from "../../schemas/familySchema";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(FAMILY, async ( req: Request, res: Response) => {
+router.put(FAMILY, authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const family = req.body;

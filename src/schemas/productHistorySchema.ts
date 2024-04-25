@@ -16,7 +16,7 @@ interface ProductHistory extends Product {
 
 const productHistorySchema = new mongoose.Schema<ProductHistory>({
     GA_CODEARTICLE: {
-        type: Number,
+        type: String,
     },
     GA_LIBCOMPL: {
         type: String
@@ -25,22 +25,22 @@ const productHistorySchema = new mongoose.Schema<ProductHistory>({
         type: String
     },
     GA_LIBREART1: { 
-        type: Number,
+        type: String,
     },
     GA_LIBREART2: {
-        type: Number,
+        type: String,
     },
     GA_LIBREART4: {
-        type: Number,
+        type: String,
     },
     GA_FOURNPRINC: {
-        type: Number
+        type: String
     },
     GA_FERME: {
         type: String
     },
     GA_VERSION: {
-        type: Number
+        type: String
     },
     GA_HISTORIQUE: [{
         type: Schema.Types.ObjectId

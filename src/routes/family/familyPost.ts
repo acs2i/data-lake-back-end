@@ -4,12 +4,13 @@ import { INTERNAL_SERVER_ERROR } from '../../codes/errors';
 import FamilyModel from '../../schemas/familySchema';
 import { Document } from 'mongoose';
 import { OK } from '../../codes/success';
+import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
 
 
 const router = express.Router();
 
 
-router.post(FAMILY, async (req: Request, res: Response) => {
+router.post(FAMILY, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const family = req.body;
 
