@@ -52,7 +52,6 @@ app.use(v1, collectionDeleteRoutes);
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
 
-
 app.use(v1, familyGetRoutes);
 app.use(v1, familyPostRoutes);
 app.use(v1, familyPutRoutes);

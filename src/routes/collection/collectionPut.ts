@@ -23,7 +23,7 @@ router.put(COLLECTION + "/:id", authorizationMiddlewear, async ( req: Request, r
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
         }
 
-        const response: UpdateWriteOpResult = await CollectionModel.updateOne({ _id}, {$set: collection })
+        const response: UpdateWriteOpResult = await CollectionModel.updateOne({ _id}, {$set: collection})
 
         console.log(response)
 

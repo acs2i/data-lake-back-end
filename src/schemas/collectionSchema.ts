@@ -1,16 +1,16 @@
 import mongoose ,{ Document, Model, Schema} from "mongoose"
 
 interface Collection extends Document {
-    YX_CODE: string  | number,
-    YX_LIBELLE: string | number,
+    CODE: string  | number,
+    LIBELLE: string | number,
 }
 
 
 const collectionSchema = new mongoose.Schema<Collection>({
-    YX_CODE: {
+    CODE: {
         type: Schema.Types.Mixed
     },
-    YX_LIBELLE: {
+    LIBELLE: {
         type: Schema.Types.Mixed
     }
 },   { timestamps: true, collection: "collection" })
