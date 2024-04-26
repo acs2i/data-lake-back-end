@@ -8,7 +8,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(PRODUCT, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.put(PRODUCT + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const product = req.body;
