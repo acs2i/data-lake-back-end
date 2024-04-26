@@ -25,8 +25,6 @@ router.put(FAMILY, authorizationMiddlewear, async ( req: Request, res: Response)
 
         const response: UpdateWriteOpResult = await FamilyModel.updateOne({ _id}, {$set: family })
 
-        console.log(response)
-
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json(family)
         } else{
