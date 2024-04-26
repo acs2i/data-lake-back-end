@@ -8,7 +8,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(FAMILY, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.put(FAMILY + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const family = req.body;
@@ -17,7 +17,7 @@ router.put(FAMILY, authorizationMiddlewear, async ( req: Request, res: Response)
             throw new Error(req.originalUrl + ", msg: family was falsy: " + family)
         }
 
-        const {_id} = family;
+        const _id: string | undefined | null = req.params.id;
 
         if(!_id) {
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
