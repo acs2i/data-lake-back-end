@@ -5,7 +5,6 @@ import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import { getUvc } from "../../services/productServices";
 import UvcModel, { Uvc } from "../../schemas/uvcSchema";
 import FamilyModel, { Family } from "../../schemas/familySchema";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
@@ -19,7 +18,7 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, re
         let intLimit;
 
         if(!limit) {
-            intLimit = 1000;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        
@@ -75,7 +74,7 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
 
 
         if(limit === undefined) {
-            intLimit = 100;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        

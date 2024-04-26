@@ -25,7 +25,7 @@ router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respons
 
 
         if(limit === undefined) {
-            intLimit = 1000;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        

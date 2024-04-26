@@ -65,7 +65,7 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
 
         if(limit === undefined) {
-            intLimit = 1000;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        

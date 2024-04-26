@@ -25,7 +25,7 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
 
 
         if(!limit) {
-            intLimit = 1000;        
+            intLimit = 10;        
         } else {
             intLimit = parseInt(limit); 
         }        
