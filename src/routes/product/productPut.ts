@@ -17,7 +17,7 @@ router.put(PRODUCT, authorizationMiddlewear, async ( req: Request, res: Response
             throw new Error(req.originalUrl + ", msg: product was falsy: " + product)
         }
 
-        const {_id} = product;
+        const _id: string | undefined | null = req.params.id;
 
         if(!_id) {
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
