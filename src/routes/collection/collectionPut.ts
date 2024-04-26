@@ -8,7 +8,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(COLLECTION, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.put(COLLECTION + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const collection = req.body;
@@ -17,7 +17,7 @@ router.put(COLLECTION, authorizationMiddlewear, async ( req: Request, res: Respo
             throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)
         }
 
-        const {_id} = collection;
+        const _id: string | undefined | null = req.params.id;
 
         if(!_id) {
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
