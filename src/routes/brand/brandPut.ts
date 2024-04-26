@@ -8,7 +8,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.put(BRAND, authorizationMiddlewear, async ( req: Request, res: Response) => {
+router.put(BRAND + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
         const brand = req.body;
@@ -16,14 +16,12 @@ router.put(BRAND, authorizationMiddlewear, async ( req: Request, res: Response) 
         if(!brand) {
             throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
         }
-
-        const {_id} = brand;
+        const _id: string | undefined | null = req.params.id;
 
         if(!_id) {
-            throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
+          throw new Error(req.originalUrl + ", msg: id was falsy: " + _id)
         }
-
-        console.log("BRAND: " , brand)
+    
 
         const response: UpdateWriteOpResult = await BrandModel.updateOne({ _id}, {$set: brand })
 
