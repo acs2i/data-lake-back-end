@@ -89,7 +89,7 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
 
         const data = [];
         for (let document of documents) {
-            const { GA_CODEARTICLE } = document;
+            const { GA_CODEARTICLE, _id } = document;
 
             if(GA_CODEARTICLE) {
     
@@ -108,7 +108,8 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
                         GA_FOURNPRINC, 
                         GA_FERME,      
                         GA_VERSION,
-                        GA_HISTORIQUE
+                        GA_HISTORIQUE,
+                        _id
                     } = document;
     
     
@@ -123,7 +124,8 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
                         GA_FERME,      
                         GA_VERSION,
                         GA_HISTORIQUE, 
-                        uvc 
+                        uvc, 
+                        _id
                     } as PopulatedProduct
     
                     // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
@@ -235,7 +237,8 @@ router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
                     GA_FERME,      
                     GA_VERSION,
                     GA_HISTORIQUE, 
-                    uvc 
+                    uvc,
+                    _id: id
                 } as PopulatedProduct
 
                 // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
