@@ -46,25 +46,29 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
         // If the value CANNOT be converted into a number, this means that it must be a string. Therefore, it is searching in Libelle 
         // if it can be converted into a number, that means it must be a code. and we search in that bar
-        let documents: Document[] | null | undefined;
+        let data: Document[] | null | undefined;
 
+        let total;
+
+        // if it is not a number, then search in libelle
         if(isNaN(Number(value))) {
-            // if it is not a number, then search in libelle
-            documents  = await FamilyModel.find({ YX_LIBELLE: { $regex: value as string } }).limit(intLimit);
-
+            const filter = { YX_LIBELLE: { $regex: value as string } };
+            data  = await FamilyModel.find(filter).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
         } else {
-            // need to discuss to convert yx_code into string
-            documents = await FamilyModel.find({ YX_CODE: { $regex: value as string} }).limit(intLimit);
-
+            const filter = { YX_CODE: { $regex: value as string } };
+            data = await FamilyModel.find(filter).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
         }
 
 
-        if ( documents === null ||  documents === undefined) {
+        if ( !data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).send(documents)
-        // res.status(OK).json(documents)
+
+        res.status(OK).send({ data , total})
+
     } catch(err) {
         console.error(err);
         res.status(INTERNAL_SERVER_ERROR).json(err)

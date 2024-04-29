@@ -21,28 +21,30 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
         
         const { intLimit } = await generalLimits(req);
 
+        const filter =  { 
+            $or: [
+                    {
+                        YX_CODE: { $regex: value as string}
+                    },
+                    {
+                        YX_LIBELLE: { $regex: value as string}
+                    }
+                ] 
+        }
 
 
             // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const documents: Document[] | null | undefined = await BrandModel.find(
-            { 
-                $or: [
-                        {
-                            YX_CODE: { $regex: value as string}
-                        },
-                        {
-                            YX_LIBELLE: { $regex: value as string}
-                        }
-                    ] 
-            }
-        ).limit(intLimit);
+        const data: Document[] | null | undefined = await BrandModel.find(filter).limit(intLimit);
 
 
-        if ( documents === null ||  documents === undefined) {
+        if ( !data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).json(documents)
+        const total = await BrandModel.countDocuments({});
+
+
+        res.status(OK).json({data, total})
 
     } catch(err) {
         console.error(err);

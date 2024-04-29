@@ -11,12 +11,12 @@ import BrandModel, { Brand } from "../schemas/brandSchema";
 
 
 /** 
- * There is a decision i can make here
+ * There is a decision i can make here related to the GET request at /product
  * 
  * 1. I call the get family as well in the for loop, which would more efficient than making another function call
  * 2. I do another function call, to leave the functions decoupled.
  * 
- * I think for the principle of code reusability, I should leave things decoupled. Perhaps this will lead to benefits of scaling later. 
+ * I think for the principle of code reusability, I should leave things decoupled (option 2). Perhaps this will lead to benefits of scaling later. 
 */
 
 

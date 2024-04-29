@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import { Document } from "mongoose";
+import { Collection, Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { COLLECTION } from "./shared";
@@ -22,26 +22,28 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
 
         const {intLimit} = await generalLimits(req);
 
+        const filter =  { 
+            $or: [
+                    {
+                        CODE: { $regex: value as string}
+                    },
+                    {
+                        LIBELLE: { $regex: value as string}
+                    }
+                ] 
+        }
+
             // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const documents: Document[] | null | undefined = await CollectionModel.find(
-            { 
-                $or: [
-                        {
-                            CODE: { $regex: value as string}
-                        },
-                        {
-                            LIBELLE: { $regex: value as string}
-                        }
-                    ] 
-            }
-        ).limit(intLimit);
+        const data: Document[] | null | undefined = await CollectionModel.find(filter).limit(intLimit);
 
 
-        if ( documents === null ||  documents === undefined) {
+        if ( !data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).json(documents)
+        const total = await CollectionModel.countDocuments(filter);
+
+        res.status(OK).json({data, total})
 
     } catch(err) {
         console.error(err);
