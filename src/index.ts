@@ -26,7 +26,6 @@ import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
 
-
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string

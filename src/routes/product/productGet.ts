@@ -8,6 +8,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import UvcModel, { Uvc } from "../../schemas/uvcSchema";
 import FamilyModel, { Family } from "../../schemas/familySchema";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
+import { productPopulateBrand, productPopulateFamily, productPopulateUvc } from "../../services/productServices";
 
 const router = express.Router();
 
@@ -29,27 +30,33 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, re
             throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
         } 
 
-
+        const filter = { 
+            $or: [
+                    {
+                        GA_LIBCOMPL: { $regex: value as string}
+                    },
+                    {
+                        GA_LIBELLE: { $regex: value as string}
+                    }
+            ] 
+        }
         // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const documents: Document[] | null | undefined = await ProductModel.find(
-            { 
-                $or: [
-                        {
-                            GA_LIBCOMPL: { $regex: value as string}
-                        },
-                        {
-                            GA_LIBELLE: { $regex: value as string}
-                        }
-                    ] 
-            }
-        ).limit(intLimit);
+        const documents: Product[] | null | undefined = await ProductModel.find(filter).limit(intLimit);
 
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        res.status(OK).json(documents)
+        
+        let data = await productPopulateUvc(documents);
+        data = await productPopulateFamily(data);
+        data = await productPopulateBrand(data);
+
+        const total = await ProductModel.countDocuments(filter);
+
+
+        res.status(OK).json(data)
 
     } catch(err) {
         console.error(err);
@@ -87,93 +94,10 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        const data = [];
-        for (let document of documents) {
-            const { GA_CODEARTICLE, _id } = document;
-
-            if(GA_CODEARTICLE) {
-    
-                // Check to see if matching uvc
-                const uvc: Uvc | undefined | null = await UvcModel.findOne({GA_CODEARTICLE});
-                
-                // if uvc, then add the uvc into the document
-                if(uvc) {
-                    const {  
-                        GA_CODEARTICLE,     
-                        GA_LIBCOMPL,      
-                        GA_LIBELLE,    
-                        GA_LIBREART1,   // linked to the familly collection
-                        GA_LIBREART2,   // linked to sous famile in the family collection
-                        GA_LIBREART4,   // linked to brand collection
-                        GA_FOURNPRINC, 
-                        GA_FERME,      
-                        GA_VERSION,
-                        GA_HISTORIQUE,
-                        _id
-                    } = document;
-    
-    
-                    document = {  
-                        GA_CODEARTICLE,     
-                        GA_LIBCOMPL,      
-                        GA_LIBELLE,    
-                        GA_LIBREART1,  
-                        GA_LIBREART2, 
-                        GA_LIBREART4, 
-                        GA_FOURNPRINC, 
-                        GA_FERME,      
-                        GA_VERSION,
-                        GA_HISTORIQUE, 
-                        uvc, 
-                        _id
-                    } as PopulatedProduct
-    
-                    // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
-                    if(GA_LIBREART1) {
-                        const family: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART1, YX_TYPE: "LA1"})
-                        
-                        if(family) {
-                            
-                            document = {
-                                ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                                family
-                            } as PopulatedProduct
-    
-                        }
-                    }
-    
-                    if(GA_LIBREART2) {
-                        const subFamily: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART2, YX_TYPE: "LA2"})
-                        if(subFamily) {
-                            
-                            document = {
-                                ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                                subFamily
-                            } as PopulatedProduct
-    
-                        }
-                    }
-    
-                    if(GA_LIBREART4) {
-                        const brand: Brand | undefined | null = await BrandModel.findOne({ YX_CODE: GA_LIBREART4})
-                        
-                        if(brand) {
-                            
-                            document = {
-                                ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                                brand
-                            } as PopulatedProduct
-    
-                        }
-                    }
-    
-                }
-    
-            }
-            
-            data.push(document)
-        }
-
+        let data = await productPopulateUvc(documents);
+        data = await productPopulateFamily(data);
+        data = await productPopulateBrand(data);
+ 
         const total = await ProductModel.countDocuments({});
 
         res.status(OK).json({ data, total})
@@ -203,89 +127,11 @@ router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
             return;
         }
 
-        const { GA_CODEARTICLE } = document;
+        let data = await productPopulateUvc(document);
+        data = await productPopulateFamily(data);
+        data = await productPopulateBrand(data);
 
-        if(GA_CODEARTICLE) {
-
-            // Check to see if matching uvc
-            const uvc: Uvc | undefined | null = await UvcModel.findOne({GA_CODEARTICLE});
-            
-            // if uvc, then add the uvc into the document
-            if(uvc) {
-                const {  
-                    GA_CODEARTICLE,     
-                    GA_LIBCOMPL,      
-                    GA_LIBELLE,    
-                    GA_LIBREART1,   // linked to the familly collection
-                    GA_LIBREART2,   // linked to sous famile in the family collection
-                    GA_LIBREART4,   // linked to brand collection
-                    GA_FOURNPRINC, 
-                    GA_FERME,      
-                    GA_VERSION,
-                    GA_HISTORIQUE
-                } = document;
-
-
-                document = {  
-                    GA_CODEARTICLE,     
-                    GA_LIBCOMPL,      
-                    GA_LIBELLE,    
-                    GA_LIBREART1,  
-                    GA_LIBREART2, 
-                    GA_LIBREART4, 
-                    GA_FOURNPRINC, 
-                    GA_FERME,      
-                    GA_VERSION,
-                    GA_HISTORIQUE, 
-                    uvc,
-                    _id: id
-                } as PopulatedProduct
-
-                // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
-                if(GA_LIBREART1) {
-                    const family: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART1, YX_TYPE: "LA1"})
-                    
-                    if(family) {
-                        
-                        document = {
-                            ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                            family
-                        } as PopulatedProduct
-
-                    }
-                }
-
-                if(GA_LIBREART2) {
-                    const subFamily: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART2, YX_TYPE: "LA2"})
-                    if(subFamily) {
-                        
-                        document = {
-                            ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                            subFamily
-                        } as PopulatedProduct
-
-                    }
-                }
-
-                if(GA_LIBREART4) {
-                    const brand: Brand | undefined | null = await BrandModel.findOne({ YX_CODE: GA_LIBREART4})
-                    
-                    if(brand) {
-                        
-                        document = {
-                            ...document,    // we can destructure document like this now because its a normal object now and not a weird mongoose thing
-                            brand
-                        } as PopulatedProduct
-
-                    }
-                }
-
-            }
-
-        }
-
-
-        res.status(OK).json(document)
+        res.status(OK).json(data)
 
     }
     catch(err) {
