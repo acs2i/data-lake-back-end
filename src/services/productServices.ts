@@ -118,6 +118,8 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
                     GA_LIBELLE,  
                     _id,
                     family,
+                    GA_LIBREART1,
+                    GA_LIBREART2,
                     GA_LIBREART4,   // linked to brand collection
                     GA_FOURNPRINC, 
                     GA_FERME,      
@@ -136,6 +138,7 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
             if(subFamily) {
                 
                 product = {
+                    ...product,
                     GA_CODEARTICLE,     
                     GA_LIBCOMPL,      
                     GA_LIBELLE,  
@@ -149,7 +152,6 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
                     GA_HISTORIQUE,
                     uvcs,
                     brand,
-                    ...product,
                     subFamily
                 } as PopulatedProduct
 
