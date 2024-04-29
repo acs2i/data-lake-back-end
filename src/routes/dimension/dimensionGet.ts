@@ -5,32 +5,15 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 
 router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
+        const {skip, intLimit} = await generalLimits(req);
 
         const documents: Document[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit);
 

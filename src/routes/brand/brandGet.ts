@@ -5,38 +5,22 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { BRAND } from "./shared";
 import BrandModel from "../../schemas/brandSchema";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 /* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
 router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
-
-        let intPage;
-        let intLimit;
-
-        if(!page) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(!limit) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
 
         const value = req.query.value;
-
 
         if(!value) {
             throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
         } 
+        
+        const { intLimit } = await generalLimits(req);
+
 
 
             // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
@@ -69,26 +53,8 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
 
 router.get(BRAND, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
-
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
+     
+        const {skip, intLimit} = await generalLimits(req);
 
         const documents: Document[] | null | undefined = await BrandModel.find().skip(skip).limit(intLimit);
 

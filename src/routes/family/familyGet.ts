@@ -5,31 +5,14 @@ import FamilyModel from "../../schemas/familySchema";
 import { OK } from "../../codes/success";
 import { Document } from "mongoose";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
+        const {skip, intLimit} = await generalLimits(req);
 
         const documents: Document[] | null | undefined = await FamilyModel.find().skip(skip).limit(intLimit);
 
@@ -51,32 +34,15 @@ router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) 
 })
 router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
 
         const value = req.query.value;
-
 
         if(!value) {
             throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
         } 
 
+        const {intLimit} = await generalLimits(req);
 
         // If the value CANNOT be converted into a number, this means that it must be a string. Therefore, it is searching in Libelle 
         // if it can be converted into a number, that means it must be a code. and we search in that bar
@@ -121,26 +87,7 @@ router.get(FAMILY + "/YX_TYPE/:YX_TYPE", authorizationMiddlewear, async (req: Re
             throw new Error(req.originalUrl + ", msg: YX_TYPE was: " + YX_TYPE)
         }
 
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
-
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
+        const {skip, intLimit} = await generalLimits(req)
 
         const documents: Document[] | null | undefined = await FamilyModel.find({YX_TYPE}).skip(skip).limit(intLimit);
 
