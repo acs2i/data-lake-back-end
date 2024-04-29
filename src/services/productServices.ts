@@ -30,10 +30,11 @@ export const productPopulateUvc = async ( documents : Product | Product[]) : Pro
     for (const document of documents) {
         const { GA_CODEARTICLE, _id } = document;
 
-        const uvc: Uvc | undefined | null = await UvcModel.findOne({GA_CODEARTICLE});
+        const uvcs: Uvc[] | undefined | null = await UvcModel.find({GA_CODEARTICLE});
 
         // if uvc, then add the uvc into the document
-        if(uvc) {
+        if(uvcs) {
+
             const {  
                 GA_CODEARTICLE,     
                 GA_LIBCOMPL,      
@@ -64,7 +65,7 @@ export const productPopulateUvc = async ( documents : Product | Product[]) : Pro
                 GA_FERME,      
                 GA_VERSION,
                 GA_HISTORIQUE, 
-                uvc, 
+                uvcs, 
                 family,
                 subFamily,
                 brand,
@@ -100,7 +101,7 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
             GA_VERSION,
             GA_HISTORIQUE,
             _id,
-            uvc,
+            uvcs,
             brand,
         } = document as PopulatedProduct;
 
@@ -122,7 +123,7 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
                     GA_FERME,      
                     GA_VERSION,
                     GA_HISTORIQUE,
-                    uvc,
+                    uvcs,
                     brand,
                 } as PopulatedProduct
 
@@ -146,7 +147,7 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
                     GA_LIBREART1,
                     GA_LIBREART2,
                     GA_HISTORIQUE,
-                    uvc,
+                    uvcs,
                     brand,
                     ...product,
                     subFamily
@@ -192,7 +193,7 @@ export const productPopulateBrand = async(documents: Product | Product[]) : Prom
                     GA_VERSION,
                     GA_HISTORIQUE,
                     _id,
-                    uvc,
+                    uvcs,
                     family,
                     subFamily
                 } = document as PopulatedProduct;
@@ -209,7 +210,7 @@ export const productPopulateBrand = async(documents: Product | Product[]) : Prom
                     GA_VERSION,
                     GA_HISTORIQUE,
                     _id,
-                    uvc,
+                    uvcs,
                     family,
                     subFamily,
                     brand

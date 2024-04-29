@@ -18,7 +18,7 @@ export interface Product extends Document {
 }
 
 export interface PopulatedProduct extends Product {
-    uvc?: Uvc[] | Uvc,
+    uvcs?: Uvc[] | Uvc,
     family?: Family[] | Family,
     subFamily?: Family[] | Family,
     brand?: Brand[] | Brand
