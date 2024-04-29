@@ -26,6 +26,11 @@ import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
 
+import uvcGetRoutes from "./routes/uvc/uvcGet";
+import uvcPostRoutes from "./routes/uvc/uvcPost";
+
+import uvcPutRoutes from "./routes/uvc/uvcPut";
+
 dotenv.config();
 
 const URI = process.env.REMOTE_DEV_DB_URI as string
@@ -59,6 +64,10 @@ app.use(v1, productGetRoutes);
 app.use(v1, productPostRoutes);
 app.use(v1, productPutRoutes);
 app.use(v1, productDeleteRoutes);
+
+app.use(v1, uvcGetRoutes);
+app.use(v1, uvcPostRoutes);
+app.use(v1, uvcPutRoutes);
 
 
 app.listen(port, () => {

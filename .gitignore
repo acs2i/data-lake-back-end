@@ -10,3 +10,4 @@ db.md
 /src/routes/brand/*.sh
 /src/routes/collection/*.sh
 /src/routes/family/*.sh
+/src/routes/uvc/*.sh
