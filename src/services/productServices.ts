@@ -74,6 +74,9 @@ export const productPopulateUvc = async ( documents : Product | Product[]) : Pro
 
             data.push(product)
 
+        } else {
+            data.push(document)
+
         }
 
     }
@@ -105,7 +108,7 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
             brand,
         } = document as PopulatedProduct;
 
-        let product= {};
+        let product = undefined;
         // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
         if(GA_LIBREART1) {
             const family: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART1, YX_TYPE: "LA1"})
@@ -158,8 +161,11 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
             }
         }
 
-        data.push(product as PopulatedProduct)
-
+        if(!product) {
+            data.push(document)
+        } else {
+           data.push(product as PopulatedProduct)
+        }
 
     }
 
@@ -219,7 +225,11 @@ export const productPopulateBrand = async(documents: Product | Product[]) : Prom
                 } as PopulatedProduct
 
                 data.push(product)
+            } else {
+                data.push(document)
             }
+        } else {
+            data.push(document)
         }
     }
 
