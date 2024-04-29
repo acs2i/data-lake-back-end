@@ -1,28 +1,19 @@
 import express, { Request, Response } from "express"
-import ProductModel, { PopulatedProduct, Product } from "../../schemas/productSchema";
-import { Document } from "mongoose";
+import ProductModel, {  Product } from "../../schemas/productSchema";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import UvcModel, { Uvc } from "../../schemas/uvcSchema";
-import FamilyModel, { Family } from "../../schemas/familySchema";
-import BrandModel, { Brand } from "../../schemas/brandSchema";
+
 import { productPopulateBrand, productPopulateFamily, productPopulateUvc } from "../../services/productServices";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-        const limit: string | any | string[] | undefined = req.query.limit;
-
-        let intLimit;
-
-        if(!limit) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
+  
+        const { intLimit } = await generalLimits(req);
 
         const value = req.query.value;
 
@@ -55,8 +46,7 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, re
 
         const total = await ProductModel.countDocuments(filter);
 
-
-        res.status(OK).json(data)
+        res.status(OK).json({data, total})
 
     } catch(err) {
         console.error(err);
@@ -67,26 +57,8 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, re
 
 router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
 
-        let intPage;
-        let intLimit;
-
-        if(page === undefined) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-
-
-        if(limit === undefined) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }        
-
-        const skip = (intPage - 1) * intLimit;
+        const { skip, intLimit } = await generalLimits(req);
 
         const documents: Product[] | null | undefined = await ProductModel.find().skip(skip).limit(intLimit);
 

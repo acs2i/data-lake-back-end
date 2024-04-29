@@ -1,4 +1,3 @@
-import { Document } from "mongoose";
 import { PopulatedProduct, Product } from "../schemas/productSchema";
 import UvcModel, { Uvc } from "../schemas/uvcSchema";
 import FamilyModel, { Family } from "../schemas/familySchema";
@@ -19,6 +18,8 @@ import BrandModel, { Brand } from "../schemas/brandSchema";
  * 
  * I think for the principle of code reusability, I should leave things decoupled. Perhaps this will lead to benefits of scaling later. 
 */
+
+
 export const productPopulateUvc = async ( documents : Product | Product[]) : Promise<PopulatedProduct[]> => {
 
     if(!Array.isArray(documents)) {
