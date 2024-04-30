@@ -16,6 +16,8 @@ import collectionDeleteRoutes from "./routes/collection/collectionDelete";
 
 import dimensionGetRoutes from "./routes/dimension/dimensionGet";
 import dimensionPostRoutes from "./routes/dimension/dimensionPost";
+import dimensionPutRoutes from "./routes/dimension/dimensionPut";
+import dimensionDeleteRoutes from "./routes/dimension/dimensionDelete";
 
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
@@ -55,6 +57,8 @@ app.use(v1, collectionDeleteRoutes);
 
 app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
+app.use(v1, dimensionPutRoutes);
+app.use(v1, dimensionDeleteRoutes);
 
 app.use(v1, familyGetRoutes);
 app.use(v1, familyPostRoutes);
