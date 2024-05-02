@@ -50,15 +50,29 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
         let total;
 
-        // if it is not a number, then search in libelle
-        if(isNaN(Number(value))) {
-            const filter = { YX_LIBELLE: { $regex: value as string } };
+        // i = case insensitive
+        const regEx = new RegExp((value as string).toLowerCase(),"i")   
+
+        const type = req.query.type;
+
+        if(type) {
+            const filter = { [type as string]: { $regex: regEx} };
             data  = await FamilyModel.find(filter).limit(intLimit);
             total = await FamilyModel.countDocuments(filter);
         } else {
-            const filter = { YX_CODE: { $regex: value as string } };
-            data = await FamilyModel.find(filter).limit(intLimit);
-            total = await FamilyModel.countDocuments(filter);
+
+            // if type isnt specified,
+            // if it is not a number, then search in libelle
+            if(isNaN(Number(value))) {
+                const filter = { YX_LIBELLE: { $regex: regEx} };
+                data  = await FamilyModel.find(filter).limit(intLimit);
+                total = await FamilyModel.countDocuments(filter);
+            } else {
+                const filter = { YX_CODE: { $regex: value as string } };
+                data = await FamilyModel.find(filter).limit(intLimit);
+                total = await FamilyModel.countDocuments(filter);
+            }
+
         }
 
 
