@@ -50,13 +50,15 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
         let total;
 
+        const regEx = new RegExp(value as string, "i");
+
         // if it is not a number, then search in libelle
         if(isNaN(Number(value))) {
-            const filter = { YX_LIBELLE: { $regex: value as string } };
+            const filter = { YX_LIBELLE: { $regex: regEx } };
             data  = await FamilyModel.find(filter).limit(intLimit);
             total = await FamilyModel.countDocuments(filter);
         } else {
-            const filter = { YX_CODE: { $regex: value as string } };
+            const filter = { YX_CODE: { $regex: regEx } };
             data = await FamilyModel.find(filter).limit(intLimit);
             total = await FamilyModel.countDocuments(filter);
         }
@@ -80,20 +82,34 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
 
 /* GET BY YX_TYPE */
-
-router.get(FAMILY + "/YX_TYPE/:YX_TYPE", authorizationMiddlewear, async (req: Request, res: Response) => {
+// GOING TO DEPRCATE IT SINCE VALUE ISNT IN THE  QUERY AND IS IN PARAM
+router.get(FAMILY + "/YX_TYPE", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
-        const YX_TYPE: string | undefined | null = req.params.YX_TYPE;
+        const YX_TYPE = req.query.YX_TYPE;
 
         if(YX_TYPE === null || YX_TYPE === undefined) {
-            res.status(BAD_REQUEST).json({})
             throw new Error(req.originalUrl + ", msg: YX_TYPE was: " + YX_TYPE)
         }
 
         const {skip, intLimit} = await generalLimits(req)
 
-        const documents: Document[] | null | undefined = await FamilyModel.find({YX_TYPE}).skip(skip).limit(intLimit);
+        let documents: Document[] | null | undefined
+        let total 
+        const value = req.query.value;
+
+        if(value) {
+            const regEx = new RegExp(value as string, "i");
+            const filter = { $and: [{ YX_TYPE : YX_TYPE as string}, { YX_LIBELLE: { $regex: regEx } } ] }
+            documents = await FamilyModel.find(filter).skip(skip).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
+
+        } else {
+            const filter = {YX_TYPE: YX_TYPE as string}
+            documents = await FamilyModel.find(filter).skip(skip).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
+
+        }
 
 
         if ( documents === null ||  documents === undefined) {
@@ -102,7 +118,6 @@ router.get(FAMILY + "/YX_TYPE/:YX_TYPE", authorizationMiddlewear, async (req: Re
             return;
         }
         
-        const total = await FamilyModel.countDocuments({YX_TYPE});
 
         res.status(OK).json({ data: [...documents], total})
 
