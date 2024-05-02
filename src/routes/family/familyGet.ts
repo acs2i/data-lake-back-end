@@ -55,26 +55,22 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
         const type = req.query.type;
 
-        if(type) {
-            const filter = { [type as string]: { $regex: regEx} };
+        if(type === "YX_TYPE") {
+            const filter = { YX_TYPE: value as string };
             data  = await FamilyModel.find(filter).limit(intLimit);
             total = await FamilyModel.countDocuments(filter);
-        } else {
-
-            // if type isnt specified,
-            // if it is not a number, then search in libelle
-            if(isNaN(Number(value))) {
-                const filter = { YX_LIBELLE: { $regex: regEx} };
-                data  = await FamilyModel.find(filter).limit(intLimit);
-                total = await FamilyModel.countDocuments(filter);
-            } else {
-                const filter = { YX_CODE: { $regex: value as string } };
-                data = await FamilyModel.find(filter).limit(intLimit);
-                total = await FamilyModel.countDocuments(filter);
-            }
+        } 
+        else if(type === "YX_LIBELLE") {
+            const filter = { YX_LIBELLE: { $regex: regEx} };
+            data  = await FamilyModel.find(filter).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
 
         }
-
+        else if(type === "YX_CODE") {
+            const filter = { YX_CODE: { $regex: value as string } };
+            data = await FamilyModel.find(filter).limit(intLimit);
+            total = await FamilyModel.countDocuments(filter);
+        }
 
         if ( !data) {
             throw new Error(req.originalUrl + ", msg: find error")
@@ -94,7 +90,7 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
 
 /* GET BY YX_TYPE */
-
+// GOING TO DEPRCATE IT SINCE VALUE ISNT IN THE  QUERY AND IS IN PARAM
 router.get(FAMILY + "/YX_TYPE/:YX_TYPE", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
