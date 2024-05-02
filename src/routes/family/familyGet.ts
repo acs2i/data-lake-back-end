@@ -63,7 +63,6 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
             total = await FamilyModel.countDocuments(filter);
         }
 
-
         if ( !data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
