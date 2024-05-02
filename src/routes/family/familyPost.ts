@@ -28,20 +28,12 @@ router.post(FAMILY, authorizationMiddlewear, async (req: Request, res: Response)
 
         const _id  : string = savedFamily._id;
 
-        const updatedFamily: UpdateWriteOpResult = await savedFamily.updateOne({$set: { YX_CODE: _id }})       // This is the new method going forward to ensure uniqueness!
 
-        if (updatedFamily.acknowledged === true && updatedFamily.matchedCount === 1 && updatedFamily.modifiedCount === 1) {
 
-            const result = { ...family, _id, YX_CODE: _id };
+            const result = { ...family, _id};
 
             res.status(OK).json(result)
 
-        } else {
-            // Undo post completely
-            FamilyModel.deleteOne({ _id});
-
-            throw new Error(req.originalUrl + ", msg: for some reason, yx code could not be updated with id of the saved family");
-        }
 
 
 
