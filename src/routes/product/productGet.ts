@@ -142,3 +142,5 @@ router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
 })
 
 export default router;  
+
+

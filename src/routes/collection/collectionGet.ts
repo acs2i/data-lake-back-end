@@ -12,7 +12,7 @@ const router = express.Router();
 router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
 
-        const {intLimit} = await generalLimits(req);
+        const {intLimit, skip} = await generalLimits(req);
 
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
@@ -38,7 +38,7 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
 
 
         // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const data: Document[] | null | undefined = await CollectionModel.find(filter).limit(intLimit);
+        const data: Document[] | null | undefined = await CollectionModel.find(filter).skip(skip).limit(intLimit);
 
 
         if ( !data) {

@@ -35,7 +35,7 @@ router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) 
 router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
 
-        const {intLimit} = await generalLimits(req);
+        const {intLimit, skip} = await generalLimits(req);
 
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
@@ -66,7 +66,7 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
         }
 
 
-        const data  = await FamilyModel.find(filter).limit(intLimit);
+        const data  = await FamilyModel.find(filter).skip(skip).limit(intLimit);
         const total = await FamilyModel.countDocuments(filter);
        
 

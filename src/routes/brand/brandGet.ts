@@ -13,7 +13,7 @@ const router = express.Router();
 router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         
-        const { intLimit } = await generalLimits(req);
+        const { intLimit , skip} = await generalLimits(req);
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
@@ -37,7 +37,7 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
         }
 
 
-        const data: Document[] | null | undefined = await BrandModel.find(filter).limit(intLimit);
+        const data: Document[] | null | undefined = await BrandModel.find(filter).skip(skip).limit(intLimit);
 
 
         if (!data) {

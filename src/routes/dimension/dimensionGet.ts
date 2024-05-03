@@ -12,7 +12,7 @@ const router = express.Router();
 router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
 
-        const {intLimit} = await generalLimits(req);
+        const {intLimit, skip} = await generalLimits(req);
 
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
@@ -43,7 +43,7 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
         }
 
 
-        const data  = await DimensionModel.find(filter).limit(intLimit);
+        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit);
         const total = await DimensionModel.countDocuments(filter);
        
 

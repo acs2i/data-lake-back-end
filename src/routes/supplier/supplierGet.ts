@@ -1,30 +1,15 @@
 import express, { Request, Response } from "express"
 import { SUPPLIER } from "./shared";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
+import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
 router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
     try {
-        const page: string | any | string[] | undefined = req.query.page;
-        const limit: string | any | string[] | undefined = req.query.limit;
-    
-        let intPage;
-        let intLimit;
-    
-        if(!page) {
-            intPage = 1;
-        } else {
-            intPage = parseInt(page) 
-        }
-    
-    
-        if(!limit) {
-            intLimit = 10;        
-        } else {
-            intLimit = parseInt(limit); 
-        }    
         
+        const {intLimit, skip} = await generalLimits(req);
+
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
         const {T_TIERS, T_LIBELLE, T_JURIDIQUE, T_FERME, T_TELEPHONE, T_EMAIL} = req.query
@@ -61,7 +46,7 @@ router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
             filter.$and.push({ T_EMAIL: regEx })
         }
 
-        const data: Supplier[] | null | undefined = await SupplierModel.find(filter).limit(intLimit);
+        const data: Supplier[] | null | undefined = await SupplierModel.find(filter).skip(skip).limit(intLimit);
         
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
