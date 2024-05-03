@@ -35,38 +35,39 @@ router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) 
 router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
 
-
-        const value = req.query.value;
-
-        if(!value) {
-            throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-        } 
-
         const {intLimit} = await generalLimits(req);
 
-        // If the value CANNOT be converted into a number, this means that it must be a string. Therefore, it is searching in Libelle 
-        // if it can be converted into a number, that means it must be a code. and we search in that bar
-        let data: Document[] | null | undefined;
+        const YX_CODE = req.query.YX_CODE;
 
-        let total;
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const regEx = new RegExp(value as string, "i");
-
-        // if it is not a number, then search in libelle
-        if(isNaN(Number(value))) {
-            const filter = { YX_LIBELLE: { $regex: regEx } };
-            data  = await FamilyModel.find(filter).limit(intLimit);
-            total = await FamilyModel.countDocuments(filter);
-        } else {
-            const filter = { YX_CODE: { $regex: regEx } };
-            data = await FamilyModel.find(filter).limit(intLimit);
-            total = await FamilyModel.countDocuments(filter);
+        if(YX_CODE) {
+            const regEx = new RegExp(YX_CODE as string, "i");
+            filter.$and.push({ YX_COD: regEx })
         }
 
-        if ( !data) {
-            throw new Error(req.originalUrl + ", msg: find error")
+        const YX_TYPE = req.query.YX_TYPE;
+
+        if(YX_TYPE) {
+            const regEx = new RegExp(YX_TYPE as string, "i");
+            filter.$and.push({ YX_TYPE: regEx })
+        }
+        
+        const YX_LIBELLE = req.query.YX_LIBELLE;
+
+        if(YX_LIBELLE) {
+            const regEx = new RegExp(YX_LIBELLE as string, "i");
+            filter.$and.push({ YX_LIBELLE: regEx })
         }
 
+        if(!YX_CODE && !YX_LIBELLE && !YX_TYPE) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        }
+
+
+        const data  = await FamilyModel.find(filter).limit(intLimit);
+        const total = await FamilyModel.countDocuments(filter);
+       
 
         res.status(OK).send({ data , total})
 
