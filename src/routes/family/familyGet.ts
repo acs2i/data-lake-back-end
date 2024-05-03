@@ -37,13 +37,14 @@ router.get(FAMILY + "/search", authorizationMiddlewear, async( req: Request, res
 
         const {intLimit} = await generalLimits(req);
 
-        const YX_CODE = req.query.YX_CODE;
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
+        const YX_CODE = req.query.YX_CODE;
+
         if(YX_CODE) {
             const regEx = new RegExp(YX_CODE as string, "i");
-            filter.$and.push({ YX_COD: regEx })
+            filter.$and.push({ YX_CODE: regEx })
         }
 
         const YX_TYPE = req.query.YX_TYPE;
