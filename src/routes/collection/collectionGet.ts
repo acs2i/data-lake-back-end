@@ -9,31 +9,35 @@ import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
-/* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
 router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
 
-
-        const value = req.query.value;
-
-        if(!value) {
-            throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-        } 
-
         const {intLimit} = await generalLimits(req);
 
-        const filter =  { 
-            $or: [
-                    {
-                        CODE: { $regex: value as string}
-                    },
-                    {
-                        LIBELLE: { $regex: value as string}
-                    }
-                ] 
+
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const CODE = req.query.CODE;
+
+        if(CODE) {
+            const regEx = new RegExp(CODE as string, "i");
+            filter.$and.push({ CODE: regEx })
+        }
+        
+        const LIBELLE = req.query.LIBELLE;
+
+        if(LIBELLE) {
+            const regEx = new RegExp(LIBELLE as string, "i");
+            filter.$and.push({ LIBELLE: regEx })
         }
 
-            // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
+        
+        if(!CODE && !LIBELLE) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        }
+
+
+        // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
         const data: Document[] | null | undefined = await CollectionModel.find(filter).limit(intLimit);
 
 

@@ -30,8 +30,9 @@ import productDeleteRoutes from "./routes/product/productDelete";
 
 import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
-
 import uvcPutRoutes from "./routes/uvc/uvcPut";
+
+import supplierGetRoutes from "./routes/supplier/supplierGet"
 
 dotenv.config();
 
@@ -72,6 +73,8 @@ app.use(v1, productDeleteRoutes);
 app.use(v1, uvcGetRoutes);
 app.use(v1, uvcPostRoutes);
 app.use(v1, uvcPutRoutes);
+
+app.use(v1, supplierGetRoutes)
 
 
 app.listen(port, () => {

@@ -15,22 +15,49 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, re
   
         const { intLimit } = await generalLimits(req);
 
-        const value = req.query.value;
-
-        if(!value) {
-            throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-        } 
-
-        const filter = { 
-            $or: [
-                    {
-                        GA_LIBCOMPL: { $regex: value as string}
-                    },
-                    {
-                        GA_LIBELLE: { $regex: value as string}
-                    }
-            ] 
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+        const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
+        
+        if(GA_CODEARTICLE) {
+            const regEx = new RegExp(GA_CODEARTICLE as string, "i");
+            filter.$and.push({ GA_CODEARTICLE: regEx })
         }
+
+        if(GA_LIBCOMPL) {
+            const regEx = new RegExp(GA_LIBCOMPL as string, "i");
+            filter.$and.push({ GA_LIBCOMPL: regEx })
+        }
+
+        if(GA_LIBELLE) {
+            const regEx = new RegExp(GA_LIBELLE as string, "i");
+            filter.$and.push({ GA_LIBELLE: regEx })
+        }
+
+        if(GA_LIBREART4) {
+            const regEx = new RegExp(GA_LIBREART4 as string, "i");
+            filter.$and.push({ GA_LIBREART4: regEx })
+        }
+
+        if(GA_LIBREART1) {
+            const regEx = new RegExp(GA_LIBREART1 as string, "i");
+            filter.$and.push({ GA_LIBREART1: regEx })
+        }
+
+        if(GA_LIBREART2) {
+            const regEx = new RegExp(GA_LIBREART2 as string, "i");
+            filter.$and.push({ GA_LIBREART2: regEx })
+        }
+
+        if(GA_FOURNPRINC) {
+            const regEx = new RegExp(GA_FOURNPRINC as string, "i");
+            filter.$and.push({ GA_FOURNPRINC: regEx })
+        }
+
+        if(GA_FERME) {
+            const regEx = new RegExp(GA_FERME as string, "i");
+            filter.$and.push({ GA_FERME: regEx })
+        }
+
         // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
         const documents: Product[] | null | undefined = await ProductModel.find(filter).limit(intLimit);
 

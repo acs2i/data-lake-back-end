@@ -1,6 +1,6 @@
 import mongoose, { Document, Model } from "mongoose";
 
-interface Supplier extends Document {
+export interface Supplier extends Document {
     T_TIERS: number,
     T_LIBELLE: string,
     T_JURIDIQUE: string,

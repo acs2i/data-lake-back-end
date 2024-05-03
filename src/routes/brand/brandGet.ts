@@ -12,36 +12,39 @@ const router = express.Router();
 /* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
 router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-
-        const value = req.query.value;
-
-        if(!value) {
-            throw new Error(req.originalUrl + ", msg: value in family routes get was falsy: " + value);
-        } 
         
         const { intLimit } = await generalLimits(req);
 
-        const filter =  { 
-            $or: [
-                    {
-                        YX_CODE: { $regex: value as string}
-                    },
-                    {
-                        YX_LIBELLE: { $regex: value as string}
-                    }
-                ] 
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const YX_CODE = req.query.YX_CODE;
+
+        if(YX_CODE) {
+            const regEx = new RegExp(YX_CODE as string, "i");
+            filter.$and.push({ YX_CODE: regEx })
+        }
+
+        const YX_LIBELLE = req.query.YX_LIBELLE;
+
+        if(YX_LIBELLE) {
+            const regEx = new RegExp(YX_LIBELLE as string, "i");
+            filter.$and.push({ YX_LIBELLE: regEx })
         }
 
 
-            // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
+        if(!YX_CODE && !YX_LIBELLE) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        }
+
+
         const data: Document[] | null | undefined = await BrandModel.find(filter).limit(intLimit);
 
 
-        if ( !data) {
+        if (!data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        const total = await BrandModel.countDocuments({});
+        const total = await BrandModel.countDocuments(filter);
 
 
         res.status(OK).json({data, total})
