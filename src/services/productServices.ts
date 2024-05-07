@@ -109,6 +109,8 @@ export const productPopulateFamily = async( documents: Product | Product[]): Pro
         } = document as PopulatedProduct;
 
         let product = undefined;
+
+        console.log(GA_LIBREART1 , " \n" , GA_LIBREART2)
         // if ga libreart1 is not undefined, lets see if there are any values in family collection for it
         if(GA_LIBREART1) {
             const family: Family | undefined | null = await FamilyModel.findOne({ YX_CODE: GA_LIBREART1, YX_TYPE: "LA1"})
