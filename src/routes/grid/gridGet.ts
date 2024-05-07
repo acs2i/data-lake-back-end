@@ -34,4 +34,32 @@ router.get(GRID, authorizationMiddlewear, async (req: Request, res: Response) =>
 
 })
 
+router.get(GRID + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+
+    try {
+
+        const id = req.params.id;
+
+        if(!id) {
+            throw new Error(req.originalUrl + ", msg: id was falsy: " + id);
+        }
+
+        const data: Document | null | undefined = await GridModel.findById(id);
+
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+
+        res.status(OK).json(data)
+
+
+    } catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
+})
+
+
 export default router;
