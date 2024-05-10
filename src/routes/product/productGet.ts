@@ -10,6 +10,57 @@ import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
+router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Response) => {
+    try {
+  
+      const { GA_LIBELLE } = req.params;
+  
+      if(!GA_LIBELLE){
+        throw new Error("GA_LIBELLE was falsy")
+      }
+  
+      const page: string | any | string[] | undefined = req.query.page;
+      const limit: string | any | string[] | undefined = req.query.limit;
+  
+      let intPage;
+      let intLimit;
+  
+      if(!page) {
+          intPage = 1;
+      } else {
+          intPage = parseInt(page) 
+      }
+  
+  
+      if(!limit) {
+          intLimit = 10;        
+      } else {
+          intLimit = parseInt(limit); 
+      }    
+  
+      const document : Product | null | undefined = await ProductModel.findOne({GA_LIBELLE});
+  
+      if(!document) {
+        console.warn("product was falsy");
+        res.status(200).json({});
+        return;
+      }
+  
+  
+      let data = await productPopulateUvc(document);
+      data = await productPopulateFamily(data);
+      data = await productPopulateBrand(data);
+
+      res.status(200).json(data)
+  
+  
+    } catch(err) {
+      console.error(err)
+      res.status(400).json({})
+    }
+  })
+  
+
 router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
   
