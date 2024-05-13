@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
 import { FAMILY } from "./shared";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
-import FamilyModel from "../../schemas/familySchema";
+import FamilyModel, { Family } from "../../schemas/familySchema";
 import { OK } from "../../codes/success";
 import { Document } from "mongoose";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
@@ -117,8 +117,7 @@ router.get(FAMILY + "/YX_TYPE", authorizationMiddlewear, async (req: Request, re
             res.status(OK).json({});
             console.warn(req.originalUrl + ", msg: documents was null or undefined");
             return;
-        }
-        
+        } 
 
         res.status(OK).json({ data: [...documents], total})
 
@@ -142,7 +141,7 @@ router.get(FAMILY + "/:id", authorizationMiddlewear, async (req: Request, res: R
             throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await FamilyModel.findById(id);
+        let document: Family & { subFamilies?: (Family & { subSubFamilies?: Family[]})[] } | null | undefined = await FamilyModel.findById(id);
 
 
         if ( document === null ||  document === undefined) {
@@ -150,6 +149,64 @@ router.get(FAMILY + "/:id", authorizationMiddlewear, async (req: Request, res: R
             console.warn(req.originalUrl + ", msg: Document was null or undefined");
             return;
         }
+
+        const populateSubFamily = req.query.subFamily;
+
+        const YX_CODE = document.YX_CODE;
+
+        if(populateSubFamily && YX_CODE) {
+
+        
+
+            let regEx = new RegExp("^" + YX_CODE as string, "i");
+            let filter = { $and: [{YX_CODE: { $regex: regEx }}, { YX_TYPE: "LA2"}]  } as any
+
+            const subFamilies: (Family & { subSubFamilies?: Family[]})[] | null | undefined = await FamilyModel.find(filter);
+
+            const populateSubSubFamily = req.query.subSubFamily;
+
+            if(subFamilies && populateSubSubFamily) {
+
+
+                let {YX_CODE, YX_LIBELLE, YX_TYPE} = document;
+
+                document = {YX_CODE, YX_LIBELLE, YX_TYPE, subFamilies} as Family & { subFamilies?: (Family & { subSubFamilies?: Family[]})[] } ;
+
+                for(let i = 0; i < subFamilies.length; i++) {
+                    const subFamily:  (Family & { subSubFamilies?: Family[]}) | undefined | null= subFamilies[i]
+
+                    if(!subFamily){
+                        continue;
+                    }
+
+                    const subFamilyYxCode = subFamily.YX_CODE
+                    
+                    regEx = new RegExp("^" + subFamilyYxCode as string, "i");
+                    filter = { $and: [{YX_CODE: { $regex: regEx }}, { YX_TYPE: "LA3"}]  } as any
+                    
+                    const subSubFamilies: Family[] | null | undefined = await FamilyModel.find(filter);
+
+                    if(!subSubFamilies) {
+                        continue;
+                    }
+
+                    let {YX_CODE, YX_LIBELLE, YX_TYPE} = subFamily;
+
+                    // Need to create a new object so javascript doesn't do a shallow copy
+                    const newSubSubFamily:  (Family & { subSubFamilies?: Family[]})  = { YX_CODE, YX_LIBELLE, YX_TYPE, subSubFamilies: subSubFamilies as Family[]} as  (Family & { subSubFamilies?: Family[]}); 
+
+                    subFamilies[i] = newSubSubFamily;
+
+
+
+                }
+            }
+        }
+
+
+
+
+
 
         res.status(OK).json(document)
 
