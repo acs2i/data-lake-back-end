@@ -8,7 +8,6 @@ export interface Family extends Document {
 
 
 const familySchema = new mongoose.Schema<Family>({
-
     YX_CODE: {
         type: String
     },

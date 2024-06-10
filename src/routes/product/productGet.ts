@@ -61,77 +61,74 @@ router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Respons
   })
   
 
-router.get(PRODUCT + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
+  router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
+      const { GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE, GA_LIBREART4, GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC, GA_FERME, page = 1, limit = 10 } = req.query;
+      
+      let filter: any = { $and: [] };  // any to make typescript stop complaining
+      
+      if (GA_CODEARTICLE) {
+        const regEx = new RegExp(GA_CODEARTICLE as string, "i");
+        filter.$and.push({ GA_CODEARTICLE: regEx });
+      }
   
-        const { intLimit } = await generalLimits(req);
-
-        let filter: any = { $and: [] }  // any to make typescript stop complaining
-        const {GA_CODEARTICLE, GA_LIBCOMPL, GA_LIBELLE,GA_LIBREART4,GA_LIBREART1, GA_LIBREART2, GA_FOURNPRINC,GA_FERME} = req.query
-        
-        if(GA_CODEARTICLE) {
-            const regEx = new RegExp(GA_CODEARTICLE as string, "i");
-            filter.$and.push({ GA_CODEARTICLE: regEx })
-        }
-
-        if(GA_LIBCOMPL) {
-            const regEx = new RegExp(GA_LIBCOMPL as string, "i");
-            filter.$and.push({ GA_LIBCOMPL: regEx })
-        }
-
-        if(GA_LIBELLE) {
-            const regEx = new RegExp(GA_LIBELLE as string, "i");
-            filter.$and.push({ GA_LIBELLE: regEx })
-        }
-
-        if(GA_LIBREART4) {
-            const regEx = new RegExp(GA_LIBREART4 as string, "i");
-            filter.$and.push({ GA_LIBREART4: regEx })
-        }
-
-        if(GA_LIBREART1) {
-            const regEx = new RegExp(GA_LIBREART1 as string, "i");
-            filter.$and.push({ GA_LIBREART1: regEx })
-        }
-
-        if(GA_LIBREART2) {
-            const regEx = new RegExp(GA_LIBREART2 as string, "i");
-            filter.$and.push({ GA_LIBREART2: regEx })
-        }
-
-        if(GA_FOURNPRINC) {
-            const regEx = new RegExp(GA_FOURNPRINC as string, "i");
-            filter.$and.push({ GA_FOURNPRINC: regEx })
-        }
-
-        if(GA_FERME) {
-            const regEx = new RegExp(GA_FERME as string, "i");
-            filter.$and.push({ GA_FERME: regEx })
-        }
-
-        // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const documents: Product[] | null | undefined = await ProductModel.find(filter).limit(intLimit);
-
-
-        if ( documents === null ||  documents === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-        
-        let data = await productPopulateUvc(documents);
-        data = await productPopulateFamily(data);
-        data = await productPopulateBrand(data);
-
-        const total = await ProductModel.countDocuments(filter);
-
-        res.status(OK).json({data, total})
-
-    } catch(err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR).json(err)
+      if (GA_LIBCOMPL) {
+        const regEx = new RegExp(GA_LIBCOMPL as string, "i");
+        filter.$and.push({ GA_LIBCOMPL: regEx });
+      }
+  
+      if (GA_LIBELLE) {
+        const regEx = new RegExp(GA_LIBELLE as string, "i");
+        filter.$and.push({ GA_LIBELLE: regEx });
+      }
+  
+      if (GA_LIBREART4) {
+        filter.$and.push({ GA_LIBREART4 });
+      }
+  
+      if (GA_LIBREART1) {
+        filter.$and.push({ GA_LIBREART1 });
+      }
+  
+      if (GA_LIBREART2) {
+        filter.$and.push({ GA_LIBREART2 });
+      }
+  
+      if (GA_FOURNPRINC) {
+        const regEx = new RegExp(GA_FOURNPRINC as string, "i");
+        filter.$and.push({ GA_FOURNPRINC: regEx });
+      }
+  
+      if (GA_FERME) {
+        const regEx = new RegExp(GA_FERME as string, "i");
+        filter.$and.push({ GA_FERME: regEx });
+      }
+  
+      if (filter.$and.length === 0) {
+        delete filter.$and;
+      }
+  
+      const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+      const documents: Product[] | null | undefined = await ProductModel.find(filter).skip(skip).limit(parseInt(limit as string));
+  
+      if (documents === null || documents === undefined) {
+        throw new Error(req.originalUrl + ", msg: find error");
+      }
+  
+      let data = await productPopulateUvc(documents);
+      data = await productPopulateFamily(data);
+      data = await productPopulateBrand(data);
+  
+      const total = await ProductModel.countDocuments(filter);
+  
+      res.status(200).json({ data, total });
+  
+    } catch (err) {
+      console.error(err);
+      res.status(500).json(err);
     }
-
-})
+  });
+  
 
 router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
