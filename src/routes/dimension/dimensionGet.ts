@@ -43,7 +43,7 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
         }
 
 
-        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit);
+        const data  = await DimensionModel.find(filter).sort({createdAt: -1}).skip(skip).limit(intLimit);
         const total = await DimensionModel.countDocuments(filter);
        
 
@@ -62,7 +62,7 @@ router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respons
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await DimensionModel.find().sort({createdAt: -1}).skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

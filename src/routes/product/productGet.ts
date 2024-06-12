@@ -109,7 +109,7 @@ router.get(PRODUCT + "/ga-libelle/:GA_LIBELLE", async(req: Request, res: Respons
       }
   
       const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
-      const documents: Product[] | null | undefined = await ProductModel.find(filter).skip(skip).limit(parseInt(limit as string));
+      const documents: Product[] | null | undefined = await ProductModel.find(filter).sort({createdAt: -1}).skip(skip).limit(parseInt(limit as string));
   
       if (documents === null || documents === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
@@ -135,7 +135,7 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
 
         const { skip, intLimit } = await generalLimits(req);
 
-        const documents: Product[] | null | undefined = await ProductModel.find().skip(skip).limit(intLimit);
+        const documents: Product[] | null | undefined = await ProductModel.find().sort({createdAt: -1}).skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

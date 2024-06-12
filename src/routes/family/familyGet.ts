@@ -14,7 +14,7 @@ router.get(FAMILY, authorizationMiddlewear, async( req: Request, res: Response) 
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await FamilyModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await FamilyModel.find().sort({createdAt: -1}).skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
