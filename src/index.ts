@@ -11,6 +11,8 @@ import brandDeleteRoutes from "./routes/brand/brandDelete";
 
 import classificationGetRoutes from "./routes/classification/classificationGet";
 import classificationPostRoutes from "./routes/classification/classificationPost";
+import classificationPutRoutes from "./routes/classification/classificationPut";
+import classificationDeleteRoutes from "./routes/classification/classificationDelete";
 
 
 import collectionGetRoutes from "./routes/collection/collectionGet";
@@ -60,6 +62,8 @@ app.use(v1, brandDeleteRoutes);
 
 app.use(v1, classificationGetRoutes)
 app.use(v1, classificationPostRoutes)
+app.use(v1, classificationPutRoutes)
+app.use(v1, classificationDeleteRoutes)
 
 app.use(v1, collectionGetRoutes);
 app.use(v1, collectionPostRoutes);

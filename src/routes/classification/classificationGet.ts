@@ -11,7 +11,6 @@ const router = express.Router();
 
 router.get(CLASSIFICATION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        console.log("HEWRE")
         const {intLimit, skip} = await generalLimits(req);
 
         const documents: Document[] | null | undefined = await ClassificationModel.find().skip(skip).limit(intLimit);
