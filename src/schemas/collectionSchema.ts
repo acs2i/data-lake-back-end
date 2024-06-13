@@ -1,17 +1,22 @@
-import mongoose ,{ Document, Model, Schema} from "mongoose"
+import mongoose ,{ Document, Model, ObjectId, Schema} from "mongoose"
 
 interface Collection extends Document {
-    CODE: string  | number,
-    LIBELLE: string | number,
+    code: string ,
+    label: string,
+    creator_id: ObjectId
+
 }
 
 
 const collectionSchema = new mongoose.Schema<Collection>({
-    CODE: {
+    code: {
         type: Schema.Types.Mixed
     },
-    LIBELLE: {
+    label: {
         type: Schema.Types.Mixed
+    },
+    creator_id: {
+        type: mongoose.Types.ObjectId
     }
 },   { timestamps: true, collection: "collection" })
 

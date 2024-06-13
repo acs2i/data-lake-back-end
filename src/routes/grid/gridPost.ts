@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import {  GRID } from './shared';
 import { INTERNAL_SERVER_ERROR } from '../../codes/errors';
-import GridModel from '../../schemas/gridSchema';
+import DimensionGridModel from '../../schemas/dimensionGridSchema';
 import { Document } from 'mongoose';
 import { OK } from '../../codes/success';
 import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
@@ -18,7 +18,7 @@ router.post(GRID, authorizationMiddlewear, async (req: Request, res: Response) =
             throw new Error(req.originalUrl + ", msg: grid was falsy: " + grid)
         }
 
-        const newGrid: Document | null | undefined = await new GridModel({...grid});
+        const newGrid: Document | null | undefined = await new DimensionGridModel({...grid});
 
         if(!newGrid) {
             throw new Error(req.originalUrl + " msg: grid save did not work for some reason: " + grid);

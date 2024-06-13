@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 import { GRID } from "./shared";
-import GridModel from "../../schemas/gridSchema";
+import DimensionGridModel from "../../schemas/dimensionGridSchema";
 import { generalLimits } from "../../services/generalServices";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
@@ -15,14 +15,14 @@ router.get(GRID, authorizationMiddlewear, async (req: Request, res: Response) =>
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await GridModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await DimensionGridModel.find().skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
        
-        const total = await GridModel.countDocuments({});
+        const total = await DimensionGridModel.countDocuments({});
 
         res.status(OK).json({ data: [...documents], total})
 
@@ -44,7 +44,7 @@ router.get(GRID + "/:id", authorizationMiddlewear, async (req: Request, res: Res
             throw new Error(req.originalUrl + ", msg: id was falsy: " + id);
         }
 
-        const data: Document | null | undefined = await GridModel.findById(id);
+        const data: Document | null | undefined = await DimensionGridModel.findById(id);
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

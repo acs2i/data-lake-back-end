@@ -1,20 +1,21 @@
-import mongoose ,{ Document, Model, Schema} from "mongoose"
-import { ObjectId } from "mongoose";
+import mongoose ,{ Document, Model, Schema,ObjectId} from "mongoose"
 import { Uvc } from "./uvcSchema";
 import { Family } from "./familySchema";
 import { Brand } from "./brandSchema";
 
 export interface Product extends Document {
-    GA_CODEARTICLE: string,     // lié à la collection "UVC" sur la clé "ga_codearticle"
-    GA_LIBCOMPL: string,       // dupliqué ioci ainsi que uvc schema..
-    GA_LIBELLE: string,     // dupliqué ici, ainsi que "uvc Schema"
-    GA_LIBREART1 : string,  // lié  à la famille
-    GA_LIBREART2 : string, // c'est la famille qui concatené avec la sous famille, puis il est utilisé pour fetcher la valeur dans le collection FAMILY
-    GA_LIBREART4 : string, // c'est une valeur qui lie à collection BRAND, et dans la collection BRAND, YX_CODE lie avec celle-ci.
-    GA_FOURNPRINC: string, // lié à la collection "SUPPLIER" sur la clé "t_tiers"
-    GA_FERME: string,       // acts as a boolean, either "X" or "-" BIG X
-    GA_VERSION?: string,
-    GA_HISTORIQUE?: ObjectId[]
+    creator_id: ObjectId,
+    reference: string,
+    long_name: string,
+    short_name: string,
+    supplier_id: ObjectId
+    family_ids: ObjectId[]
+    dimension_type: string      // shouldnt this be id?
+    dimension: string[]
+    class_ids: ObjectId[]
+    classification_ids: ObjectId[]
+    brand_id: ObjectId
+    collection_id: ObjectId
 }
 
 export interface PopulatedProduct extends Product {
@@ -25,37 +26,18 @@ export interface PopulatedProduct extends Product {
 }
 
 const productSchema = new mongoose.Schema<Product>({
-    GA_CODEARTICLE: {
-        type: String,
-    },
-    GA_LIBCOMPL: {
-        type: String
-    },
-    GA_LIBELLE: {
-        type: String
-    },
-    GA_LIBREART1: { // 21 galibreart1 <-> YXCODE 21 
-        type: String,
-    },
-    GA_LIBREART2: {
-        type: String,
-    },
-    GA_LIBREART4: {
-        type: String,
-    },
-    GA_FOURNPRINC: {
-        type: String
-    },
-    GA_FERME: {
-        type: String
-    },
-    GA_VERSION: {
-        type: String
-    },
-    // GA_HISTORIQUE which will be added 
-    GA_HISTORIQUE: [{
-        type: Schema.Types.ObjectId
-    }]
+    creator_id: {type: mongoose.Types.ObjectId},
+    supplier_id: {type: mongoose.Types.ObjectId},
+    family_ids: [{type: mongoose.Types.ObjectId}],
+    class_ids: [{type: mongoose.Types.ObjectId}],
+    classification_ids: [{type: mongoose.Types.ObjectId}],
+    brand_id: {type: mongoose.Types.ObjectId},
+    collection_id: {type: mongoose.Types.ObjectId},
+    reference: {type: String},
+    long_name: {type: String},
+    short_name: {type: String},
+    dimension_type: {type: String},
+    dimension: [{type: String}]
 },  { timestamps: true, collection: "product" })
 
 
