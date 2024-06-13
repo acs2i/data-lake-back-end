@@ -18,6 +18,8 @@ router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) 
             throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
         }
 
+        console.log(brand)
+
         const newBrand: Document | null | undefined = await new BrandModel({...brand});
 
         if(!newBrand) {
@@ -26,11 +28,7 @@ router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) 
 
         const savedBrand: Document | null | undefined = await newBrand.save({timestamps: true});
         
-        const _id = savedBrand._id;
-
-        const result = { ...brand, _id}
-
-        res.status(OK).json(result);
+        res.status(OK).json(savedBrand);
         
     }
     catch(err) {

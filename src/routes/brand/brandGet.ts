@@ -9,7 +9,7 @@ import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
-/* ADD THE SEARCH FOR YX_CODE, YX_LIBELLE */
+
 router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
         
@@ -17,22 +17,22 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const YX_CODE = req.query.YX_CODE;
+        const code = req.query.code;
 
-        if(YX_CODE) {
-            const regEx = new RegExp(YX_CODE as string, "i");
-            filter.$and.push({ YX_CODE: regEx })
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx })
         }
 
-        const YX_LIBELLE = req.query.YX_LIBELLE;
+        const label = req.query.label;
 
-        if(YX_LIBELLE) {
-            const regEx = new RegExp(YX_LIBELLE as string, "i");
-            filter.$and.push({ YX_LIBELLE: regEx })
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx })
         }
 
 
-        if(!YX_CODE && !YX_LIBELLE) {
+        if(!code && !label) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
@@ -58,6 +58,7 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
 
 router.get(BRAND, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
+
      
         const {skip, intLimit} = await generalLimits(req);
 
