@@ -2,9 +2,9 @@ import mongoose, { Document, ObjectId } from "mongoose";
 
 
 interface Classification extends Document {
-    type: string,
-    level: string[]
-    creator_id: ObjectId
+    type?: string,
+    level?: string[]
+    creator_id?: ObjectId
 }
 
 const classificationSchema = new mongoose.Schema<Classification>({

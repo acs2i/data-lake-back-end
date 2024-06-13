@@ -9,6 +9,10 @@ import brandPostRoutes from "./routes/brand/brandPost";
 import brandPutRoutes from "./routes/brand/brandPut";
 import brandDeleteRoutes from "./routes/brand/brandDelete";
 
+import classificationGetRoutes from "./routes/classification/classificationGet";
+import classificationPostRoutes from "./routes/classification/classificationPost";
+
+
 import collectionGetRoutes from "./routes/collection/collectionGet";
 import collectionPostRoutes from "./routes/collection/collectionPost";
 import collectionPutRoutes from "./routes/collection/collectionPut";
@@ -54,6 +58,9 @@ app.use(v1, brandPostRoutes);
 app.use(v1, brandPutRoutes);
 app.use(v1, brandDeleteRoutes);
 
+app.use(v1, classificationGetRoutes)
+app.use(v1, classificationPostRoutes)
+
 app.use(v1, collectionGetRoutes);
 app.use(v1, collectionPostRoutes);
 app.use(v1, collectionPutRoutes);
@@ -71,10 +78,10 @@ app.use(v1, familyPutRoutes);
 app.use(v1, gridGetRoutes);
 app.use(v1, gridPostRoutes);
 
-app.use(v1, productGetRoutes);
-app.use(v1, productPostRoutes);
-app.use(v1, productPutRoutes);
-app.use(v1, productDeleteRoutes);
+// app.use(v1, productGetRoutes);
+// app.use(v1, productPostRoutes);
+// app.use(v1, productPutRoutes);
+// app.use(v1, productDeleteRoutes);
 
 app.use(v1, uvcGetRoutes);
 app.use(v1, uvcPostRoutes);

@@ -5,7 +5,7 @@ import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
-import { productPopulateBrand, productPopulateFamily, productPopulateUvc } from "../../services/productServices";
+// import { productPopulateBrand, productPopulateFamily, productPopulateUvc } from "../../services/productServices";
 import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
