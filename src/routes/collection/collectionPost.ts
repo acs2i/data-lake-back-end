@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        // expects collection 
-        const collection = req.body.collection;
+        
+        const collection = req.body;
 
         if(!collection) {
             throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)
@@ -25,12 +25,8 @@ router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Respo
         }
 
         const savedCollection: Document | null | undefined = await newCollection.save({timestamps: true});
-        
-        const _id = savedCollection._id;
 
-        const result = { ...collection, _id}
-
-        res.status(OK).json(result);
+        res.status(OK).json(savedCollection);
         
     }
     catch(err) {

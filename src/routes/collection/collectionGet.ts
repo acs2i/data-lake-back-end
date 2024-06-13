@@ -17,22 +17,22 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const CODE = req.query.CODE;
+        const code = req.query.code;
 
-        if(CODE) {
-            const regEx = new RegExp(CODE as string, "i");
-            filter.$and.push({ CODE: regEx })
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx })
         }
         
-        const LIBELLE = req.query.LIBELLE;
+        const label = req.query.label;
 
-        if(LIBELLE) {
-            const regEx = new RegExp(LIBELLE as string, "i");
-            filter.$and.push({ LIBELLE: regEx })
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx })
         }
 
         
-        if(!CODE && !LIBELLE) {
+        if(!code && !label) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
