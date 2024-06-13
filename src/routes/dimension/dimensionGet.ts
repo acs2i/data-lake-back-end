@@ -16,36 +16,20 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
 
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
-
-        const GDI_TYPEDIM = req.query.GDI_TYPEDIM;
-
-        if(GDI_TYPEDIM) {
-            const regEx = new RegExp(GDI_TYPEDIM as string, "i");
-            filter.$and.push({ GDI_TYPEDIM: regEx })
-        }
-
-        const GDI_DIMORLI = req.query.GDI_DIMORLI;
-
-        if(GDI_DIMORLI) {
-            const regEx = new RegExp(GDI_DIMORLI as string, "i");
-            filter.$and.push({ GDI_DIMORLI: regEx })
-        }
         
-        const GDI_LIBELLE = req.query.GDI_LIBELLE;
+        const label = req.query.label;
 
-        if(GDI_LIBELLE) {
-            const regEx = new RegExp(GDI_LIBELLE as string, "i");
-            filter.$and.push({ GDI_LIBELLE: regEx })
+        if(!label) {
+            throw new Error(req.originalUrl + ", msg: Label was falsy. Probably means label was undefined")
         }
 
-        if(!GDI_TYPEDIM && !GDI_LIBELLE && !GDI_DIMORLI) {
-            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
-        }
+        const regEx = new RegExp(label as string, "i");
 
+        filter.$and.push({ label: regEx })
 
         const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit);
+        
         const total = await DimensionModel.countDocuments(filter);
-       
 
         res.status(OK).send({ data , total})
 

@@ -23,11 +23,7 @@ router.post(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respon
             throw new Error(req.originalUrl + " msg: dimension save did not work for some reason: " + dimension);
         }
 
-        const savedDimension: Document | null | undefined = await newDimension.save({timestamps: true});
-
-        const _id = savedDimension._id;
-
-        const result = { ...dimension, _id};
+        const result: Document | null | undefined = await newDimension.save({timestamps: true});
 
         res.status(OK).json(result)
 
