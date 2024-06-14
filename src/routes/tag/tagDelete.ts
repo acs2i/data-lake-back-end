@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express"
-import { CLASS } from "./shared";
+import { TAG } from "./shared";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import ClassModel from "../../schemas/classSchema";
+import TagModel from "../../schemas/tagSchema";
 
 const router = express.Router();
 
-router.delete(CLASS + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.delete(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -17,7 +17,7 @@ router.delete(CLASS + "/:id", authorizationMiddlewear, async (req: Request, res:
             throw new Error(req.originalUrl + ", msg: id was falsy: " + id);
         }
 
-        const response = await ClassModel.deleteOne({ _id: id })
+        const response = await TagModel.deleteOne({ _id: id })
 
         if(response.deletedCount === 0) {
             res.status(INTERNAL_SERVER_ERROR).json({ msg: "collection not found"});

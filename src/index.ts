@@ -9,16 +9,10 @@ import brandPostRoutes from "./routes/brand/brandPost";
 import brandPutRoutes from "./routes/brand/brandPut";
 import brandDeleteRoutes from "./routes/brand/brandDelete";
 
-import classGetRoutes from "./routes/class/classGet";
-import classPostRoutes from "./routes/class/classPost";
-import classPutRoutes from "./routes/class/classPut";
-import classDeleteRoutes from "./routes/class/classPut";
-
-
-import classificationGetRoutes from "./routes/classification/classificationGet";
-import classificationPostRoutes from "./routes/classification/classificationPost";
-import classificationPutRoutes from "./routes/classification/classificationPut";
-import classificationDeleteRoutes from "./routes/classification/classificationDelete";
+import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet";
+import tagGroupingPostRoutes from "./routes/tagGrouping/tagGroupingPost";
+import tagGroupingPutRoutes from "./routes/tagGrouping/tagGroupingPut";
+import tagGroupingDeleteRoutes from "./routes/tagGrouping/tagGroupingDelete";
 
 
 import collectionGetRoutes from "./routes/collection/collectionGet";
@@ -56,11 +50,18 @@ import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
 
+import supplierGetRoutes from "./routes/supplier/supplierGet"
+
+import tagGetRoutes from "./routes/tag/tagGet";
+import tagPostRoutes from "./routes/tag/tagPost";
+import tagPutRoutes from "./routes/tag/tagPut";
+import tagDeleteRoutes from "./routes/tag/tagPut";
+
+
 import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
 import uvcPutRoutes from "./routes/uvc/uvcPut";
 
-import supplierGetRoutes from "./routes/supplier/supplierGet"
 
 dotenv.config();
 
@@ -77,18 +78,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(v1, brandGetRoutes);
 app.use(v1, brandPostRoutes);
 app.use(v1, brandPutRoutes);
-app.use(v1, brandDeleteRoutes);
+app.use(v1, brandDeleteRoutes); 
 
-app.use(v1, classGetRoutes)
-app.use(v1, classPostRoutes)
-app.use(v1, classPutRoutes) 
-app.use(v1, classDeleteRoutes) 
-
-
-app.use(v1, classificationGetRoutes)
-app.use(v1, classificationPostRoutes)
-app.use(v1, classificationPutRoutes)
-app.use(v1, classificationDeleteRoutes)
+app.use(v1, tagGroupingGetRoutes)
+app.use(v1, tagGroupingPostRoutes)
+app.use(v1, tagGroupingPutRoutes)
+app.use(v1, tagGroupingDeleteRoutes)
 
 app.use(v1, collectionGetRoutes);
 app.use(v1, collectionPostRoutes);
@@ -128,6 +123,11 @@ app.use(v1, uvcPostRoutes);
 app.use(v1, uvcPutRoutes);
 
 app.use(v1, supplierGetRoutes)
+
+app.use(v1, tagGetRoutes)
+app.use(v1, tagPostRoutes)
+app.use(v1, tagPutRoutes) 
+app.use(v1, tagDeleteRoutes)
 
 
 app.listen(port, () => {

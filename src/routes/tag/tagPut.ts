@@ -1,12 +1,12 @@
 import express , {Request, Response} from "express"
-import { CLASS } from "./shared"
+import { TAG } from "./shared"
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear"
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
-import ClassModel from "../../schemas/classSchema"
+import TagModel from "../../schemas/tagSchema"
 import { OK } from "../../codes/success"
 
 const router = express.Router()
-router.delete(CLASS + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.delete(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id = req.params.id;
@@ -15,10 +15,10 @@ router.delete(CLASS + "/:id", authorizationMiddlewear, async (req: Request, res:
             throw new Error(req.originalUrl + ", msg: id was falsy: " + id);
         }
 
-        const response = await ClassModel.deleteOne({ _id: id })
+        const response = await TagModel.deleteOne({ _id: id })
 
         if(response.deletedCount === 0) {
-            res.status(INTERNAL_SERVER_ERROR).json({ msg: "class not found"});
+            res.status(INTERNAL_SERVER_ERROR).json({ msg: "tag not found"});
         } else {
             res.status(OK).json(response);
         }

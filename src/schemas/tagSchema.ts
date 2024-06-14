@@ -1,7 +1,7 @@
- import mongoose, { Document, ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
 
-interface Class extends Document {
+interface Tag extends Document {
     type: string
     code: string
     name: string
@@ -11,7 +11,7 @@ interface Class extends Document {
     creator_id: ObjectId
 }
 
-const classSchema = new mongoose.Schema<Class>({
+const tagSchema = new mongoose.Schema<Tag>({
     type: { type: String },
     code: { type: String },
     name: { type: String },
@@ -20,7 +20,7 @@ const classSchema = new mongoose.Schema<Class>({
     classification_id: { type: mongoose.Types.ObjectId },
     creator_id: { type: mongoose.Types.ObjectId },
 
-}, { timestamps: true, collection: "class"  })
+}, { timestamps: true, collection: "tag"  })
 
-const ClassModel = mongoose.model<Class>("class", classSchema)
-export default ClassModel
+const TagModel = mongoose.model<Tag>("tag", tagSchema)
+export default TagModel
