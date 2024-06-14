@@ -31,6 +31,19 @@ import dimensionPostRoutes from "./routes/dimension/dimensionPost";
 import dimensionPutRoutes from "./routes/dimension/dimensionPut";
 import dimensionDeleteRoutes from "./routes/dimension/dimensionDelete";
 
+
+import dimensionGridGetRoutes from "./routes/dimensionGrid/dimensionGridGet";
+import dimensionGridPostRoutes from "./routes/dimensionGrid/dimensionGridPost";
+import dimensionGridPutRoutes from "./routes/dimensionGrid/dimensionGridPut";
+import dimensionGridDeleteRoutes from "./routes/dimensionGrid/dimensionGridDelete";
+
+
+import dimensionTypeGetRoutes from "./routes/dimensionType/dimensionTypeGet";
+import dimensionTypePostRoutes from "./routes/dimensionType/dimensionTypePost";
+import dimensionTypePutRoutes from "./routes/dimensionType/dimensionTypePut";
+import dimensionTypeDeleteRoutes from "./routes/dimensionType/dimensionTypeDelete";
+
+
 import familyGetRoutes from "./routes/family/familyGet"
 import familyPostRoutes from "./routes/family/familyPost"
 import familyPutRoutes from "./routes/family/familyPut"
@@ -86,6 +99,17 @@ app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
 app.use(v1, dimensionPutRoutes);
 app.use(v1, dimensionDeleteRoutes);
+
+app.use(v1, dimensionGridGetRoutes);
+app.use(v1, dimensionGridPostRoutes);
+app.use(v1, dimensionGridPutRoutes);
+app.use(v1, dimensionGridDeleteRoutes);
+
+
+app.use(v1, dimensionTypeGetRoutes);
+app.use(v1, dimensionTypePostRoutes);
+app.use(v1, dimensionTypePutRoutes);
+app.use(v1, dimensionTypeDeleteRoutes);
 
 app.use(v1, familyGetRoutes);
 app.use(v1, familyPostRoutes);
