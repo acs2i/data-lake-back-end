@@ -11,7 +11,8 @@ const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
         type: String
     }, 
     type_id: {
-        type: mongoose.Types.ObjectId
+        type: mongoose.Types.ObjectId,
+        ref: "dimension_type"
     },
     creator_id: {
         type: mongoose.Types.ObjectId

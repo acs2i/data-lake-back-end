@@ -13,7 +13,7 @@ router.get(TAG_GROUPING, authorizationMiddlewear, async (req: Request, res: Resp
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await TagGroupingModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await TagGroupingModel.find().skip(skip).limit(intLimit).populate({path: "group_strings", populate: { path: "type_id"}});
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

@@ -14,7 +14,7 @@ router.get(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: Re
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await DimensionGridModel.find().skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await DimensionGridModel.find().skip(skip).limit(intLimit).populate("type_id");
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
