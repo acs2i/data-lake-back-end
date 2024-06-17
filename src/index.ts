@@ -9,12 +9,6 @@ import brandPostRoutes from "./routes/brand/brandPost";
 import brandPutRoutes from "./routes/brand/brandPut";
 import brandDeleteRoutes from "./routes/brand/brandDelete";
 
-import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet";
-import tagGroupingPostRoutes from "./routes/tagGrouping/tagGroupingPost";
-import tagGroupingPutRoutes from "./routes/tagGrouping/tagGroupingPut";
-import tagGroupingDeleteRoutes from "./routes/tagGrouping/tagGroupingDelete";
-
-
 import collectionGetRoutes from "./routes/collection/collectionGet";
 import collectionPostRoutes from "./routes/collection/collectionPost";
 import collectionPutRoutes from "./routes/collection/collectionPut";
@@ -63,6 +57,10 @@ import tagPostRoutes from "./routes/tag/tagPost";
 import tagPutRoutes from "./routes/tag/tagPut";
 import tagDeleteRoutes from "./routes/tag/tagPut";
 
+import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
+import tagGroupingPostRoutes from "./routes/tagGrouping/tagGroupingPost"
+import tagGroupingPutRoutes from "./routes/tagGrouping/tagGroupingPut"
+import tagGroupingDeleteRoutes from "./routes/tagGrouping/tagGroupingDelete"
 
 import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
@@ -85,11 +83,6 @@ app.use(v1, brandGetRoutes);
 app.use(v1, brandPostRoutes);
 app.use(v1, brandPutRoutes);
 app.use(v1, brandDeleteRoutes); 
-
-app.use(v1, tagGroupingGetRoutes)
-app.use(v1, tagGroupingPostRoutes)
-app.use(v1, tagGroupingPutRoutes)
-app.use(v1, tagGroupingDeleteRoutes)
 
 app.use(v1, collectionGetRoutes);
 app.use(v1, collectionPostRoutes);
@@ -119,8 +112,8 @@ app.use(v1, dimensionTypeDeleteRoutes);
 // app.use(v1, gridGetRoutes);
 // app.use(v1, gridPostRoutes);
 
-// app.use(v1, productGetRoutes);
-// app.use(v1, productPostRoutes);
+app.use(v1, productGetRoutes);
+app.use(v1, productPostRoutes);
 // app.use(v1, productPutRoutes);
 // app.use(v1, productDeleteRoutes);
 
@@ -137,6 +130,14 @@ app.use(v1, tagGetRoutes)
 app.use(v1, tagPostRoutes)
 app.use(v1, tagPutRoutes) 
 app.use(v1, tagDeleteRoutes)
+
+
+app.use(v1, tagGroupingGetRoutes)
+app.use(v1, tagGroupingPostRoutes)
+app.use(v1, tagGroupingPutRoutes) 
+app.use(v1, tagGroupingDeleteRoutes)
+
+
 
 
 app.listen(port, () => {

@@ -6,8 +6,8 @@ interface DimensionType extends Document {
 }
 
 const dimensionSchema = new mongoose.Schema<DimensionType>({
-    type: { type: String },
+    type: { type: String},
 },  { timestamps: true, collection: "dimension_type" })
 
-const DimensionModel: Model<DimensionType> = mongoose.model<DimensionType>("dimension_type", dimensionSchema);
-export default DimensionModel
+const DimensionTypeModel: Model<DimensionType> = mongoose.model<DimensionType>("dimension_type", dimensionSchema);
+export default DimensionTypeModel

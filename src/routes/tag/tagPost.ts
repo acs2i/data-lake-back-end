@@ -16,7 +16,7 @@ router.post(TAG, authorizationMiddlewear, async (req: Request, res: Response) =>
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const newObject: Document | null | undefined = await new TagModel({...object, GA_VERSION: 1});
+        const newObject: Document | null | undefined = await new TagModel({...object});
 
         if(!newObject) {
             throw new Error(req.originalUrl + " msg: newObject save did not work for some reason: " + newObject);

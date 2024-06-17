@@ -9,11 +9,11 @@ export interface Product extends Document {
     long_name: string,
     short_name: string,
     supplier_id: ObjectId
-    family_ids: ObjectId[]
-    dimension_type: string      // shouldnt this be id?
-    dimension: string[]
-    class_ids: ObjectId[]
-    classification_ids: ObjectId[]
+    // family_ids: ObjectId[]
+    dimension_type_id: ObjectId      // shouldnt this be id?
+    dimension_ids: ObjectId[]
+    tag_ids: ObjectId[]
+    tag_grouping_ids: ObjectId[]
     brand_id: ObjectId
     collection_id: ObjectId
 }
@@ -27,17 +27,17 @@ export interface PopulatedProduct extends Product {
 
 const productSchema = new mongoose.Schema<Product>({
     creator_id: {type: mongoose.Types.ObjectId},
-    supplier_id: {type: mongoose.Types.ObjectId},
-    family_ids: [{type: mongoose.Types.ObjectId}],
-    class_ids: [{type: mongoose.Types.ObjectId}],
-    classification_ids: [{type: mongoose.Types.ObjectId}],
-    brand_id: {type: mongoose.Types.ObjectId},
-    collection_id: {type: mongoose.Types.ObjectId},
-    reference: {type: String},
+    supplier_id: {type: mongoose.Types.ObjectId, ref: "supplier"},
+    // family_ids: [{type: mongoose.Types.ObjectId}],
+    tag_ids: [{type: mongoose.Types.ObjectId, ref: "tag"}],
+    tag_grouping_ids: [{type: mongoose.Types.ObjectId, ref: "tag_grouping"}],
+    brand_id: {type: mongoose.Types.ObjectId, ref: "brand"},
+    collection_id: {type: mongoose.Types.ObjectId, ref: "collection"},
+    reference: {type: String},  
     long_name: {type: String},
     short_name: {type: String},
-    dimension_type: {type: String},
-    dimension: [{type: String}]
+    dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
+    dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}]
 },  { timestamps: true, collection: "product" })
 
 

@@ -1,11 +1,11 @@
 import mongoose, { Document, ObjectId } from "mongoose";
 
 
-interface Tag extends Document {
+export interface Tag extends Document {
     type: string
     code: string
     name: string
-    classification_id: ObjectId
+    tag_grouping_id: ObjectId
     parent_id?: ObjectId[]
     status: string
     creator_id: ObjectId
@@ -17,7 +17,7 @@ const tagSchema = new mongoose.Schema<Tag>({
     name: { type: String },
     status: { type: String },
     parent_id: [{ type: mongoose.Types.ObjectId }],
-    classification_id: { type: mongoose.Types.ObjectId },
+    tag_grouping_id: { type: mongoose.Types.ObjectId, ref: "tag_grouping" },
     creator_id: { type: mongoose.Types.ObjectId },
 
 }, { timestamps: true, collection: "tag"  })

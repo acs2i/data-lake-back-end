@@ -1,7 +1,7 @@
 import mongoose, { Document, ObjectId } from "mongoose";
 
 
-interface TagGrouping extends Document {
+export interface TagGrouping extends Document {
     type?: string,
     level?: string[]
     creator_id?: ObjectId

@@ -1,6 +1,6 @@
 import mongoose ,{ Document, Model, ObjectId, Schema} from "mongoose"
 
-interface Collection extends Document {
+export interface Collection extends Document {
     code: string ,
     label: string,
     creator_id: ObjectId
