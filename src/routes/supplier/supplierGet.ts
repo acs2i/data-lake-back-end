@@ -2,10 +2,65 @@ import express, { Request, Response } from "express"
 import { SUPPLIER } from "./shared";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
 import { generalLimits } from "../../services/generalServices";
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
+import { BAD_REQUEST } from "../../codes/errors";
+import { OK } from "../../codes/success";
 
 const router = express.Router();
 
-router.get(SUPPLIER, async (req: Request, res: Response) => {
+router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res: Response) => {
+    try {
+        
+        const {intLimit, skip} = await generalLimits(req);
+
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const {code, label, juridique, status} = req.query
+    
+    
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx })
+        }
+
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx })
+        }
+
+        if(juridique) {
+            const regEx = new RegExp(juridique as string, "i");
+            filter.$and.push({ juridique: regEx })
+        }
+        
+        if(status) {
+            const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status: regEx })
+        }
+
+
+        const data: Supplier[] | null | undefined = await SupplierModel.find(filter).skip(skip).limit(intLimit);
+        
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+
+        const total = await SupplierModel.countDocuments(filter);
+
+        res.status(200).json({data, total});
+    
+    } catch(err) {
+      console.error(err)
+      res.status(500).json(err);
+    }
+  
+  
+  
+  })
+
+
+router.get(SUPPLIER, authorizationMiddlewear,async (req: Request, res: Response) => {
     try {
 
         const {intLimit, skip} = await generalLimits(req);
@@ -29,68 +84,37 @@ router.get(SUPPLIER, async (req: Request, res: Response) => {
   
   
   })
-  
 
-router.get(SUPPLIER + "/search", async(req: Request, res: Response) => {
+router.get(SUPPLIER + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        
-        const {intLimit, skip} = await generalLimits(req);
 
-        let filter: any = { $and: [] }  // any to make typescript stop complaining
+        const id: string | undefined | null = req.params.id;
 
-        const {T_TIERS, T_LIBELLE, T_JURIDIQUE, T_FERME, T_TELEPHONE, T_EMAIL} = req.query
-    
-    
-        if(T_TIERS) {
-            const regEx = new RegExp(T_TIERS as string, "i");
-            filter.$and.push({ T_TIERS: regEx })
+        if(id === null || id === undefined) {
+            res.status(BAD_REQUEST).json({})
+            throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        if(T_LIBELLE) {
-            const regEx = new RegExp(T_LIBELLE as string, "i");
-            filter.$and.push({ T_LIBELLE: regEx })
+        const document: Document | null | undefined = await SupplierModel.findById(id);
+
+
+        if ( document === null ||  document === undefined) {
+            res.status(OK).json({});
+            console.warn(req.originalUrl + ", msg: Document was null or undefined");
+            return;
         }
 
-        if(T_JURIDIQUE) {
-            const regEx = new RegExp(T_JURIDIQUE as string, "i");
-            filter.$and.push({ T_JURIDIQUE: regEx })
-        }
-        
-        if(T_FERME) {
-            const regEx = new RegExp(T_FERME as string, "i");
-            filter.$and.push({ T_FERME: regEx })
-        }
+        res.status(OK).json(document)
 
-        if(T_TELEPHONE) {
-            const regEx = new RegExp(T_TELEPHONE as string, "i");
-            filter.$and.push({ T_TELEPHONE: regEx })
-        }
-
-        
-        if(T_EMAIL) {
-            const regEx = new RegExp(T_EMAIL as string, "i");
-            filter.$and.push({ T_EMAIL: regEx })
-        }
-
-        const data: Supplier[] | null | undefined = await SupplierModel.find(filter).skip(skip).limit(intLimit);
-        
-        if ( data === null ||  data === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-
-        const total = await SupplierModel.countDocuments(filter);
-
-        res.status(200).json({data, total});
-    
-    } catch(err) {
-      console.error(err)
-      res.status(500).json(err);
     }
-  
-  
-  
-  })
+    catch(err) {
+        res.status(BAD_REQUEST).json(err)
+        console.error(err)
+    }
+
+
+})
+    
 
 
 export default router;

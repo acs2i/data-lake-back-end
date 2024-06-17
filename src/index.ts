@@ -38,12 +38,14 @@ import dimensionTypePutRoutes from "./routes/dimensionType/dimensionTypePut";
 import dimensionTypeDeleteRoutes from "./routes/dimensionType/dimensionTypeDelete";
 
 
-import familyGetRoutes from "./routes/family/familyGet"
-import familyPostRoutes from "./routes/family/familyPost"
-import familyPutRoutes from "./routes/family/familyPut"
+/* DEPRECATED */
+// import familyGetRoutes from "./routes/family/familyGet"
+// import familyPostRoutes from "./routes/family/familyPost"
+// import familyPutRoutes from "./routes/family/familyPut"
 
-import gridGetRoutes from "./routes/grid/gridGet";
-import gridPostRoutes from "./routes/grid/gridPost";
+/* DEPRECATED FOR DIMENSIONGRID */
+// import gridGetRoutes from "./routes/grid/gridGet";
+// import gridPostRoutes from "./routes/grid/gridPost";
 
 import productGetRoutes from "./routes/product/productGet";
 import productPostRoutes from "./routes/product/productPost";
@@ -51,6 +53,10 @@ import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
 
 import supplierGetRoutes from "./routes/supplier/supplierGet"
+import supplierPostRoutes from "./routes/supplier/supplierPost"
+import supplierPutRoutes from "./routes/supplier/supplierPut"
+import supplierDeleteRoutes from "./routes/supplier/supplierDelete"
+
 
 import tagGetRoutes from "./routes/tag/tagGet";
 import tagPostRoutes from "./routes/tag/tagPost";
@@ -106,12 +112,12 @@ app.use(v1, dimensionTypePostRoutes);
 app.use(v1, dimensionTypePutRoutes);
 app.use(v1, dimensionTypeDeleteRoutes);
 
-app.use(v1, familyGetRoutes);
-app.use(v1, familyPostRoutes);
-app.use(v1, familyPutRoutes);
+// app.use(v1, familyGetRoutes);
+// app.use(v1, familyPostRoutes);
+// app.use(v1, familyPutRoutes);
 
-app.use(v1, gridGetRoutes);
-app.use(v1, gridPostRoutes);
+// app.use(v1, gridGetRoutes);
+// app.use(v1, gridPostRoutes);
 
 // app.use(v1, productGetRoutes);
 // app.use(v1, productPostRoutes);
@@ -123,6 +129,9 @@ app.use(v1, uvcPostRoutes);
 app.use(v1, uvcPutRoutes);
 
 app.use(v1, supplierGetRoutes)
+app.use(v1, supplierPostRoutes)
+app.use(v1, supplierPutRoutes)
+app.use(v1, supplierDeleteRoutes)
 
 app.use(v1, tagGetRoutes)
 app.use(v1, tagPostRoutes)

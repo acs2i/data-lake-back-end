@@ -1,2 +1,2 @@
-
-export const GRID = "/grid"
+// DEPRECATED
+// export const GRID = "/grid"

@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express"
-import { PRODUCT } from "./shared";
-import ProductModel from "../../schemas/productSchema";
+import { SUPPLIER } from "./shared";
+import SupplierModel from "../../schemas/supplierSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
-router.delete(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.delete(SUPPLIER + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
 
     try {
 
@@ -17,7 +17,7 @@ router.delete(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, re
             throw new Error(req.originalUrl + ", msg: id was falsy: " + id);
         }
 
-        const response = await ProductModel.deleteOne({ _id: id })
+        const response = await SupplierModel.deleteOne({ _id: id })
 
         if(response.deletedCount === 0) {
             res.status(INTERNAL_SERVER_ERROR).json({ msg: "Brand not found"});
