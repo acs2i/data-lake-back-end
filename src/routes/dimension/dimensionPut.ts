@@ -25,8 +25,6 @@ router.put(DIMENSION + "/:id", authorizationMiddlewear, async ( req: Request, re
 
         const response: UpdateWriteOpResult = await DimensionModel.updateOne({ _id}, {$set: dimension})
 
-        console.log(response)
-
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json(dimension)
         } else{

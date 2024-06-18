@@ -3,7 +3,7 @@ import { DIMENSION } from "./shared";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 import { Document } from "mongoose";
-import DimensionModel from "../../schemas/dimensionSchema";
+import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
@@ -17,13 +17,13 @@ router.post(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respon
             throw new Error(req.originalUrl + ", msg: dimension was falsy: " + dimension)
         }
 
-        const newDimension: Document | null | undefined = await new DimensionModel({...dimension});
+        const newDimension: Dimension | null | undefined = await new DimensionModel({...dimension});
 
         if(!newDimension) {
             throw new Error(req.originalUrl + " msg: dimension save did not work for some reason: " + dimension);
         }
 
-        const result: Document | null | undefined = await newDimension.save({timestamps: true});
+        const result: Dimension | null | undefined = await newDimension.save({timestamps: true});
 
         res.status(OK).json(result)
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 import { DIMENSION } from "./shared";
-import DimensionModel from "../../schemas/dimensionSchema";
+import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
@@ -27,7 +27,7 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
 
         filter.$and.push({ label: regEx })
 
-        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit);
+        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit).populate("dimension_type_id");;
         
         const total = await DimensionModel.countDocuments(filter);
 
@@ -46,16 +46,16 @@ router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respons
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit);
+        const data: Dimension[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit).populate("dimension_type_id");
 
-        if ( documents === null ||  documents === undefined) {
+        if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
 
         const total = await DimensionModel.countDocuments({});
 
-        res.status(OK).json({ data: [...documents], total})
+        res.status(OK).json({ data, total})
         
     } catch(err) {
         console.error(err)
@@ -73,16 +73,16 @@ router.get(DIMENSION + "/:id", authorizationMiddlewear, async (req: Request, res
             throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await DimensionModel.findById(id);
+        const data: Dimension | null | undefined = await DimensionModel.findById(id).populate("dimension_type_id");
 
 
-        if ( document === null ||  document === undefined) {
+        if ( data === null ||  data === undefined) {
             res.status(OK).json({});
-            console.warn(req.originalUrl + ", msg: Document was null or undefined");
+            console.warn(req.originalUrl + ", msg: data was null or undefined");
             return;
         }
 
-        res.status(OK).json(document)
+        res.status(OK).json(data)
 
     }
     catch(err) {
@@ -92,11 +92,6 @@ router.get(DIMENSION + "/:id", authorizationMiddlewear, async (req: Request, res
 
 
 })
-
-// we'll need to fetch the dimension using the id of the product
-// but you gotta do this roundabout way of getting it by going to uvc first,
-// then using the values of
-// "couleur" and "taille" in the uvc collection
 
 
 export default router;
