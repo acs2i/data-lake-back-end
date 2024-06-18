@@ -31,6 +31,8 @@ import dimensionTypePostRoutes from "./routes/dimensionType/dimensionTypePost";
 import dimensionTypePutRoutes from "./routes/dimensionType/dimensionTypePut";
 import dimensionTypeDeleteRoutes from "./routes/dimensionType/dimensionTypeDelete";
 
+import itemGetRoutes from "./routes/item/itemGet";
+import itemDeleteRoutes from "./routes/item/itemDelete";
 
 /* DEPRECATED */
 // import familyGetRoutes from "./routes/family/familyGet"
@@ -105,6 +107,9 @@ app.use(v1, dimensionTypePostRoutes);
 app.use(v1, dimensionTypePutRoutes);
 app.use(v1, dimensionTypeDeleteRoutes);
 
+app.use(v1, itemGetRoutes);
+app.use(v1, itemDeleteRoutes);
+
 // app.use(v1, familyGetRoutes);
 // app.use(v1, familyPostRoutes);
 // app.use(v1, familyPutRoutes);
@@ -136,7 +141,6 @@ app.use(v1, tagGroupingGetRoutes)
 app.use(v1, tagGroupingPostRoutes)
 app.use(v1, tagGroupingPutRoutes) 
 app.use(v1, tagGroupingDeleteRoutes)
-
 
 
 
