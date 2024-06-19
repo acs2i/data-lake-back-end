@@ -1,6 +1,6 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 
-interface Item {
+export interface Item extends Document {
  supplier_id: ObjectId,
  price: number,
  currency: string   // c'est la devise, // ajoute les tarifs, 
@@ -9,7 +9,7 @@ interface Item {
 }
 
 const item = new mongoose.Schema<Item>({
-    supplier_id: {type: mongoose.Types.ObjectId},
+    supplier_id: {type: mongoose.Types.ObjectId, ref: "supplier"},
     creator_id: {type: mongoose.Types.ObjectId},
     ean: {type: String},
     currency: {type: String},
