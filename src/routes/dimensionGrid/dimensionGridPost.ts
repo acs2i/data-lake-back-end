@@ -17,7 +17,7 @@ router.post(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: R
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const newObject: Document | null | undefined = await new DimensionGridModel({...object});
+        const newObject: Document | null | undefined = new DimensionGridModel({...object});
 
         if(!newObject) {
             throw new Error(req.originalUrl + " msg: object save did not work for some reason: " + object);

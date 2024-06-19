@@ -41,7 +41,7 @@ router.get(DIMENSION_GRID + "/:id", authorizationMiddlewear, async (req: Request
             throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await DimensionGridModel.findById(id);
+        const document: Document | null | undefined = await DimensionGridModel.findById(id).populate("type_id");
 
 
         if ( document === null ||  document === undefined) {
