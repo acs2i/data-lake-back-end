@@ -3,9 +3,8 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
 import { TAG_GROUPING } from "./shared";
 import { OK } from "../../codes/success";
-import TagGroupingModel from "../../schemas/tagGroupingSchema";
+import TagGroupingModel, { TagGrouping } from "../../schemas/tagGroupingSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
-import { Document } from "mongoose";
 
 const router = express.Router();
 
@@ -13,14 +12,14 @@ router.get(TAG_GROUPING, authorizationMiddlewear, async (req: Request, res: Resp
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await TagGroupingModel.find().skip(skip).limit(intLimit).populate({path: "group_strings", populate: { path: "type_id"}});
+        const data: TagGrouping[] | null | undefined = await TagGroupingModel.find().skip(skip).limit(intLimit).populate({path: "group_strings", populate: { path: "type_id"}});
 
-        if ( documents === null ||  documents === undefined) {
+        if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
         const total = await TagGroupingModel.countDocuments({});
 
-        res.status(OK).json({ data: [...documents], total})
+        res.status(OK).json({ data, total})
 
     } catch(err) {
         console.error(err)
