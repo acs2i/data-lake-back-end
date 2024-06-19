@@ -16,6 +16,7 @@ export interface Product extends Document {
     tag_grouping_ids: ObjectId[]
     brand_id: ObjectId
     collection_id: ObjectId
+    version: number
 }
 
 export interface PopulatedProduct extends Product {
@@ -37,7 +38,8 @@ const productSchema = new mongoose.Schema<Product>({
     long_name: {type: String},
     short_name: {type: String},
     dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
-    dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}]
+    dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}],
+    version: {type: Number}
 },  { timestamps: true, collection: "product" })
 
 

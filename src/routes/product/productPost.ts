@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import ProductModel from "../../schemas/productSchema";
+import ProductModel, { Product } from "../../schemas/productSchema";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
@@ -18,19 +18,15 @@ router.post(PRODUCT, authorizationMiddlewear, async (req: Request, res: Response
             throw new Error(req.originalUrl + ", msg: product was falsy: " + product)
         }
 
-        const newProduct: Document | null | undefined = await new ProductModel({...product, GA_VERSION: 1});
+        const newProduct: Product | null | undefined = await new ProductModel({...product, version: 1});
 
         if(!newProduct) {
             throw new Error(req.originalUrl + " msg: product save did not work for some reason: " + product);
         }
 
-        const savedProduct: Document | null | undefined = await newProduct.save({timestamps: true});
-        
-        const _id = savedProduct._id;
-
-        const result = { ...product, _id}
-
-        res.status(OK).json(result);
+        const savedProduct: Product | null | undefined = await newProduct.save({timestamps: true});
+    
+        res.status(OK).json(savedProduct);
         
     }
     catch(err) {

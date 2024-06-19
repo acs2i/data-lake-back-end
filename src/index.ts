@@ -119,8 +119,8 @@ app.use(v1, itemDeleteRoutes);
 
 app.use(v1, productGetRoutes);
 app.use(v1, productPostRoutes);
-// app.use(v1, productPutRoutes);
-// app.use(v1, productDeleteRoutes);
+app.use(v1, productPutRoutes);
+app.use(v1, productDeleteRoutes);
 
 app.use(v1, uvcGetRoutes);
 app.use(v1, uvcPostRoutes);

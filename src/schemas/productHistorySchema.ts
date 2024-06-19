@@ -9,45 +9,26 @@ Note:
 
 */
 
-interface ProductHistory extends Product {
-    GA_PARENT: ObjectId
+export interface ProductHistory extends Product {
+    parent_product_id: ObjectId
 }
 
 
 const productHistorySchema = new mongoose.Schema<ProductHistory>({
-    GA_CODEARTICLE: {
-        type: String,
-    },
-    GA_LIBCOMPL: {
-        type: String
-    },
-    GA_LIBELLE: {
-        type: String
-    },
-    GA_LIBREART1: { 
-        type: String,
-    },
-    GA_LIBREART2: {
-        type: String,
-    },
-    GA_LIBREART4: {
-        type: String,
-    },
-    GA_FOURNPRINC: {
-        type: String
-    },
-    GA_FERME: {
-        type: String
-    },
-    GA_VERSION: {
-        type: String
-    },
-    GA_HISTORIQUE: [{
-        type: Schema.Types.ObjectId
-    }],
-    GA_PARENT: {
-        type: Schema.Types.ObjectId
-    }
+    creator_id: {type: mongoose.Types.ObjectId},
+    supplier_id: {type: mongoose.Types.ObjectId, ref: "supplier"},
+    // family_ids: [{type: mongoose.Types.ObjectId}],
+    tag_ids: [{type: mongoose.Types.ObjectId, ref: "tag"}],
+    tag_grouping_ids: [{type: mongoose.Types.ObjectId, ref: "tag_grouping"}],
+    brand_id: {type: mongoose.Types.ObjectId, ref: "brand"},
+    collection_id: {type: mongoose.Types.ObjectId, ref: "collection"},
+    reference: {type: String},  
+    long_name: {type: String},
+    short_name: {type: String},
+    dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
+    dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}],
+    version: {type: Number},
+    parent_product_id: {type: mongoose.Types.ObjectId}
 },  { timestamps: true, collection: "product_history" })
 
 const ProductHistoryModel: Model<ProductHistory> = mongoose.model<ProductHistory>("product_history", productHistorySchema);
