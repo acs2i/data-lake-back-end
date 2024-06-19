@@ -16,7 +16,7 @@ const tagSchema = new mongoose.Schema<Tag>({
     code: { type: String },
     name: { type: String },
     status: { type: String },
-    parent_id: [{ type: mongoose.Types.ObjectId }],
+    parent_id: [{ type: mongoose.Types.ObjectId , ref: "tag"}],
     tag_grouping_id: { type: mongoose.Types.ObjectId, ref: "tag_grouping" },
     creator_id: { type: mongoose.Types.ObjectId },
 

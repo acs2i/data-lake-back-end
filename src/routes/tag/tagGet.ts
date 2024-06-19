@@ -11,7 +11,7 @@ router.get(TAG, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit).populate("tag_grouping_id");
+        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit).populate("tag_grouping_id").populate("tag");
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
