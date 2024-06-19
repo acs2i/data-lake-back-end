@@ -25,8 +25,6 @@ router.put(COLLECTION + "/:id", authorizationMiddlewear, async ( req: Request, r
 
         const response: UpdateWriteOpResult = await CollectionModel.updateOne({ _id}, {$set: collection})
 
-        console.log(response)
-
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json(collection)
         } else{

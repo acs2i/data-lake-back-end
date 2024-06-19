@@ -18,8 +18,6 @@ router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) 
             throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
         }
 
-        console.log(brand)
-
         const newBrand: Document | null | undefined = await new BrandModel({...brand});
 
         if(!newBrand) {

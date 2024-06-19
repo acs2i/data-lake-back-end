@@ -23,7 +23,6 @@ router.put(DIMENSION_TYPE + "/:id", authorizationMiddlewear, async ( req: Reques
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
         }
 
-        console.log("object: " , object)
         const response: UpdateWriteOpResult = await DimensionTypeModel.updateOne({ _id}, {$set: object})
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
