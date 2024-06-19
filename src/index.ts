@@ -57,7 +57,7 @@ import supplierDeleteRoutes from "./routes/supplier/supplierDelete"
 import tagGetRoutes from "./routes/tag/tagGet";
 import tagPostRoutes from "./routes/tag/tagPost";
 import tagPutRoutes from "./routes/tag/tagPut";
-import tagDeleteRoutes from "./routes/tag/tagPut";
+import tagDeleteRoutes from "./routes/tag/tagDelete";
 
 import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet"
 import tagGroupingPostRoutes from "./routes/tagGrouping/tagGroupingPost"

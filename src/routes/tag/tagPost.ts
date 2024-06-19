@@ -3,8 +3,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { TAG } from "./shared";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
-import { Document } from "mongoose";
-import TagModel from "../../schemas/tagSchema";
+import TagModel, { Tag } from "../../schemas/tagSchema";
 
 const router = express.Router();
 
@@ -16,13 +15,13 @@ router.post(TAG, authorizationMiddlewear, async (req: Request, res: Response) =>
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const newObject: Document | null | undefined = await new TagModel({...object});
+        const newObject: Tag | null | undefined = new TagModel({...object});
 
         if(!newObject) {
             throw new Error(req.originalUrl + " msg: newObject save did not work for some reason: " + newObject);
         }
 
-        const savedObject: Document | null | undefined = await newObject.save({timestamps: true});
+        const savedObject: Tag | null | undefined = await newObject.save({timestamps: true});
 
         res.status(OK).json(savedObject);
         

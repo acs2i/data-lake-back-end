@@ -2,8 +2,7 @@ import express, { Request, Response } from "express"
 import { TAG } from "./shared"
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
 import { generalLimits } from "../../services/generalServices"
-import TagModel from "../../schemas/tagSchema"
-import { Document } from "mongoose"
+import TagModel, { Tag } from "../../schemas/tagSchema"
 import { OK } from "../../codes/success"
 
 const router = express.Router()
@@ -12,15 +11,15 @@ router.get(TAG, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit);
+        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit).populate("tag_grouping_id");
 
-        if ( documents === null ||  documents === undefined) {
+        if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
         const total = await TagModel.countDocuments({});
 
-        res.status(OK).json({ data: [...documents], total})
+        res.status(OK).json({ data, total})
 
     } catch(err) {
         console.error(err)
