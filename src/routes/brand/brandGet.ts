@@ -14,7 +14,7 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
     try {
         
         const { intLimit , skip} = await generalLimits(req);
-
+        
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
         const code = req.query.code;
