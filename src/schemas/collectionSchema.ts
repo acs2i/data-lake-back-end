@@ -4,6 +4,7 @@ export interface Collection extends Document {
     code: string ,
     label: string,
     creator_id: ObjectId
+    additionalFields?: any
 
 }
 
@@ -17,6 +18,10 @@ const collectionSchema = new mongoose.Schema<Collection>({
     },
     creator_id: {
         type: mongoose.Types.ObjectId
+    },
+    additionalFields: {
+        type: Map,
+        of: mongoose.Schema.Types.Mixed
     }
 },   { timestamps: true, collection: "collection" })
 

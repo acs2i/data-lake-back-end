@@ -5,12 +5,18 @@ export interface TagGrouping extends Document {
     type?: string,
     level?: string[]
     creator_id?: ObjectId
+    additionalFields?: any
+
 }
 
 const tagGroupingSchema = new mongoose.Schema<TagGrouping>({
     type: { type: String },
     level: [{ type: String }],
     creator_id: { type: mongoose.Types.ObjectId },
+    additionalFields: {
+        type: Map,
+        of: mongoose.Schema.Types.Mixed
+    }
 
 }, { timestamps: true, collection: "tag_grouping"  })
 

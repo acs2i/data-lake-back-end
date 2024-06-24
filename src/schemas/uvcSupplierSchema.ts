@@ -6,6 +6,8 @@ interface UvcSupplier extends Document {
     supplier_id: ObjectId,
     color: string,
     size: string
+    additionalFields?: any
+
 }
 
 const uvcSupplierSchema = new mongoose.Schema<UvcSupplier>({
@@ -13,6 +15,10 @@ const uvcSupplierSchema = new mongoose.Schema<UvcSupplier>({
     supplier_id: { type: mongoose.Types.ObjectId },
     color: { type: String, },
     size: { type: String, },
+    additionalFields: {
+        type: Map,
+        of: mongoose.Schema.Types.Mixed
+    }
 }, { timestamps: true, collection: "uvc"} )
 
 

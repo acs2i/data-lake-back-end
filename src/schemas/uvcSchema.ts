@@ -6,6 +6,8 @@ export interface Uvc extends Document {
     size: string,
     item_ids: ObjectId[]
     status: string
+    additionalFields?: any
+
 }
 
 const uvcSchema = new mongoose.Schema<Uvc>({
@@ -13,7 +15,11 @@ const uvcSchema = new mongoose.Schema<Uvc>({
     color: {type: String},
     size: {type: String},
     item_ids: [{type: mongoose.Types.ObjectId}],
-    status: {type: String}
+    status: {type: String},
+    additionalFields: {
+        type: Map,
+        of: mongoose.Schema.Types.Mixed
+    }
 },  { timestamps: true, collection: "uvc" })
 
 
