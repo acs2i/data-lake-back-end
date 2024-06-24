@@ -13,7 +13,7 @@ const tagGroupingSchema = new mongoose.Schema<TagGrouping>({
     type: { type: String },
     level: [{ type: String }],
     creator_id: { type: mongoose.Types.ObjectId },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

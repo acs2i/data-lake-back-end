@@ -16,7 +16,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
     size: {type: String},
     item_ids: [{type: mongoose.Types.ObjectId}],
     status: {type: String},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

@@ -11,7 +11,7 @@ interface Grouping extends Document {
 const groupingSchema = new mongoose.Schema<Grouping>({
     label: { type: String},
     group_strings: [{type: mongoose.Types.ObjectId, ref: "dimension_grid"}],
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

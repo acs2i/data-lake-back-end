@@ -18,7 +18,7 @@ const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
     creator_id: {
         type: mongoose.Types.ObjectId
     },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

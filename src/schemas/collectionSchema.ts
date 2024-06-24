@@ -19,7 +19,7 @@ const collectionSchema = new mongoose.Schema<Collection>({
     creator_id: {
         type: mongoose.Types.ObjectId
     },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

@@ -18,7 +18,7 @@ const brandSchema = new mongoose.Schema<Brand>({
     creator_id: {
         type: mongoose.Types.ObjectId
     },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
       }

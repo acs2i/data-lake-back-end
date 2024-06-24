@@ -21,7 +21,7 @@ const tagSchema = new mongoose.Schema<Tag>({
     parent_id: [{ type: mongoose.Types.ObjectId }],
     tag_grouping_id: { type: mongoose.Types.ObjectId, ref: "tag_grouping" },
     creator_id: { type: mongoose.Types.ObjectId },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

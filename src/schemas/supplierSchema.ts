@@ -15,7 +15,7 @@ const supplierSchema = new mongoose.Schema<Supplier>({
     label: { type: String},
     juridique: { type: String},
     status: { type: String},           
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

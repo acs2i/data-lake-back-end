@@ -14,7 +14,7 @@ const groupSchema = new mongoose.Schema<Group>({
     code: {type: String},
     label: {type: String},
     type: {type: String},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema<Product>({
     dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
     dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}],
     version: {type: Number},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

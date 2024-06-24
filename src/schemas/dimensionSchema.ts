@@ -12,7 +12,7 @@ const dimensionSchema = new mongoose.Schema<Dimension>({
     dimension_type_id: { type: mongoose.Types.ObjectId, ref: "dimension_type" },
     label: { type: String },
     creator_id: { type: mongoose.Types.ObjectId},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

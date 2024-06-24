@@ -16,7 +16,7 @@ const item = new mongoose.Schema<Item>({
     ean: {type: String},
     currency: {type: String},
     price: {type: Number},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

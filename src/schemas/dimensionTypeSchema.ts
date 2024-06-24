@@ -8,7 +8,7 @@ interface DimensionType extends Document {
 
 const dimensionSchema = new mongoose.Schema<DimensionType>({
     type: { type: String},
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

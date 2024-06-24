@@ -15,7 +15,7 @@ const uvcSupplierSchema = new mongoose.Schema<UvcSupplier>({
     supplier_id: { type: mongoose.Types.ObjectId },
     color: { type: String, },
     size: { type: String, },
-    additionalFields: {
+    additional_fields {
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }
