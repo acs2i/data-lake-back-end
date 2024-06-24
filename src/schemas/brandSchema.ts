@@ -4,7 +4,7 @@ export interface Brand extends Document {
     code: string,
     label: string
     creator_id: ObjectId,
-    additionalFields?: any
+    additional_fields?: any
 }
 
 
@@ -18,7 +18,7 @@ const brandSchema = new mongoose.Schema<Brand>({
     creator_id: {
         type: mongoose.Types.ObjectId
     },
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
       }

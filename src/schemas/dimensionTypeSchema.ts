@@ -2,13 +2,13 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 interface DimensionType extends Document {
     type: string
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
 const dimensionSchema = new mongoose.Schema<DimensionType>({
     type: { type: String},
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

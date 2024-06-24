@@ -17,7 +17,7 @@ export interface Product extends Document {
     brand_id: ObjectId
     collection_id: ObjectId
     version: number
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -42,7 +42,7 @@ const productSchema = new mongoose.Schema<Product>({
     dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
     dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}],
     version: {type: Number},
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

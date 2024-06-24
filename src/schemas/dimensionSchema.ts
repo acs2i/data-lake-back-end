@@ -4,7 +4,7 @@ export interface Dimension extends Document {
     dimension_type_id: ObjectId,
     label: string,
     creator_id: ObjectId,
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -12,7 +12,7 @@ const dimensionSchema = new mongoose.Schema<Dimension>({
     dimension_type_id: { type: mongoose.Types.ObjectId, ref: "dimension_type" },
     label: { type: String },
     creator_id: { type: mongoose.Types.ObjectId},
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

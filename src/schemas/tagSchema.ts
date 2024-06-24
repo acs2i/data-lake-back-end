@@ -9,7 +9,7 @@ export interface Tag extends Document {
     parent_id?: ObjectId[]
     status: string
     creator_id: ObjectId,
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -21,7 +21,7 @@ const tagSchema = new mongoose.Schema<Tag>({
     parent_id: [{ type: mongoose.Types.ObjectId }],
     tag_grouping_id: { type: mongoose.Types.ObjectId, ref: "tag_grouping" },
     creator_id: { type: mongoose.Types.ObjectId },
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

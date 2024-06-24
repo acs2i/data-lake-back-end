@@ -5,7 +5,7 @@ interface Group extends Document {
     code: string,
     label: string,
     type: string
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -14,7 +14,7 @@ const groupSchema = new mongoose.Schema<Group>({
     code: {type: String},
     label: {type: String},
     type: {type: String},
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

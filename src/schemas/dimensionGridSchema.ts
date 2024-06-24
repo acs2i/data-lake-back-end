@@ -4,7 +4,7 @@ interface DimensionGrid {
     label: string, 
     type_id: ObjectId,
     creator_id: ObjectId
-    additionalFields?: any
+    additional_fields?: any
 }
 
 const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
@@ -18,7 +18,7 @@ const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
     creator_id: {
         type: mongoose.Types.ObjectId
     },
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

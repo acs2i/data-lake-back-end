@@ -6,7 +6,7 @@ export interface Item extends Document {
  currency: string   // c'est la devise, // ajoute les tarifs, 
  ean: string        // c'est la code barre
  creator_id: ObjectId
- additionalFields?: any
+ additional_fields?: any
 
 }
 
@@ -16,7 +16,7 @@ const item = new mongoose.Schema<Item>({
     ean: {type: String},
     currency: {type: String},
     price: {type: Number},
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

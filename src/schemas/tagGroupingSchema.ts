@@ -5,7 +5,7 @@ export interface TagGrouping extends Document {
     type?: string,
     level?: string[]
     creator_id?: ObjectId
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -13,7 +13,7 @@ const tagGroupingSchema = new mongoose.Schema<TagGrouping>({
     type: { type: String },
     level: [{ type: String }],
     creator_id: { type: mongoose.Types.ObjectId },
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }

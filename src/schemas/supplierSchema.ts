@@ -6,7 +6,7 @@ export interface Supplier extends Document {
     juridique: string,
     status: string,            // just a boolean that determines if true or false, possible values are: "+" , "-"
                                 // created a variable field to store addresses
-    additionalFields?: any
+    additional_fields?: any
 
 }
 
@@ -15,7 +15,7 @@ const supplierSchema = new mongoose.Schema<Supplier>({
     label: { type: String},
     juridique: { type: String},
     status: { type: String},           
-    additional_fields {
+    additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }
