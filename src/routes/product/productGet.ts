@@ -10,8 +10,9 @@ import CollectionModel, { Collection } from "../../schemas/collectionSchema";
 import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import DimensionTypeModel from "../../schemas/dimensionTypeSchema";
 import TagModel, { Tag } from "../../schemas/tagSchema";
-import { TagGrouping } from "../../schemas/tagGroupingSchema";
-import { Supplier } from "../../schemas/supplierSchema";
+import TagGroupingModel, { TagGrouping } from "../../schemas/tagGroupingSchema";
+import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
   
@@ -28,7 +29,7 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     let dimensionIds: Dimension[] | null | undefined
     let dimensionTypeIds: Dimension[] | null | undefined
     let tagIds: Tag[] | null | undefined
-    let tagGroupingIds: TagGrouping[] | null | undefined
+    let tagGroupingIds: any[] | null | undefined
     let supplierIds: Supplier[] | null | undefined
 
     let filter: any = {  }; 
@@ -37,47 +38,57 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     if (brand) {
       const brandRegex = new RegExp(brand as string, "i");
       brandIds = await BrandModel.find({ label: {$regex: brandRegex}}).select("_id")
-      filter = {...filter, brand_id: {$in: brandIds}}
+      const $in = brandIds.map(doc => doc._id)
+      filter = {...filter, brand_id: {$in}}
     }
 
     if (collection) {
       const collectionRegex = new RegExp(collection as string, "i");
       collectionIds = await CollectionModel.find({ label: {$regex: collectionRegex}}).select("_id")
-      filter = {...filter, collection_id: {$in: collectionIds}}
+      const $in = collectionIds.map(doc => doc._id)
+      filter = {...filter, collection_id: {$in}}
     }
 
-    if (dimension) {
-      const dimensionRegex = new RegExp(dimension as string, "i");
-      dimensionIds = await DimensionModel.find({ label: {$regex: dimensionRegex}}).select("_id")
-      filter = {...filter, dimension_ids: {$in: dimensionIds}}
-    }
+    // NOT WOKRING
+    // if (dimension) {
+    //   const dimensionRegex = new RegExp(dimension as string, "i");
+    //   dimensionIds = await DimensionModel.find({ label: {$regex: dimensionRegex}}).select("_id")
+    //   const $in = dimensionIds.map(doc => doc._id)
+    //   filter = {...filter, dimension_ids: {$in}}
+    // }
 
     if (dimension_type) {
       const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
       dimensionTypeIds = await DimensionTypeModel.find({ type: {$regex: dimensionTypeRegex}}).select("_id")
-      filter = {...filter, dimension_type_id: {$in: dimensionTypeIds}}
+      const $in = dimensionTypeIds.map(doc => doc._id)
+      filter = {...filter, dimension_type_id: {$in}}
     }
 
     if (tag) {
       const tagIdRegex = new RegExp(tag as string, "i");
       tagIds = await TagModel.find({ name: {$regex: tagIdRegex}}).select("_id")
-      filter = {...filter, tag_ids: {$in: tagIds}}
+      const $in = tagIds.map(doc => doc._id)
+      filter = {...filter, tag_ids: {$in}}
     }
 
     if (tag_grouping) {
       const tagGroupingIdRegex = new RegExp(tag_grouping as string, "i");
-      tagGroupingIds = await TagModel.find({ type: {$regex: tagGroupingIdRegex}}).select("_id")
-      filter = {...filter, tag_grouping_ids: {$in: tagGroupingIds}}
+      tagGroupingIds = await TagGroupingModel.find({ type: {$regex: tagGroupingIdRegex}}).select("_id")
+      const $in = tagGroupingIds.map(doc => doc._id)
+      filter = {...filter, tag_grouping_ids: {$in}}
     }
 
     if (supplier) {
       const supplierIdRegex = new RegExp(supplier as string, "i");
-      supplierIds = await TagModel.find({ label: {$regex: supplierIdRegex}}).select("_id")
-      filter = {...filter, tag_grouping_ids: {$in: supplierIds}}
+      supplierIds = await SupplierModel.find({ label: {$regex: supplierIdRegex}}).select("_id")
+      const $in = supplierIds.map(doc => doc._id)
+      filter = {...filter, supplier_id: {$in}}
     }
 
     
-    const data: Product[] | null | undefined = await ProductModel.find(filter).skip(skip).limit(intLimit)
+    console.log("Filter: " , filter ) 
+    const data: Product[] | null | undefined = await ProductModel.find(filter
+    ).skip(skip).limit(intLimit)
   
 
     if (data === null || data === undefined) {
@@ -94,7 +105,6 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
   }
 });
   
-
 router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
 
