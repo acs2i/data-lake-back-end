@@ -11,10 +11,10 @@ export interface Uvc extends Document {
 }
 
 const uvcSchema = new mongoose.Schema<Uvc>({
-    product_id: { type: mongoose.Types.ObjectId},
+    product_id: { type: mongoose.Types.ObjectId, ref: "product"},
     color: {type: String},
     size: {type: String},
-    item_ids: [{type: mongoose.Types.ObjectId}],
+    item_ids: [{type: mongoose.Types.ObjectId, ref: "item"}],
     status: {type: String},
     additional_fields:{
         type: Map,
