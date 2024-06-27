@@ -1,6 +1,6 @@
 import mongoose ,{ Document, Model, Schema,ObjectId} from "mongoose"
 import { Uvc } from "./uvcSchema";
-import { Family } from "./familySchema";
+// import { Family } from "./familySchema";
 import { Brand } from "./brandSchema";
 
 export interface Product extends Document {
@@ -21,12 +21,12 @@ export interface Product extends Document {
 
 }
 
-export interface PopulatedProduct extends Product {
-    uvcs?: Uvc[] | Uvc,
-    family?: Family[] | Family,
-    subFamily?: Family[] | Family,
-    brand?: Brand[] | Brand
-}
+// export interface PopulatedProduct extends Product {
+//     uvcs?: Uvc[] | Uvc,
+//     family?: Family[] | Family,
+//     subFamily?: Family[] | Family,
+//     brand?: Brand[] | Brand
+// }
 
 const productSchema = new mongoose.Schema<Product>({
     creator_id: {type: mongoose.Types.ObjectId},

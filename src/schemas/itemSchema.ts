@@ -7,11 +7,13 @@ export interface Item extends Document {
  ean: string        // c'est la code barre
  creator_id: ObjectId
  additional_fields?: any
+ uvc_id: ObjectId // links to uvc, this is the rang 
 
 }
 
 const item = new mongoose.Schema<Item>({
     supplier_id: {type: mongoose.Types.ObjectId, ref: "supplier"},
+    uvc_id: {type: mongoose.Types.ObjectId, ref: "uvc"},
     creator_id: {type: mongoose.Types.ObjectId},
     ean: {type: String},
     currency: {type: String},
