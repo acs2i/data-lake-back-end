@@ -18,7 +18,7 @@ export interface Product extends Document {
     collection_id: ObjectId
     version: number
     additional_fields?: any
-
+    uvc_ids: ObjectId[]
 }
 
 // export interface PopulatedProduct extends Product {
@@ -42,6 +42,7 @@ const productSchema = new mongoose.Schema<Product>({
     dimension_type_id: {type: mongoose.Types.ObjectId, ref: "dimension_type"},
     dimension_ids: [{type: mongoose.Types.ObjectId, ref: "dimension"}],
     version: {type: Number},
+    uvc_ids: [{type: mongoose.Types.ObjectId, ref: "uvc"}],
     additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed

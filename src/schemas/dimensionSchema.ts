@@ -2,7 +2,7 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 export interface Dimension extends Document {
     type: string,
-    dimension_type_id: ObjectId,
+    dimension_grid_id: ObjectId,
     label: string,
     creator_id: ObjectId,
     additional_fields?: any
@@ -10,7 +10,7 @@ export interface Dimension extends Document {
 }
 
 const dimensionSchema = new mongoose.Schema<Dimension>({
-    dimension_type_id: { type: mongoose.Types.ObjectId, ref: "dimension_type" },
+    dimension_grid_id: { type: mongoose.Types.ObjectId, ref: "dimension_grid" },
     label: { type: String },
     creator_id: { type: mongoose.Types.ObjectId},
     additional_fields:{

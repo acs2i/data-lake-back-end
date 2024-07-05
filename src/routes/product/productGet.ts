@@ -8,7 +8,7 @@ import { generalLimits } from "../../services/generalServices";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
 import CollectionModel, { Collection } from "../../schemas/collectionSchema";
 import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
-import DimensionTypeModel from "../../schemas/dimensionTypeSchema";
+// import DimensionTypeModel from "../../schemas/dimensionTypeSchema";
 import TagModel, { Tag } from "../../schemas/tagSchema";
 import TagGroupingModel, { TagGrouping } from "../../schemas/tagGroupingSchema";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
@@ -57,12 +57,12 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     //   filter = {...filter, dimension_ids: {$in}}
     // }
 
-    if (dimension_type) {
-      const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
-      dimensionTypeIds = await DimensionTypeModel.find({ type: {$regex: dimensionTypeRegex}}).select("_id")
-      const $in = dimensionTypeIds.map(doc => doc._id)
-      filter = {...filter, dimension_type_id: {$in}}
-    }
+    // if (dimension_type) {
+    //   const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
+    //   dimensionTypeIds = await DimensionTypeModel.find({ type: {$regex: dimensionTypeRegex}}).select("_id")
+    //   const $in = dimensionTypeIds.map(doc => doc._id)
+    //   filter = {...filter, dimension_type_id: {$in}}
+    // }
 
     if (tag) {
       const tagIdRegex = new RegExp(tag as string, "i");

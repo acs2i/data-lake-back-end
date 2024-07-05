@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { UVC } from './shared';
 import { INTERNAL_SERVER_ERROR } from '../../codes/errors';
-import FamilyModel from '../../schemas/familySchema';
+// import FamilyModel from '../../schemas/familySchema';
 import { Document } from 'mongoose';
 import { OK } from '../../codes/success';
 import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
