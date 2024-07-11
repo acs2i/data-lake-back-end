@@ -4,8 +4,6 @@ import ProductModel, { Product } from "../../schemas/productSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import ProductHistoryModel, { ProductHistory } from "../../schemas/productHistorySchema";
-import { UpdateWriteOpResult } from "mongoose";
 
 const router = express.Router();
 
@@ -28,23 +26,23 @@ router.delete(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, re
         } else {
 
             // Create the version
-            const newProductHistoryVersion: ProductHistory = new ProductHistoryModel({...oldProduct, parent_product_id: null } )
+            // const newProductHistoryVersion: ProductHistory = new ProductHistoryModel({...oldProduct, parent_product_id: null } )
 
-            const savedNewProductHistory: ProductHistory | null | undefined = await newProductHistoryVersion.save({timestamps: true})
+            // const savedNewProductHistory: ProductHistory | null | undefined = await newProductHistoryVersion.save({timestamps: true})
 
-            if(!savedNewProductHistory) {
+            // if(!savedNewProductHistory) {
                 
-                const recreatedProduct: Product = new ProductModel({...oldProduct});
+            //     const recreatedProduct: Product = new ProductModel({...oldProduct});
 
-                const savedRecreatedProduct: Product | null | undefined = await recreatedProduct.save({timestamps: true})
+            //     const savedRecreatedProduct: Product | null | undefined = await recreatedProduct.save({timestamps: true})
 
-                if(!savedRecreatedProduct) {
-                    throw new Error(req.originalUrl + " , msg: Product history was not able to be updated, and the product WAS NOT able to be recreated")
-                } else {
-                    throw new Error(req.originalUrl + " , msg: Product history was not able to be updated, the product was recreated")
-                }
+            //     if(!savedRecreatedProduct) {
+            //         throw new Error(req.originalUrl + " , msg: Product history was not able to be updated, and the product WAS NOT able to be recreated")
+            //     } else {
+            //         throw new Error(req.originalUrl + " , msg: Product history was not able to be updated, the product was recreated")
+            //     }
 
-            }
+            // }
 
             res.status(OK).json(response);
         }

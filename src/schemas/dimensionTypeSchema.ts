@@ -1,19 +1,13 @@
-// deprecated - foldd into dimension
-// import mongoose, { Document, Model, ObjectId } from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose"
 
-// interface DimensionType extends Document {
-//     type: string
-//     additional_fields?: any
+export interface DimensionType extends Document {
+    dimension: string
+}
 
-// }
+const dimensionTypeSchema: Schema<DimensionType> = new mongoose.Schema<DimensionType>({
+    dimension: { type: String }
+}, { timestamps: true, collection: "dimension_type"})
 
-// const dimensionSchema = new mongoose.Schema<DimensionType>({
-//     type: { type: String},
-//     additional_fields:{
-//         type: Map,
-//         of: mongoose.Schema.Types.Mixed
-//     }
-// },  { timestamps: true, collection: "dimension_type" })
+const DimensionTypeModel : Model<DimensionType> = mongoose.model<DimensionType>("dimension_type", dimensionTypeSchema)
 
-// const DimensionTypeModel: Model<DimensionType> = mongoose.model<DimensionType>("dimension_type", dimensionSchema);
-// export default DimensionTypeModel
+export default DimensionTypeModel

@@ -7,12 +7,9 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
 import CollectionModel, { Collection } from "../../schemas/collectionSchema";
-import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
-// import DimensionTypeModel from "../../schemas/dimensionTypeSchema";
+import { Dimension } from "../../schemas/dimensionSchema";
 import TagModel, { Tag } from "../../schemas/tagSchema";
-import TagGroupingModel, { TagGrouping } from "../../schemas/tagGroupingSchema";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
-import { ObjectId } from "mongodb";
 
 const router = express.Router();
   
@@ -20,7 +17,7 @@ const router = express.Router();
 router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
   try {
 
-    const { supplier, tag, tag_grouping, brand, collection, dimension, dimension_type } = req.query;
+    const { supplier, tag, brand, collection, dimension, dimension_type } = req.query;
 
     const { skip, intLimit } = await generalLimits(req);
 
@@ -29,7 +26,6 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     let dimensionIds: Dimension[] | null | undefined
     let dimensionTypeIds: Dimension[] | null | undefined
     let tagIds: Tag[] | null | undefined
-    let tagGroupingIds: any[] | null | undefined
     let supplierIds: Supplier[] | null | undefined
 
     let filter: any = {  }; 
@@ -71,12 +67,6 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
       filter = {...filter, tag_ids: {$in}}
     }
 
-    if (tag_grouping) {
-      const tagGroupingIdRegex = new RegExp(tag_grouping as string, "i");
-      tagGroupingIds = await TagGroupingModel.find({ type: {$regex: tagGroupingIdRegex}}).select("_id")
-      const $in = tagGroupingIds.map(doc => doc._id)
-      filter = {...filter, tag_grouping_ids: {$in}}
-    }
 
     if (supplier) {
       const supplierIdRegex = new RegExp(supplier as string, "i");

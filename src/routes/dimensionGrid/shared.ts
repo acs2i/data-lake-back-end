@@ -1,1 +1,0 @@
-export const DIMENSION_GRID = '/dimension-grid'

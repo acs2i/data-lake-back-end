@@ -5,7 +5,6 @@ import { OK } from "../../codes/success";
 import ProductModel, { Product } from "../../schemas/productSchema";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import ProductHistoryModel, { ProductHistory } from "../../schemas/productHistorySchema";
 
 const router = express.Router();
 
@@ -37,21 +36,21 @@ router.put(PRODUCT + "/:id", authorizationMiddlewear, async ( req: Request, res:
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
 
             // If the product was updated, then add it to the version
-            const newProductHistory: ProductHistory | null | undefined = new ProductHistoryModel({...product, parent_product_id: _id})
+            // const newProductHistory: ProductHistory | null | undefined = new ProductHistoryModel({...product, parent_product_id: _id})
 
-            const savedNewProductHistory: ProductHistory | null | undefined = await newProductHistory.save({timestamps: true})
+            // const savedNewProductHistory: ProductHistory | null | undefined = await newProductHistory.save({timestamps: true})
 
-            if(!savedNewProductHistory) {
-                // Attempt to roll back save
-                const responseToRollback: UpdateWriteOpResult = await ProductModel.updateOne({_id}, {$set: oldProduct})
+            // if(!savedNewProductHistory) {
+            //     // Attempt to roll back save
+            //     const responseToRollback: UpdateWriteOpResult = await ProductModel.updateOne({_id}, {$set: oldProduct})
 
-                if(responseToRollback.acknowledged === true && responseToRollback.matchedCount === 1 && responseToRollback.modifiedCount === 1) {
-                    throw new Error(req.originalUrl + ", msg: Product History was not able to be saved. Change were rolled back")
-                } else {
-                    throw new Error(req.originalUrl + ", msg: Product History was not able to be saved. Changes WERE NOT able to to be rolled back")
-                }
+            //     if(responseToRollback.acknowledged === true && responseToRollback.matchedCount === 1 && responseToRollback.modifiedCount === 1) {
+            //         throw new Error(req.originalUrl + ", msg: Product History was not able to be saved. Change were rolled back")
+            //     } else {
+            //         throw new Error(req.originalUrl + ", msg: Product History was not able to be saved. Changes WERE NOT able to to be rolled back")
+            //     }
 
-            }
+            // }
 
             res.status(OK).json(product)
         } else{

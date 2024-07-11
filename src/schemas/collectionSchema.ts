@@ -2,7 +2,9 @@ import mongoose ,{ Document, Model, ObjectId, Schema} from "mongoose"
 
 export interface Collection extends Document {
     code: string ,
-    label: string,
+    label: string[],
+    type: string,
+    status: number
     creator_id: ObjectId
     additional_fields?: any
 
@@ -11,10 +13,16 @@ export interface Collection extends Document {
 
 const collectionSchema = new mongoose.Schema<Collection>({
     code: {
-        type: Schema.Types.Mixed
+        type: String
     },
-    label: {
-        type: Schema.Types.Mixed
+    label: [{
+        type: String
+    }],
+    type: {
+        type: String
+    },
+    status: {
+        type: Number
     },
     creator_id: {
         type: mongoose.Types.ObjectId

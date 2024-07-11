@@ -3,9 +3,11 @@ import mongoose, { Document, Model } from "mongoose";
 export interface Supplier extends Document {
     code: string
     label: string,
-    juridique: string,
-    status: string,            // just a boolean that determines if true or false, possible values are: "+" , "-"
-                                // created a variable field to store addresses
+    address: string[],
+    country: string,
+    user_field: string[],
+    status: string,
+    creator: any,       // its an object
     additional_fields?: any
 
 }
@@ -13,8 +15,14 @@ export interface Supplier extends Document {
 const supplierSchema = new mongoose.Schema<Supplier>({
     code: {type: String },
     label: { type: String},
-    juridique: { type: String},
-    status: { type: String},           
+    address: [{ type: String}],
+    country: { type: String},
+    user_field: [{ type: String}],
+    status: { type: String},
+    creator: {
+        type: Map,
+        of: String
+    },
     additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed

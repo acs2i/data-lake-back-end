@@ -1,17 +1,20 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 export interface Dimension extends Document {
-    type: string,
-    dimension_grid_id: ObjectId,
+    code: string,
     label: string,
-    creator_id: ObjectId,
+    type: string,
+    status: number,
+    creator_id: ObjectId
     additional_fields?: any
 
 }
 
 const dimensionSchema = new mongoose.Schema<Dimension>({
-    dimension_grid_id: { type: mongoose.Types.ObjectId, ref: "dimension_grid" },
+    code: {type: String},
     label: { type: String },
+    type: { type: String },
+    status: { type: Number },
     creator_id: { type: mongoose.Types.ObjectId},
     additional_fields:{
         type: Map,

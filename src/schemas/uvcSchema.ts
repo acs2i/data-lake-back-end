@@ -1,25 +1,33 @@
-import mongoose, { Document, Model, ObjectId, Schema } from "mongoose";
+import mongoose, { Date, Document, Model, ObjectId, Schema } from "mongoose";
+
+
+
+interface Price {
+    tarif_id: ObjectId,
+    currency: string,
+    supplier_id: ObjectId,
+    price: number,
+    store: string,
+    timestampe: Date
+}
 
 export interface Uvc extends Document {
-    product_id: ObjectId,
-    color: string,
-    size: string,
-    item_ids: ObjectId[]
-    status: string
-    additional_fields?: any
-
+    dimensions: string[],
+    prices: Price[]
+    eans: string[],
+    user_field: string[],
+    status: number
+    creator_id: ObjectId
 }
 
 const uvcSchema = new mongoose.Schema<Uvc>({
-    product_id: { type: mongoose.Types.ObjectId, ref: "product"},
-    color: {type: String},
-    size: {type: String},
-    item_ids: [{type: mongoose.Types.ObjectId, ref: "item"}],
-    status: {type: String},
-    additional_fields:{
-        type: Map,
-        of: mongoose.Schema.Types.Mixed
-    }
+    dimensions: [{type: String}],
+    prices: [{ type: Schema.Types.Mixed } ],
+    eans: [{type: String}],
+    user_field: [{type: String}],
+    status: {type: Number},
+    creator_id: { type: mongoose.Types.ObjectId},
+
 },  { timestamps: true, collection: "uvc" })
 
 
