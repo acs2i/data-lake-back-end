@@ -9,10 +9,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 const router = express.Router();
 
 router.put(SUPPLIER + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
-    console.log("IN SPUPLIER ")
     try {
-
-        console.log("HERERER ")
         const object = req.body;
 
         if(!object) {

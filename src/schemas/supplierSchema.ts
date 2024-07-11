@@ -5,7 +5,6 @@ export interface Supplier extends Document {
     label: string,
     address: string[],
     country: string,
-    user_field: string[],
     status: string,
     creator: any,       // its an object
     additional_fields?: any
@@ -17,7 +16,6 @@ const supplierSchema = new mongoose.Schema<Supplier>({
     label: { type: String},
     address: [{ type: String}],
     country: { type: String},
-    user_field: [{ type: String}],
     status: { type: String},
     creator: {
         type: Map,
