@@ -2,7 +2,6 @@ import express, { Request, Response } from "express"
 import { DIMENSION } from "./shared";
 import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
-import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
@@ -19,15 +18,34 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
         
         const label = req.query.label;
 
-        if(!label) {
-            throw new Error(req.originalUrl + ", msg: Label was falsy. Probably means label was undefined")
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+
+            filter.$and.push({ label: regEx })
         }
 
-        const regEx = new RegExp(label as string, "i");
+        const code = req.query.code;
 
-        filter.$and.push({ label: regEx })
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
 
-        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit).populate("dimension_type_id");;
+            filter.$and.push({ code: regEx })
+        }
+
+        const type = req.query.type;
+
+        if(type) {
+            const regEx = new RegExp(type as string, "i");
+
+            filter.$and.push({ type: regEx })
+        }
+
+
+        if(!label && !code && !type) {
+            throw new Error(req.originalUrl + ", msg: code, label and type were falsy. Probably means code, label and type were undefined")
+        }
+
+        const data  = await DimensionModel.find(filter).skip(skip).limit(intLimit)
         
         const total = await DimensionModel.countDocuments(filter);
 
@@ -46,7 +64,7 @@ router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respons
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const data: Dimension[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit).populate("dimension_type_id");
+        const data: Dimension[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit)
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
@@ -73,7 +91,7 @@ router.get(DIMENSION + "/:id", authorizationMiddlewear, async (req: Request, res
             throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        const data: Dimension | null | undefined = await DimensionModel.findById(id).populate("dimension_type_id");
+        const data: Dimension | null | undefined = await DimensionModel.findById(id)
 
 
         if ( data === null ||  data === undefined) {

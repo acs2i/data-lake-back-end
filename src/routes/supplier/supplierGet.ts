@@ -15,7 +15,7 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const {code, label, juridique, status} = req.query
+        const {code, label, address, status, country} = req.query
     
     
         if(code) {
@@ -28,9 +28,9 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res
             filter.$and.push({ label: regEx })
         }
 
-        if(juridique) {
-            const regEx = new RegExp(juridique as string, "i");
-            filter.$and.push({ juridique: regEx })
+        if(address) {
+            const regEx = new RegExp(address as string, "i");
+            filter.$and.push({ address: regEx })
         }
         
         if(status) {
@@ -38,6 +38,15 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res
             filter.$and.push({ status: regEx })
         }
 
+        if(country) {
+            const regEx = new RegExp(country as string, "i");
+            filter.$and.push({ country: regEx })
+        }
+
+
+        if(!code && !label && !address && !status && !country) {
+            throw new Error("Code, label adddress country were all falsy for some reason")
+        }
 
         const data: Supplier[] | null | undefined = await SupplierModel.find(filter).skip(skip).limit(intLimit);
         

@@ -31,8 +31,14 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
             filter.$and.push({ label: regEx })
         }
 
+        const type = req.query.type;
+
+        if(type) {
+            const regEx = new RegExp(type as string, "i");
+            filter.$and.push({ type: regEx })
+        }
         
-        if(!code && !label) {
+        if(!code && !label && !type) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
@@ -41,7 +47,7 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
         const data: Document[] | null | undefined = await CollectionModel.find(filter).skip(skip).limit(intLimit);
 
 
-        if ( !data) {
+        if (!data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 

@@ -2,7 +2,6 @@ import express, { Request, Response } from "express"
 import { DIMENSION } from "./shared";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
-import { Document } from "mongoose";
 import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 

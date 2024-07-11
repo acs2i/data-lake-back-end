@@ -75,9 +75,7 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
       filter = {...filter, supplier_id: {$in}}
     }
 
-    
-    console.log("Filter: " , filter ) 
-    const data: Product[] | null | undefined = await ProductModel.find(filter
+        const data: Product[] | null | undefined = await ProductModel.find(filter
     ).skip(skip).limit(intLimit)
   
 
@@ -102,23 +100,20 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
 
         const data: Product[] | null | undefined = await ProductModel
           .find().skip(skip).limit(intLimit)
-          .populate("brand_id")
-          .populate("collection_id")
-          .populate({
-            path: "dimension_ids",
-            populate: {
-              path: "dimension_type_id"
-            }
-          })
-          .populate("dimension_type_id")
-          .populate({ 
-            path: "tag_ids",
-            populate: { 
-              path: "tag_grouping_id" 
-            }
-          })
-          .populate("tag_grouping_ids")
+          .populate("brand_ids")
+          .populate("collection_ids")
+          // .populate({
+          //   path: "dimension_ids",
+          //   populate: {
+          //     path: "dimension_type_id"
+          //   }
+          // })
+          // .populate("dimension_type_id")
+          .populate("tag_ids")
+          // .populate("tag_grouping_ids")
           .populate("supplier_id")
+          .populate("supplier_ids")
+
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
@@ -148,23 +143,19 @@ router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
 
       const data: Product[] | null | undefined = await ProductModel
         .find()
-        .populate("brand_id")
-        .populate("collection_id")
-        .populate({
-          path: "dimension_ids",
-          populate: {
-            path: "dimension_type_id"
-          }
-        })
-        .populate("dimension_type_id")
-        .populate({ 
-          path: "tag_ids",
-          populate: { 
-            path: "tag_grouping_id" 
-          }
-        })
-        .populate("tag_grouping_ids")
+        .populate("brand_ids")
+        .populate("collection_ids")
+        // .populate({
+        //   path: "dimension_ids",
+        //   populate: {
+        //     path: "dimension_type_id"
+        //   }
+        // })
+        // .populate("dimension_type_id")
+        .populate("tag_ids")
+        // .populate("tag_grouping_ids")
         .populate("supplier_id")
+        .populate("supplier_ids")
 
       if ( data === null ||  data === undefined) {
           throw new Error(req.originalUrl + ", msg: find error")
