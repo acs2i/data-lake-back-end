@@ -8,7 +8,7 @@ interface Price {
     supplier_id: ObjectId,
     price: number,
     store: string,
-    timestampe: Date
+    timestamp: Date
 }
 
 export interface Uvc extends Document {
