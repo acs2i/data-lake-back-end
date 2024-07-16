@@ -7,10 +7,12 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
 import CollectionModel, { Collection } from "../../schemas/collectionSchema";
-import { Dimension } from "../../schemas/dimensionSchema";
+import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import TagModel, { Tag } from "../../schemas/tagSchema";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
+import { ObjectId, Types } from 'mongoose';
 
+const { ObjectId } = Types;
 const router = express.Router();
   
 
@@ -24,7 +26,6 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     let brandIds: Brand[] | null | undefined
     let collectionIds: Collection[] | null | undefined
     let dimensionIds: Dimension[] | null | undefined
-    let dimensionTypeIds: Dimension[] | null | undefined
     let tagIds: Tag[] | null | undefined
     let supplierIds: Supplier[] | null | undefined
 
@@ -34,24 +35,30 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     if (brand) {
       const brandRegex = new RegExp(brand as string, "i");
       brandIds = await BrandModel.find({ label: {$regex: brandRegex}}).select("_id")
-      const $in = brandIds.map(doc => doc._id)
-      filter = {...filter, brand_id: {$in}}
+      const $in : ObjectId[]= []
+      brandIds.forEach(doc => $in.push(doc._id as ObjectId)) 
+      filter = {...filter, brand_id: {$in }}
     }
 
     if (collection) {
       const collectionRegex = new RegExp(collection as string, "i");
       collectionIds = await CollectionModel.find({ label: {$regex: collectionRegex}}).select("_id")
-      const $in = collectionIds.map(doc => doc._id)
+      const $in : ObjectId[]= []
+      collectionIds.forEach(doc => $in.push( doc._id as ObjectId)) 
       filter = {...filter, collection_id: {$in}}
     }
 
     // NOT WOKRING
-    // if (dimension) {
-    //   const dimensionRegex = new RegExp(dimension as string, "i");
-    //   dimensionIds = await DimensionModel.find({ label: {$regex: dimensionRegex}}).select("_id")
-    //   const $in = dimensionIds.map(doc => doc._id)
-    //   filter = {...filter, dimension_ids: {$in}}
-    // }
+    if (dimension) {
+      const dimensionRegex = new RegExp(dimension as string, "i");
+      dimensionIds = await DimensionModel.find({ label: {$regex: dimensionRegex}}).select("_id")
+      const $in : any[]= []
+      dimensionIds.forEach(doc => $in.push( doc._id as any)) 
+      filter = {...filter, dimension_ids: {$in }}
+
+    }
+
+    // if the latest dump file does not work
 
     // if (dimension_type) {
     //   const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
@@ -63,7 +70,8 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     if (tag) {
       const tagIdRegex = new RegExp(tag as string, "i");
       tagIds = await TagModel.find({ name: {$regex: tagIdRegex}}).select("_id")
-      const $in = tagIds.map(doc => doc._id)
+      const $in : ObjectId[]= []
+      tagIds.forEach(doc => $in.push( doc._id as ObjectId)) 
       filter = {...filter, tag_ids: {$in}}
     }
 
@@ -71,12 +79,13 @@ router.get(PRODUCT + "/search", authorizationMiddlewear, async (req: Request, re
     if (supplier) {
       const supplierIdRegex = new RegExp(supplier as string, "i");
       supplierIds = await SupplierModel.find({ label: {$regex: supplierIdRegex}}).select("_id")
-      const $in = supplierIds.map(doc => doc._id)
-      filter = {...filter, supplier_id: {$in}}
+      const $in : ObjectId[]= []
+      supplierIds.forEach(doc => $in.push( doc._id as ObjectId)) 
+      filter = {...filter, supplier_id: {$in }}
     }
 
-        const data: Product[] | null | undefined = await ProductModel.find(filter
-    ).skip(skip).limit(intLimit)
+
+    const data: Product[] | null | undefined = await ProductModel.find(filter).skip(skip).limit(intLimit)
   
 
     if (data === null || data === undefined) {
