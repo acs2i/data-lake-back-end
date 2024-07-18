@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema<Product>({
     uvc_ids: [{type: mongoose.Types.ObjectId, ref: "uvc"}],
     brand_ids: [{type: mongoose.Types.ObjectId, ref: "brand"}],
     collection_ids: [{type: mongoose.Types.ObjectId, ref: "collection"}],
-    status: {type: String},
+    status: {type: String, default: "A"},
     additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
