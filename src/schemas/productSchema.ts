@@ -14,6 +14,7 @@ export interface Product extends Document {
     uvc_ids: ObjectId[],
     brand_ids: ObjectId[],
     collection_ids: ObjectId[], // collection is product collection
+    imgPath: string, // collection is product collection
     status: string
     additional_fields: any
 }
@@ -33,6 +34,7 @@ const productSchema = new mongoose.Schema<Product>({
     uvc_ids: [{type: mongoose.Types.ObjectId, ref: "uvc"}],
     brand_ids: [{type: mongoose.Types.ObjectId, ref: "brand"}],
     collection_ids: [{type: mongoose.Types.ObjectId, ref: "collection"}],
+    imgPath: {type: String},
     status: {type: String, default: "A"},
     additional_fields:{
         type: Map,
