@@ -1,10 +1,10 @@
-import mongoose, { Document, ObjectId } from "mongoose";
+import mongoose, { Document,Model, ObjectId } from "mongoose";
 
 export interface Tag extends Document {
   code: string;
   name: string;
   level: string;
-  tagGrouping_id: ObjectId;
+  tag_grouping_id: ObjectId;
   status: string;
   additional_fields?: any;
   creator_id: ObjectId;
@@ -16,10 +16,9 @@ const tagSchema = new mongoose.Schema<Tag>(
     name: { type: String },
     status: { type: String },
     level: { type: String },
-    tagGrouping_id: {
+    tag_grouping_id: {
       type: mongoose.Types.ObjectId,
       ref: "tag_grouping",
-      default: "",
     },
     additional_fields: {
       type: Map,

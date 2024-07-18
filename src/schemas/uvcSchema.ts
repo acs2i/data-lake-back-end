@@ -19,13 +19,20 @@ export interface Uvc extends Document {
   additional_fields: any;
 }
 
-const priceSchema = new mongoose.Schema({
-  tarif_id: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
-  currency: { type: String },
-  supplier_id: { type: mongoose.Types.ObjectId, ref: "supplier", default: "" },
-  price: [{ type: Number }],
-  store: { type: String },
-});
+const priceSchema = new mongoose.Schema(
+  {
+    tarif_id: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
+    currency: { type: String },
+    supplier_id: {
+      type: mongoose.Types.ObjectId,
+      ref: "supplier",
+      default: "",
+    },
+    price: [{ type: Number }],
+    store: { type: String },
+  },
+  { _id: false }
+);
 
 const uvcSchema = new mongoose.Schema<Uvc>(
   {

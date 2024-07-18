@@ -119,8 +119,8 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
           // })
           // .populate("dimension_type_id")
           .populate("tag_ids")
-          // .populate("tag_grouping_ids")
-          .populate("supplier_id")
+          .populate("uvc_ids")
+          .populate("princ_supplier_id")
           .populate("supplier_ids")
 
 

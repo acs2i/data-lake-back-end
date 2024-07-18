@@ -2,6 +2,7 @@ import express, { Request, Response } from "express"
 import { TAG } from "./shared"
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
 import { generalLimits } from "../../services/generalServices"
+import TagGroupingModel, {TagGrouping} from "../../schemas/tagGroupingSchema"
 import TagModel, { Tag } from "../../schemas/tagSchema"
 import { OK } from "../../codes/success"
 
@@ -11,7 +12,9 @@ router.get(TAG, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit)
+        await TagGroupingModel.find()
+
+        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit).populate("tag_grouping_id")
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

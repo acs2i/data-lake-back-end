@@ -36,32 +36,38 @@ export interface Supplier extends Document {
   country: string;
   contacts?: Contact[];
   conditions?: Condition[];
-  brand_id: ObjectId;
+  brand_id: ObjectId[];
   status: string;
-  creator: any; // its an object
+  creator: any; // it's an object
   additional_fields?: any;
 }
 
-const contactSchema = new mongoose.Schema({
-  firstname: { type: String },
-  lastname: { type: String },
-  function: { type: String },
-  phone: { type: String },
-  mobile: { type: String },
-  email: { type: String },
-});
+const contactSchema = new mongoose.Schema(
+  {
+    firstname: { type: String },
+    lastname: { type: String },
+    function: { type: String },
+    phone: { type: String },
+    mobile: { type: String },
+    email: { type: String },
+  },
+  { _id: false }
+);
 
-const conditionSchema = new mongoose.Schema({
-  tarif: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
-  currency: { type: String },
-  rfa: { type: String },
-  net_price: { type: String },
-  labeling: { type: String },
-  paiement_condition: { type: String },
-  franco: { type: String },
-  validate_tarif: { type: String },
-  budget: { type: String },
-});
+const conditionSchema = new mongoose.Schema(
+  {
+    tarif: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
+    currency: { type: String },
+    rfa: { type: String },
+    net_price: { type: String },
+    labeling: { type: String },
+    paiement_condition: { type: String },
+    franco: { type: String },
+    validate_tarif: { type: String },
+    budget: { type: String },
+  },
+  { _id: false }
+);
 
 const supplierSchema = new mongoose.Schema<Supplier>(
   {
@@ -79,11 +85,13 @@ const supplierSchema = new mongoose.Schema<Supplier>(
     country: { type: String },
     contacts: [contactSchema],
     conditions: [conditionSchema],
-    brand_id: [{
-      type: mongoose.Types.ObjectId,
-      ref: "brand",
-      default: [],
-    }],
+    brand_id: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "brand",
+        default: [],
+      },
+    ],
     status: { type: String },
     creator: {
       type: Map,
