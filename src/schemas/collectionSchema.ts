@@ -3,8 +3,7 @@ import mongoose ,{ Document, Model, ObjectId, Schema} from "mongoose"
 export interface Collection extends Document {
     code: string ,
     label: string[],
-    type: string,
-    status: number
+    status: string,
     creator_id: ObjectId
     additional_fields?: any
 
@@ -18,11 +17,8 @@ const collectionSchema = new mongoose.Schema<Collection>({
     label: [{
         type: String
     }],
-    type: {
-        type: String
-    },
     status: {
-        type: Number
+        type: String
     },
     creator_id: {
         type: mongoose.Types.ObjectId

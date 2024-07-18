@@ -3,7 +3,8 @@ import mongoose, { Document, Model } from "mongoose";
 export interface Supplier extends Document {
     code: string
     label: string,
-    address: string[],
+    address: string,
+    postal: string,
     country: string,
     status: string,
     creator: any,       // its an object
@@ -14,7 +15,8 @@ export interface Supplier extends Document {
 const supplierSchema = new mongoose.Schema<Supplier>({
     code: {type: String },
     label: { type: String},
-    address: [{ type: String}],
+    address: { type: String},
+    postal: { type: String},
     country: { type: String},
     status: { type: String},
     creator: {
