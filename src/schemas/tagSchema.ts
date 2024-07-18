@@ -2,8 +2,10 @@ import mongoose, { Document, ObjectId } from "mongoose";
 
 
 export interface Tag extends Document {
+    code: string,
     name: string
     level: string
+    tagGrouping_id: ObjectId
     status: string
     additional_fields?: any
     creator_id: ObjectId
@@ -11,9 +13,13 @@ export interface Tag extends Document {
 }
 
 const tagSchema = new mongoose.Schema<Tag>({
+    code: { type: String },
     name: { type: String },
     status: { type: String },
     level: { type: String },
+    tagGrouping_id: {
+        type: mongoose.Types.ObjectId
+    },
     additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
