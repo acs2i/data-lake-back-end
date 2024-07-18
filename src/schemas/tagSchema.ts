@@ -5,8 +5,8 @@ export interface Tag extends Document {
     name: string
     level: string
     status: number
-    creator_id: ObjectId
     additional_fields?: any
+    creator_id: ObjectId
 
 }
 
@@ -14,11 +14,11 @@ const tagSchema = new mongoose.Schema<Tag>({
     name: { type: String },
     status: { type: Number },
     level: { type: String },
-    creator_id: { type: mongoose.Types.ObjectId },
     additional_fields:{
         type: Map,
         of: mongoose.Schema.Types.Mixed
-    }
+    },
+    creator_id: { type: mongoose.Types.ObjectId }
 
 }, { timestamps: true, collection: "tag"  })
 
