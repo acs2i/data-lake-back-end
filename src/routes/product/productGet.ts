@@ -111,13 +111,6 @@ router.get(PRODUCT, authorizationMiddlewear, async(req: Request, res: Response) 
           .find().skip(skip).limit(intLimit)
           .populate("brand_ids")
           .populate("collection_ids")
-          // .populate({
-          //   path: "dimension_ids",
-          //   populate: {
-          //     path: "dimension_type_id"
-          //   }
-          // })
-          // .populate("dimension_type_id")
           .populate("tag_ids")
           .populate("uvc_ids")
           .populate("princ_supplier_id")
@@ -163,7 +156,7 @@ router.get(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
         // .populate("dimension_type_id")
         .populate("tag_ids")
         // .populate("tag_grouping_ids")
-        .populate("supplier_id")
+        .populate("princ_supplier_id")
         .populate("supplier_ids")
 
       if ( data === null ||  data === undefined) {
