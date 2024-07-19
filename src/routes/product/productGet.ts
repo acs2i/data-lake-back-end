@@ -124,7 +124,6 @@ router.get(
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
-        .populate("uvc_ids")
         .populate("princ_supplier_id")
         .populate("supplier_ids");
 
@@ -158,6 +157,7 @@ router.get(
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
+        .populate("uvc_ids")
         .populate("princ_supplier_id")
         .populate("supplier_ids");
 
