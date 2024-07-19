@@ -10,7 +10,7 @@ interface Contact {
 }
 
 interface Condition {
-  tarif: ObjectId;
+  tarif: string;
   currency: string;
   rfa: string;
   net_price: string;
@@ -56,7 +56,7 @@ const contactSchema = new mongoose.Schema(
 
 const conditionSchema = new mongoose.Schema(
   {
-    tarif: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
+    tarif: { type: String },
     currency: { type: String },
     rfa: { type: String },
     net_price: { type: String },
