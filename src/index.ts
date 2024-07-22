@@ -19,6 +19,11 @@ import dimensionPostRoutes from "./routes/dimension/dimensionPost";
 import dimensionPutRoutes from "./routes/dimension/dimensionPut";
 import dimensionDeleteRoutes from "./routes/dimension/dimensionDelete";
 
+import dimensionGridGetRoutes from "./routes/dimensionGrid/dimensionGridGet";
+import dimensionGridPostRoutes from "./routes/dimensionGrid/dimensionGridPost";
+import dimensionGridPutRoutes from "./routes/dimensionGrid/dimensionGridPut";
+import dimensionGridDeleteRoutes from "./routes/dimensionGrid/dimensionGridDelete";
+
 import productGetRoutes from "./routes/product/productGet";
 import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
@@ -65,6 +70,13 @@ app.use(v1, dimensionGetRoutes);
 app.use(v1, dimensionPostRoutes);
 app.use(v1, dimensionPutRoutes);
 app.use(v1, dimensionDeleteRoutes);
+
+
+app.use(v1, dimensionGridGetRoutes);
+app.use(v1, dimensionGridPostRoutes);
+app.use(v1, dimensionGridPutRoutes);
+app.use(v1, dimensionGridDeleteRoutes);
+
 
 app.use(v1, productGetRoutes);
 app.use(v1, productPostRoutes);

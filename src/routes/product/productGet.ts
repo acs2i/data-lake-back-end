@@ -20,7 +20,7 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, brand, collection, dimension, dimension_type } =
+      const { supplier, tag, brand, collection, dimension,status } =
         req.query;
 
       const { skip, intLimit } = await generalLimits(req);
@@ -30,7 +30,7 @@ router.get(
       let dimensionIds: Dimension[] | null | undefined;
       let tagIds: Tag[] | null | undefined;
       let supplierIds: Supplier[] | null | undefined;
-
+  
       let filter: any = {};
 
       if (brand) {
@@ -65,6 +65,9 @@ router.get(
       }
 
       // if the latest dump file does not work
+      if(status) {
+        filter = {...filter, status}
+      }
 
       // if (dimension_type) {
       //   const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
