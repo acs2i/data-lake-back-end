@@ -69,30 +69,28 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res
   })
 
 
-router.get(SUPPLIER, authorizationMiddlewear,async (req: Request, res: Response) => {
+  router.get(SUPPLIER, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-
-        const {intLimit, skip} = await generalLimits(req);
-
-        const data: Supplier[] | null | undefined = await SupplierModel.find().skip(skip).limit(intLimit);
-    
-                
-        if ( data === null ||  data === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-
-        const total = await SupplierModel.countDocuments({});
-        
-        res.status(200).json({data, total});
-
-    } catch(err) {
+      const { intLimit, skip } = await generalLimits(req);
+  
+      const data: Supplier[] | null | undefined = await SupplierModel.find()
+        .sort({ createdAt: -1 }) 
+        .skip(skip)
+        .limit(intLimit);
+  
+      if (data === null || data === undefined) {
+        throw new Error(req.originalUrl + ", msg: find error")
+      }
+  
+      const total = await SupplierModel.countDocuments({});
+  
+      res.status(200).json({ data, total });
+    } catch (err) {
       console.error(err)
       res.status(500).json(err);
     }
+  });
   
-  
-  })
 
 router.get(SUPPLIER + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
