@@ -27,5 +27,33 @@ router.get(TAG, async(req: Request, res: Response) => {
     }
 })
 
+router.get(TAG + "/:id", async (req: Request, res: Response) => {
+    try {
+
+        const id: string | undefined | null = req.params.id;
+
+        if(id === null || id === undefined) {
+            throw new Error(req.originalUrl + ", msg: id was: " + id)
+        }
+
+        const document: Document | null | undefined = await TagModel.findById(id);
+
+
+        if ( document === null ||  document === undefined) {
+            res.status(OK).json({});
+            console.warn(req.originalUrl + ", msg: Document was null or undefined");
+            return;
+        }
+
+        res.status(OK).json(document)
+
+    }
+    catch(err) {
+        console.error(err)
+    }
+
+
+})
+
 
 export default router

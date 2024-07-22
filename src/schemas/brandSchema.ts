@@ -3,7 +3,7 @@ import mongoose ,{ Document, Model, ObjectId} from "mongoose"
 export interface Brand extends Document {
     code: string,
     label: string,
-    status: number,
+    status: string,
     creator_id: ObjectId,
     additional_fields?: any
 }
@@ -17,7 +17,7 @@ const brandSchema = new mongoose.Schema<Brand>({
         type: String
     },
     status: {
-        type: Number
+        type: String
     },
     creator_id: {
         type: mongoose.Types.ObjectId
