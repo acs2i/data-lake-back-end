@@ -12,21 +12,21 @@ const router = express.Router();
 router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         // expects brand 
-        const brand = req.body;
+        const object = req.body;
 
-        if(!brand) {
-            throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const newBrand: Document | null | undefined = await new BrandModel({...brand});
+        const newObject: Document | null | undefined = await new BrandModel({...object});
 
-        if(!newBrand) {
-            throw new Error(req.originalUrl + " msg: brand save did not work for some reason: " + brand);
+        if(!newObject) {
+            throw new Error(req.originalUrl + " msg: brand save did not work for some reason: " + object);
         }
 
-        const savedBrand: Document | null | undefined = await newBrand.save({timestamps: true});
+        const savedObject: Document | null | undefined = await newObject.save({timestamps: true});
         
-        res.status(OK).json(savedBrand);
+        res.status(OK).json(savedObject);
         
     }
     catch(err) {

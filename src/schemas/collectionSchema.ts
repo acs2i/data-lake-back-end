@@ -1,4 +1,4 @@
-import mongoose ,{ Document, Model, ObjectId, Schema} from "mongoose"
+import mongoose ,{ Document, Model, ObjectId} from "mongoose"
 
 export interface Collection extends Document {
     code: string ,

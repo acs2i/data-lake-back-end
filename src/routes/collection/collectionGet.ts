@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import { Collection, Document } from "mongoose";
+import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { COLLECTION } from "./shared";

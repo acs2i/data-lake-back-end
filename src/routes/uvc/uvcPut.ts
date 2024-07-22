@@ -11,10 +11,10 @@ const router = express.Router();
 router.put(UVC + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
-        const uvc = req.body;
+        const object = req.body;
 
-        if(!uvc) {
-            throw new Error(req.originalUrl + ", msg: uvc was falsy: " + uvc)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: uvc was falsy: " + object)
         }
 
         const _id: string | undefined | null = req.params.id;
@@ -23,10 +23,10 @@ router.put(UVC + "/:id", authorizationMiddlewear, async ( req: Request, res: Res
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
         }
 
-        const response: UpdateWriteOpResult = await UvcModel.updateOne({ _id}, {$set: uvc })
+        const response: UpdateWriteOpResult = await UvcModel.updateOne({ _id}, {$set: object })
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
-            res.status(OK).json({ _id, ...uvc})
+            res.status(OK).json({ _id, ...object})
         } else{
             throw new Error(req.originalUrl + ", msg: There was a response that didn't match the needed criteria: "+response.acknowledged+" " +response.matchedCount+" "+response.modifiedCount)
         }

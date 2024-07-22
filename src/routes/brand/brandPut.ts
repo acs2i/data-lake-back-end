@@ -11,10 +11,10 @@ const router = express.Router();
 router.put(BRAND + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
-        const brand = req.body;
+        const object = req.body;
 
-        if(!brand) {
-            throw new Error(req.originalUrl + ", msg: brand was falsy: " + brand)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: brand was falsy: " + object)
         }
         const _id: string | undefined | null = req.params.id;
 
@@ -23,10 +23,10 @@ router.put(BRAND + "/:id", authorizationMiddlewear, async ( req: Request, res: R
         }
     
 
-        const response: UpdateWriteOpResult = await BrandModel.updateOne({ _id}, {$set: brand })
+        const response: UpdateWriteOpResult = await BrandModel.updateOne({ _id}, {$set: object })
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
-            res.status(OK).json(brand)
+            res.status(OK).json(object)
         } else{
             throw new Error(req.originalUrl + ", msg: There was a response that didn't match the needed criteria: "+response.acknowledged+" " +response.matchedCount+" "+response.modifiedCount)
         }

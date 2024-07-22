@@ -12,19 +12,19 @@ const router = express.Router();
 router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         
-        const collection = req.body;
+        const object = req.body;
 
-        if(!collection) {
-            throw new Error(req.originalUrl + ", msg: collection was falsy: " + collection)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: collection was falsy: " + object)
         }
 
-        const newCollection: Document | null | undefined = await new CollectionModel({...collection });
+        const newObject: Document | null | undefined = await new CollectionModel({...object });
 
-        if(!newCollection) {
-            throw new Error(req.originalUrl + " msg: collection save did not work for some reason: " + collection);
+        if(!newObject) {
+            throw new Error(req.originalUrl + " msg: collection save did not work for some reason: " + object);
         }
 
-        const savedCollection: Document | null | undefined = await newCollection.save({timestamps: true});
+        const savedCollection: Document | null | undefined = await newObject.save({timestamps: true});
 
         res.status(OK).json(savedCollection);
         

@@ -11,10 +11,10 @@ const router = express.Router();
 router.put(DIMENSION + "/:id", authorizationMiddlewear, async ( req: Request, res: Response) => {
     try {
 
-        const dimension = req.body;
+        const object = req.body;
 
-        if(!dimension) {
-            throw new Error(req.originalUrl + ", msg: collection was falsy: " + dimension)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: dimension was falsy: " + object)
         }
 
         const _id: string | undefined | null = req.params.id;
@@ -23,10 +23,10 @@ router.put(DIMENSION + "/:id", authorizationMiddlewear, async ( req: Request, re
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id)
         }
 
-        const response: UpdateWriteOpResult = await DimensionModel.updateOne({ _id}, {$set: dimension})
+        const response: UpdateWriteOpResult = await DimensionModel.updateOne({ _id}, {$set: object})
 
         if (response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
-            res.status(OK).json(dimension)
+            res.status(OK).json(object)
         } else{
             throw new Error(req.originalUrl + ", msg: There was a response that didn't match the needed criteria: "+response.acknowledged+" " +response.matchedCount+" "+response.modifiedCount)
         }

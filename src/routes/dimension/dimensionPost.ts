@@ -10,19 +10,19 @@ const router = express.Router();
 
 router.post(DIMENSION, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        const dimension = req.body;
+        const object = req.body;
         
-        if(!dimension) {
-            throw new Error(req.originalUrl + ", msg: dimension was falsy: " + dimension)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: dimension was falsy: " + object)
         }
 
-        const newDimension: Dimension | null | undefined = await new DimensionModel({...dimension});
+        const newObject: Dimension | null | undefined = await new DimensionModel({...object});
 
-        if(!newDimension) {
-            throw new Error(req.originalUrl + " msg: dimension save did not work for some reason: " + dimension);
+        if(!newObject) {
+            throw new Error(req.originalUrl + " msg: dimension save did not work for some reason: " + object);
         }
 
-        const result: Dimension | null | undefined = await newDimension.save({timestamps: true});
+        const result: Dimension | null | undefined = await newObject.save({timestamps: true});
 
         res.status(OK).json(result)
 

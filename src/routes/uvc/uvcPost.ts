@@ -11,23 +11,23 @@ const router = express.Router();
 
 router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        const uvc = req.body;
+        const object = req.body;
 
-        if (!uvc) {
-            throw new Error(req.originalUrl + ", msg: uvc was falsy: " + uvc);
+        if (!object) {
+            throw new Error(req.originalUrl + ", msg: uvc was falsy: " + object);
         }
 
-        const newUvc: Document | null | undefined = await new UvcModel({ ...uvc });
+        const newObject: Document | null | undefined = await new UvcModel({ ...object });
 
-        if (!newUvc) {
-            throw new Error(req.originalUrl + " msg: family save did not work for some reason: " + uvc);
+        if (!newObject) {
+            throw new Error(req.originalUrl + " msg: family save did not work for some reason: " + object);
         }
 
-        const savedUvc: Document | null | undefined = await newUvc.save({ timestamps: true });
+        const savedUvc: Document | null | undefined = await newObject.save({ timestamps: true });
 
         const _id = savedUvc._id;
 
-        const result = { ...uvc, _id };
+        const result = { ...object, _id };
 
         res.status(OK).json(result);
     } catch (err) {

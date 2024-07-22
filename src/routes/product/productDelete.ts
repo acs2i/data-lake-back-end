@@ -17,12 +17,12 @@ router.delete(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, re
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id);
         }
 
-        const oldProduct: Product | undefined | null = await ProductModel.findById(_id)
+        // const oldProduct: Product | undefined | null = await ProductModel.findById(_id)
 
         const response = await ProductModel.deleteOne({ _id })
 
         if(response.deletedCount === 0) {
-            res.status(INTERNAL_SERVER_ERROR).json({ msg: "Brand not found"});
+            res.status(INTERNAL_SERVER_ERROR).json({ msg: "Product not found"});
         } else {
 
             // Create the version

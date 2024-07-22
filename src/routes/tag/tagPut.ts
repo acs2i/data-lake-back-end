@@ -11,10 +11,10 @@ const router = express.Router()
 router.put(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
-        const tag = req.body;
+        const object = req.body;
 
-        if(!tag) {
-            throw new Error(req.originalUrl + ", msg: tag was falsy: " + tag)
+        if(!object) {
+            throw new Error(req.originalUrl + ", msg: tag was falsy: " + object)
         }
 
 
@@ -24,7 +24,7 @@ router.put(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Resp
             throw new Error(req.originalUrl + ", msg: id was falsy: " + _id);
         }
 
-        const response: UpdateWriteOpResult = await TagModel.updateOne({ _id }, { $set:tag })
+        const response: UpdateWriteOpResult = await TagModel.updateOne({ _id }, { $set:object })
  
         if(response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {
             res.status(OK).json(response);
