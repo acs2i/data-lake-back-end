@@ -39,6 +39,9 @@ import tagPostRoutes from "./routes/tag/tagPost";
 import tagPutRoutes from "./routes/tag/tagPut";
 import tagDeleteRoutes from "./routes/tag/tagDelete";
 
+import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet";
+
+
 import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
 import uvcPutRoutes from "./routes/uvc/uvcPut";
@@ -96,6 +99,8 @@ app.use(v1, tagGetRoutes)
 app.use(v1, tagPostRoutes)
 app.use(v1, tagPutRoutes) 
 app.use(v1, tagDeleteRoutes)
+
+app.use(v1, tagGroupingGetRoutes)
 
 
 

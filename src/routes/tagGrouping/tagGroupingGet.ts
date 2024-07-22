@@ -1,23 +1,23 @@
 import express, { Request, Response } from "express"
-import { TAG } from "./shared"
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
 import { generalLimits } from "../../services/generalServices"
-import TagModel, { Tag } from "../../schemas/tagSchema"
+import TagGroupingModel, { TagGrouping } from "../../schemas/tagGroupingSchema"
 import { OK } from "../../codes/success"
+import { TAG_GROUPING } from "./shared"
 
 const router = express.Router()
 
-router.get(TAG, async(req: Request, res: Response) => {
+router.get(TAG_GROUPING, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
-        const data: Tag[] | null | undefined = await TagModel.find().skip(skip).limit(intLimit).populate("tag_grouping_id")
+        const data: TagGrouping[] | null | undefined = await TagGroupingModel.find().skip(skip).limit(intLimit)
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
 
-        const total = await TagModel.countDocuments({});
+        const total = await TagGroupingModel.countDocuments({});
 
         res.status(OK).json({ data, total})
 
