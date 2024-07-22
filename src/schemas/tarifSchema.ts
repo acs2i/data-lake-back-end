@@ -12,6 +12,6 @@ const tarifSchema = new mongoose.Schema<Tarif>({
     additional_fields: [{type: mongoose.Types.Map}]
 }, { timestamps: true, collection: "tarif"})
 
-const tarifModel: Model<Tarif> = mongoose.model<Tarif>("tarif", tarifSchema)
+const TarifModel: Model<Tarif> = mongoose.model<Tarif>("tarif", tarifSchema)
 
-export default tarifModel
+export default TarifModel

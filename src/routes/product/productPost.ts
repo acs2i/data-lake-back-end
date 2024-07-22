@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express"
 import ProductModel, { Product } from "../../schemas/productSchema";
-import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
