@@ -2,7 +2,7 @@ import mongoose ,{ Document, Model, ObjectId} from "mongoose"
 
 export interface Collection extends Document {
     code: string ,
-    label: string[],
+    label: string,
     status: string,
     creator_id: ObjectId
     additional_fields?: any
@@ -14,9 +14,9 @@ const collectionSchema = new mongoose.Schema<Collection>({
     code: {
         type: String
     },
-    label: [{
+    label: {
         type: String
-    }],
+    },
     status: {
         type: String
     },

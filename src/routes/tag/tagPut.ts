@@ -8,7 +8,7 @@ import { UpdateWriteOpResult } from "mongoose"
 
 const router = express.Router()
 
-router.put(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.put(TAG + "/:id", async (req: Request, res: Response) => {
     try {
 
         const object = req.body;

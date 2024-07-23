@@ -64,7 +64,7 @@ router.get(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respons
 
         const {skip, intLimit} = await generalLimits(req);
 
-        const data: Dimension[] | null | undefined = await DimensionModel.find().skip(skip).limit(intLimit)
+        const data: Dimension[] | null | undefined = await DimensionModel.find().sort({ createdAt: -1 }).skip(skip).limit(intLimit)
 
         if ( data === null ||  data === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")
