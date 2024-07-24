@@ -69,13 +69,6 @@ router.get(
         filter = {...filter, status}
       }
 
-      // if (dimension_type) {
-      //   const dimensionTypeRegex = new RegExp(dimension_type as string, "i");
-      //   dimensionTypeIds = await DimensionTypeModel.find({ type: {$regex: dimensionTypeRegex}}).select("_id")
-      //   const $in = dimensionTypeIds.map(doc => doc._id)
-      //   filter = {...filter, dimension_type_id: {$in}}
-      // }
-
       if (tag) {
         const tagIdRegex = new RegExp(tag as string, "i");
         tagIds = await TagModel.find({ name: { $regex: tagIdRegex } }).select(
@@ -178,6 +171,3 @@ router.get(
 
 export default router;
 
-/*
-
- */

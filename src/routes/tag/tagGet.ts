@@ -28,7 +28,7 @@ router.get(TAG + "/search", async (req: Request, res: Response) => {
             filter.$and.push({ label: regEx });
         }
 
-        if (!code && !label) {
+        if (!code && !name && !label) {
             throw new Error(
                 req.originalUrl +
                     ", msg: All of the parameters were falsy. Probably means they were undefined"
