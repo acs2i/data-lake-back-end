@@ -7,6 +7,49 @@ import { OK } from "../../codes/success"
 
 const router = express.Router()
 
+
+router.get(TAG + "/search", async (req: Request, res: Response) => {
+    try {
+        const { intLimit, skip } = await generalLimits(req);
+        let filter: any = { $and: [] };
+
+        const code = req.query.code;
+        const name = req.query.name;
+
+        if (code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx });
+        }
+
+        const label = req.query.label;
+
+        if (name) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx });
+        }
+
+        if (!code && !label) {
+            throw new Error(
+                req.originalUrl +
+                    ", msg: All of the parameters were falsy. Probably means they were undefined"
+            );
+        }
+
+        const data = await TagModel.find(filter).lean().skip(skip).limit(intLimit);
+
+        if (!data) {
+            throw new Error(req.originalUrl + ", msg: find error");
+        }
+
+        const total = await TagModel.countDocuments(filter);
+
+        res.status(OK).json({ data, total });
+    } catch (err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err);
+    }
+});
+
 router.get(TAG, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
