@@ -32,6 +32,7 @@ export interface Supplier extends Document {
   address_1: string;
   address_2: string;
   address_3: string;
+  city: string;
   postal: string;
   country: string;
   contacts?: Contact[];
@@ -81,6 +82,7 @@ const supplierSchema = new mongoose.Schema<Supplier>(
     address_1: { type: String },
     address_2: { type: String },
     address_3: { type: String },
+    city: { type: String },
     postal: { type: String },
     country: { type: String },
     contacts: [contactSchema],
