@@ -12,3 +12,4 @@ db.md
 /src/routes/family/*.sh
 /src/routes/uvc/*.sh
 *.sh
+*.json

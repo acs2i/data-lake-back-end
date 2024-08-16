@@ -121,7 +121,8 @@ router.get(
         .populate("collection_ids")
         .populate("tag_ids")
         .populate("princ_supplier_id")
-        .populate("supplier_ids");
+        .populate("supplier_ids")
+        .populate("uvc_ids")
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
@@ -155,7 +156,9 @@ router.get(
         .populate("tag_ids")
         .populate("uvc_ids")
         .populate("princ_supplier_id")
-        .populate("supplier_ids");
+        .populate("supplier_ids")
+        .populate("uvc_ids")
+
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");

@@ -9,7 +9,10 @@ export interface Tarif extends Document {
 const tarifSchema = new mongoose.Schema<Tarif>({
     code: {type: Number},
     label: {type: String},
-    additional_fields: [{type: mongoose.Types.Map}]
+    additional_fields:{
+        type: Map,
+        of: mongoose.Schema.Types.Mixed
+      }
 }, { timestamps: true, collection: "tarif"})
 
 const TarifModel: Model<Tarif> = mongoose.model<Tarif>("tarif", tarifSchema)

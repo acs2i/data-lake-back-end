@@ -19,6 +19,12 @@ import dimensionPostRoutes from "./routes/dimension/dimensionPost";
 import dimensionPutRoutes from "./routes/dimension/dimensionPut";
 import dimensionDeleteRoutes from "./routes/dimension/dimensionDelete";
 
+
+import dimensionTypeGetRoutes from "./routes/dimensionType/dimensionTypeGet";
+import dimensionTypePostRoutes from "./routes/dimensionType/dimensionTypePost";
+import dimensionTypePutRoutes from "./routes/dimensionType/dimensionTypePut";
+import dimensionTypeDeleteRoutes from "./routes/dimensionType/dimensionTypeDelete";
+
 import dimensionGridGetRoutes from "./routes/dimensionGrid/dimensionGridGet";
 import dimensionGridPostRoutes from "./routes/dimensionGrid/dimensionGridPost";
 import dimensionGridPutRoutes from "./routes/dimensionGrid/dimensionGridPut";
@@ -38,6 +44,11 @@ import tagGetRoutes from "./routes/tag/tagGet";
 import tagPostRoutes from "./routes/tag/tagPost";
 import tagPutRoutes from "./routes/tag/tagPut";
 import tagDeleteRoutes from "./routes/tag/tagDelete";
+
+import tarifGetRoutes from "./routes/tarif/tarifGet";
+import tarifPostRoutes from "./routes/tarif/tarifPost";
+import tarifPutRoutes from "./routes/tarif/tarifPut";
+import tarifDeleteRoutes from "./routes/tarif/tarifDelete";
 
 import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet";
 
@@ -76,6 +87,12 @@ app.use(v1, dimensionPutRoutes);
 app.use(v1, dimensionDeleteRoutes);
 
 
+app.use(v1, dimensionTypeGetRoutes);
+app.use(v1, dimensionTypePostRoutes);
+app.use(v1, dimensionTypePutRoutes);
+app.use(v1, dimensionTypeDeleteRoutes);
+
+
 app.use(v1, dimensionGridGetRoutes);
 app.use(v1, dimensionGridPostRoutes);
 app.use(v1, dimensionGridPutRoutes);
@@ -102,6 +119,12 @@ app.use(v1, tagPutRoutes)
 app.use(v1, tagDeleteRoutes)
 
 app.use(v1, tagGroupingGetRoutes)
+
+
+app.use(v1, tarifGetRoutes)
+app.use(v1, tarifPostRoutes)
+app.use(v1, tarifPutRoutes) 
+app.use(v1, tarifDeleteRoutes)
 
 
 app.listen(port, () => {
