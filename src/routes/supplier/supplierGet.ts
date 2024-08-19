@@ -8,65 +8,63 @@ import { OK } from "../../codes/success";
 
 const router = express.Router();
 
-router.get(SUPPLIER + "/search", authorizationMiddlewear,async(req: Request, res: Response) => {
-    try {
-        
-        const {intLimit, skip} = await generalLimits(req);
+router.get(SUPPLIER + "/search", authorizationMiddlewear, async(req: Request, res: Response) => {
+  try {
+      const { intLimit, skip } = await generalLimits(req);
 
-        let filter: any = { $and: [] }  // any to make typescript stop complaining
+      let filter: any = {};  // Utilisation d'un objet vide pour stocker les filtres
 
-        const {code, label, address, status, country} = req.query
-    
-    
-        if(code) {
-            const regEx = new RegExp(code as string, "i");
-            filter.$and.push({ code: regEx })
-        }
+      const { code, company_name, address, status, country } = req.query;
 
-        if(label) {
-            const regEx = new RegExp(label as string, "i");
-            filter.$and.push({ label: regEx })
-        }
+      // Filtrer par `code` si présent
+      if (code) {
+          filter.code = new RegExp(code as string, "i");
+      }
 
-        if(address) {
-            const regEx = new RegExp(address as string, "i");
-            filter.$and.push({ address: regEx })
-        }
-        
-        if(status) {
-            const regEx = new RegExp(status as string, "i");
-            filter.$and.push({ status: regEx })
-        }
+      // Filtrer par `company_name` si présent
+      if (company_name) {
+          filter.company_name = new RegExp(company_name as string, "i");
+      }
 
-        if(country) {
-            const regEx = new RegExp(country as string, "i");
-            filter.$and.push({ country: regEx })
-        }
+      // Filtrer par `address` si présent
+      if (address) {
+          filter.address = new RegExp(address as string, "i");
+      }
+
+      // Filtrer par `status` si présent
+      if (status) {
+          filter.status = new RegExp(status as string, "i");
+      }
+
+      // Filtrer par `country` si présent
+      if (country) {
+          filter.country = new RegExp(country as string, "i");
+      }
+
+      // Vérifier qu'au moins un critère de recherche est présent
+      if (Object.keys(filter).length === 0) {
+          throw new Error("Aucun critère de recherche valide fourni.");
+      }
+
+      // Exécuter la requête avec les filtres
+      const data = await SupplierModel.find(filter).skip(skip).limit(intLimit);
+
+      if (!data) {
+          throw new Error("Erreur lors de la recherche des fournisseurs.");
+      }
+
+      const total = await SupplierModel.countDocuments(filter);
+
+      res.status(200).json({ data, total });
+
+  } catch (err) {
+      console.error(err);
+      res.status(500).json("erreur");
+  }
+});
 
 
-        if(!code && !label && !address && !status && !country) {
-            throw new Error("Code, label adddress country were all falsy for some reason")
-        }
 
-        const data: Supplier[] | null | undefined = await SupplierModel.find(filter).skip(skip).limit(intLimit);
-        
-        if ( data === null ||  data === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-
-        const total = await SupplierModel.countDocuments(filter);
-
-        res.status(200).json({data, total});
-    
-    } catch(err) {
-      console.error(err)
-      res.status(500).json(err);
-    }
-  
-  
-  
-  })
 
 
   router.get(SUPPLIER, authorizationMiddlewear, async (req: Request, res: Response) => {
