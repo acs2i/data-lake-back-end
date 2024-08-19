@@ -1,13 +1,13 @@
 import mongoose, { Document, Model } from "mongoose";
 
 export interface Tarif extends Document {
-    code: number,
+    code: string,
     label: string,
     additional_fields: any
 }
 
 const tarifSchema = new mongoose.Schema<Tarif>({
-    code: {type: Number},
+    code: {type: String},
     label: {type: String},
     additional_fields:{
         type: Map,

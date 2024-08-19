@@ -28,6 +28,33 @@ router.post(PRODUCT, authorizationMiddlewear, async (req: Request, res: Response
         const uvc_ids = []
 
         for(const u of uvc) {
+            // Make sure ean doesn't exist
+            const eans = u.eans;
+
+            // if they exist, check that they aren't already created
+            if(eans) {
+                const foundEan: Uvc | null | undefined = await UvcModel.findOne({ eans: {$in: [...eans] }})
+
+                if(foundEan) {
+                    throw new Error(req.originalUrl + "msg: Ean already exists: " + uvc)
+                }
+
+            } else {
+                // Get the current timestamp in milliseconds
+                const timestamp = Date.now();
+            
+                // Generate a small random number (up to 3 digits)
+                const randomSuffix = Math.floor(Math.random() * 1000); // 000 to 999
+            
+                // Combine timestamp and random suffix
+                const combinedNumber = `${timestamp}${randomSuffix}`;
+            
+                // Ensure the number is exactly 13 digits long by taking the last 13 digits
+                const unique13DigitNumber = combinedNumber.slice(-13);  
+
+                u.ean = unique13DigitNumber;
+            }
+ 
             const newUvc: Uvc | null | undefined = await new UvcModel({...u});
 
             if(!newUvc) {

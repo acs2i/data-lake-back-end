@@ -15,6 +15,7 @@ router.get(TAG + "/search", async (req: Request, res: Response) => {
 
         const code = req.query.code;
         const name = req.query.name;
+        const level = req.query.name;
 
         if (code) {
             const regEx = new RegExp(code as string, "i");
@@ -27,7 +28,12 @@ router.get(TAG + "/search", async (req: Request, res: Response) => {
             filter.$and.push({ name: regEx });
         }
 
-        if (!code && !name ) {
+        if (level) {
+            const regEx = new RegExp(level as string, "i");
+            filter.$and.push({ level: regEx });
+        }
+
+        if (!code && !name && !level ) {
             throw new Error(
                 req.originalUrl +
                     ", msg: All of the parameters were falsy. Probably means they were undefined"
@@ -78,8 +84,7 @@ router.get(TAG + "/:id", async (req: Request, res: Response) => {
             throw new Error(req.originalUrl + ", msg: id was: " + id)
         }
 
-        const document: Document | null | undefined = await TagModel.findById(id);
-
+        const document: Tag | null | undefined = await TagModel.findById(id).populate("tag_grouping_id");
 
         if ( document === null ||  document === undefined) {
             res.status(OK).json({});
