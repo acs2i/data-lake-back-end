@@ -16,37 +16,31 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear, async(req: Request, re
 
       const { code, company_name, address, status, country } = req.query;
 
-      // Filtrer par `code` si présent
       if (code) {
           filter.code = new RegExp(code as string, "i");
       }
 
-      // Filtrer par `company_name` si présent
       if (company_name) {
           filter.company_name = new RegExp(company_name as string, "i");
       }
 
-      // Filtrer par `address` si présent
       if (address) {
           filter.address = new RegExp(address as string, "i");
       }
 
-      // Filtrer par `status` si présent
+  
       if (status) {
           filter.status = new RegExp(status as string, "i");
       }
 
-      // Filtrer par `country` si présent
       if (country) {
           filter.country = new RegExp(country as string, "i");
       }
 
-      // Vérifier qu'au moins un critère de recherche est présent
       if (Object.keys(filter).length === 0) {
           throw new Error("Aucun critère de recherche valide fourni.");
       }
 
-      // Exécuter la requête avec les filtres
       const data = await SupplierModel.find(filter).skip(skip).limit(intLimit);
 
       if (!data) {
