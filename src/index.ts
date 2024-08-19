@@ -30,6 +30,12 @@ import dimensionGridPostRoutes from "./routes/dimensionGrid/dimensionGridPost";
 import dimensionGridPutRoutes from "./routes/dimensionGrid/dimensionGridPut";
 import dimensionGridDeleteRoutes from "./routes/dimensionGrid/dimensionGridDelete";
 
+
+import eventGetRoutes from "./routes/event/eventGet";
+import eventPostRoutes from "./routes/event/eventPost";
+import eventPutRoutes from "./routes/event/eventPut";
+import eventDeleteRoutes from "./routes/event/eventDelete";
+
 import productGetRoutes from "./routes/product/productGet";
 import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
@@ -98,6 +104,10 @@ app.use(v1, dimensionGridPostRoutes);
 app.use(v1, dimensionGridPutRoutes);
 app.use(v1, dimensionGridDeleteRoutes);
 
+app.use(v1, eventGetRoutes);
+app.use(v1, eventPostRoutes);
+app.use(v1, eventPutRoutes);
+app.use(v1, eventDeleteRoutes);
 
 app.use(v1, productGetRoutes);
 app.use(v1, productPostRoutes);
