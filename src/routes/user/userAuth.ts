@@ -1,14 +1,33 @@
 import express, { Request, Response } from "express"
 import { OK } from "../../codes/success";
-import { BAD_REQUEST } from "../../codes/errors";
+import { BAD_REQUEST, UNAUTHORIZED } from "../../codes/errors";
 import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
 import bcrypt from 'bcrypt';
 
 import UserModel, { User } from "../../schemas/userSchema";
+import { decryptUserToken } from "../../middlewears/applicationMiddlewear";
 dotenv.config();
 
 const router = express.Router();
+
+router.post("/verify", async (req: Request, res: Response) => { 
+  const authHeader : string | undefined = req.headers.authorization;
+
+  if(!authHeader) {
+    res.status(UNAUTHORIZED).send("S'il vous plait connectez-vous d'abord")
+  }
+
+  const result: boolean | Error = await decryptUserToken(authHeader as string)
+
+  if(result === true) {
+    res.status(OK).send(result)
+  } else {
+    res.status(UNAUTHORIZED).send("Vous vous n'etes pas connecté. S'il vous plait connectez-vous d'abord")
+  }
+
+
+})
 
 router.post("/signup", async (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -33,7 +52,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10); // 10 is the salt rounds
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = { email, password: hashedPassword };
+    const newUser = { email: email.toLowerCase().trim(), password: hashedPassword };
 
     console.log("user: " , newUser)
 
@@ -55,7 +74,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
   
     // Find the user
-    const existingUser: User | null | undefined = await UserModel.findOne({email});
+    const existingUser: User | null | undefined = await UserModel.findOne({email: email.toLowerCase().trim()});
     if (!existingUser) {
       return res.status(401).send('Invalid username or password');
     }
@@ -69,6 +88,7 @@ router.post('/login', async (req: Request, res: Response) => {
   
       const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET as string);
 
+      console.log('token: ' , token)
       res.status(200).json(token)
     } catch (error) {
       res.status(500).send('Error during login');
