@@ -63,6 +63,7 @@ import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
 import uvcPutRoutes from "./routes/uvc/uvcPut";
 
+import userRoute from "./routes/user/userAuth"
 
 
 dotenv.config();
@@ -117,6 +118,8 @@ app.use(v1, productDeleteRoutes);
 app.use(v1, uvcGetRoutes);
 app.use(v1, uvcPostRoutes);
 app.use(v1, uvcPutRoutes);
+
+app.use(v1, userRoute)
 
 app.use(v1, supplierGetRoutes)
 app.use(v1, supplierPostRoutes)

@@ -4,11 +4,12 @@ import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
 import { generalLimits } from "../../services/generalServices"
 import TagModel, { Tag } from "../../schemas/tagSchema"
 import { OK } from "../../codes/success"
+import authorizationMiddlewear from "../../middlewears/applicationMiddlewear"
 
 const router = express.Router()
 
 
-router.get(TAG + "/search", async (req: Request, res: Response) => {
+router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const { intLimit, skip } = await generalLimits(req);
         let filter: any = { $and: [] };
@@ -55,7 +56,7 @@ router.get(TAG + "/search", async (req: Request, res: Response) => {
     }
 });
 
-router.get(TAG, async(req: Request, res: Response) => {
+router.get(TAG, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
