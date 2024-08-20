@@ -16,7 +16,7 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
 
         const code = req.query.code;
         const name = req.query.name;
-        const level = req.query.name;
+        const level = req.query.level;
 
         if (code) {
             const regEx = new RegExp(code as string, "i");
