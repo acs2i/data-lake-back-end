@@ -12,29 +12,34 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear, async(req: Request, re
   try {
       const { intLimit, skip } = await generalLimits(req);
 
-      let filter: any = {};  // Utilisation d'un objet vide pour stocker les filtres
+      let filter: any = { $and: [] };  // Utilisation d'un objet vide pour stocker les filtres
 
       const { code, company_name, address, status, country } = req.query;
 
       if (code) {
-          filter.code = new RegExp(code as string, "i");
+          const $regEx = new RegExp(code as string, "i");
+          filter.$and.push({code: $regEx})
       }
 
       if (company_name) {
-          filter.company_name = new RegExp(company_name as string, "i");
+          const $regEx = new RegExp(company_name as string, "i");
+          filter.$and.push({company_name: $regEx})
       }
 
       if (address) {
-          filter.address = new RegExp(address as string, "i");
+          const $regEx = new RegExp(address as string, "i");
+          filter.$and.push({address: $regEx})
       }
 
   
       if (status) {
-          filter.status = new RegExp(status as string, "i");
+          const $regEx = new RegExp(status as string, "i");
+          filter.$and.push({status: $regEx})
       }
 
       if (country) {
-          filter.country = new RegExp(country as string, "i");
+          const $regEx = new RegExp(country as string, "i");
+          filter.$and.push({country: $regEx})
       }
 
       if (Object.keys(filter).length === 0) {
