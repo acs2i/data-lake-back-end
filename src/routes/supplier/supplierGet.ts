@@ -47,7 +47,7 @@ router.get(SUPPLIER + "/search", authorizationMiddlewear, async(req: Request, re
       }
 
       const data = await SupplierModel.find(filter).skip(skip).limit(intLimit);
-
+    
       if (!data) {
           throw new Error("Erreur lors de la recherche des fournisseurs.");
       }
