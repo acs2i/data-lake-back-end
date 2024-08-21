@@ -8,8 +8,9 @@ import AccessModel from "../schemas/accessSchema";
 const path = "/authentification/application"
 
 
-const decryptUserToken = async ( authHeader: string ) : Promise<Error | boolean> => {
+export const decryptUserToken = async ( authHeader: string ) : Promise<Error | boolean> => {
     
+    try {
         const key : string  = authHeader.split(' ')[1]; // Assuming the format is "Bearer <key>"
     
         if (key === '') {
@@ -17,17 +18,14 @@ const decryptUserToken = async ( authHeader: string ) : Promise<Error | boolean>
             return new Error('Invalid Authorization header format');
         }
 
-        console.log("KEY: "  ,key)
     
         const secretKey : string | undefined | null = process.env.JWT_SECRET as string;
     
-        console.log("KEY: "  ,secretKey)
     
         if(!(typeof secretKey === 'string')) {
             return new Error(path + " DECRYPT TOKEN, problem with JWT_SECRET")
         }
 
-        
     
         // jwt.verify(key, secretKey, (err, decoded) => {
         //     if(err)  return new Error('Unable to parse your Token');
@@ -39,6 +37,11 @@ const decryptUserToken = async ( authHeader: string ) : Promise<Error | boolean>
         if(result) return true;
         else return false;
 
+    } catch(err) {
+        console.warn("Error decrypting user token: " , err)
+        return false;
+    }
+    
 }
 
 
