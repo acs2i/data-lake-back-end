@@ -87,13 +87,7 @@ const supplierSchema = new mongoose.Schema<Supplier>(
     country: { type: String },
     contacts: [contactSchema],
     conditions: [conditionSchema],
-    brand_id: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "brand",
-        default: [],
-      },
-    ],
+    brand_id: [{type: mongoose.Types.ObjectId, ref: "brand"}],
     status: { type: String },
     creator: {
       type: Map,
