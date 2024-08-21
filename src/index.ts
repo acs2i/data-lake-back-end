@@ -58,10 +58,11 @@ import tarifDeleteRoutes from "./routes/tarif/tarifDelete";
 
 import tagGroupingGetRoutes from "./routes/tagGrouping/tagGroupingGet";
 
-
 import uvcGetRoutes from "./routes/uvc/uvcGet";
 import uvcPostRoutes from "./routes/uvc/uvcPost";
 import uvcPutRoutes from "./routes/uvc/uvcPut";
+
+import fieldGetRoutes from "./routes/userField/userFieldGet"
 
 import userRoute from "./routes/user/userAuth"
 
@@ -138,6 +139,8 @@ app.use(v1, tarifGetRoutes)
 app.use(v1, tarifPostRoutes)
 app.use(v1, tarifPutRoutes) 
 app.use(v1, tarifDeleteRoutes)
+
+app.use(v1, fieldGetRoutes)
 
 
 app.listen(port, () => {
