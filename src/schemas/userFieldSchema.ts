@@ -14,6 +14,7 @@ export interface Field extends Document {
   label: string;
   apply_to: string;
   additional_fields: CustomField[];
+  status: string;
 }
 
 
@@ -30,6 +31,7 @@ const userFieldSchema = new mongoose.Schema<Field>({
       value: { type: mongoose.Schema.Types.Mixed, required: true },
     },
   ],
+  status: { type: String},
 }, { timestamps: true, collection: "user-fields" });
 
 
