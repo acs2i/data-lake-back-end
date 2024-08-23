@@ -1,7 +1,6 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 export interface CustomField {
-  field_name: string;
   field_type: string; 
   options?: string[];
   value: any;
@@ -25,7 +24,6 @@ const userFieldSchema = new mongoose.Schema<Field>({
   apply_to: { type: String, required: true },
   additional_fields: [
     {
-      field_name: { type: String, required: true },
       field_type: { type: String, required: true },
       options: { type: [String] },
       value: { type: mongoose.Schema.Types.Mixed, required: true },

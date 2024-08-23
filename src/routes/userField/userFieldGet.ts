@@ -35,32 +35,32 @@ router.get(
   }
 );
 
-// router.get(
-//   USERFIELD + "/:id",
-//   authorizationMiddlewear,
-//   async (req: Request, res: Response) => {
-//     try {
-//       const id: string | undefined | null = req.params.id;
+router.get(
+  USERFIELD + "/:id",
+  authorizationMiddlewear,
+  async (req: Request, res: Response) => {
+    try {
+      const id: string | undefined | null = req.params.id;
 
-//       if (id === null || id === undefined) {
-//         res.status(BAD_REQUEST).json({});
-//         throw new Error(req.originalUrl + ", msg: id was: " + id);
-//       }
+      if (id === null || id === undefined) {
+        res.status(BAD_REQUEST).json({});
+        throw new Error(req.originalUrl + ", msg: id was: " + id);
+      }
 
-//       const data: Product | null | undefined = await ProductModel.findById(id)
+      const data: Field | null | undefined = await UserFieldModel.findById(id)
    
 
-//       if (data === null || data === undefined) {
-//         throw new Error(req.originalUrl + ", msg: find error");
-//       }
+      if (data === null || data === undefined) {
+        throw new Error(req.originalUrl + ", msg: find error");
+      }
 
-//       res.status(OK).json(data);
-//     } catch (err) {
-//       res.status(BAD_REQUEST).json(err);
-//       console.error(err);
-//     }
-//   }
-// );
+      res.status(OK).json(data);
+    } catch (err) {
+      res.status(BAD_REQUEST).json(err);
+      console.error(err);
+    }
+  }
+);
 
 export default router;
 
