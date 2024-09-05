@@ -18,7 +18,7 @@ export interface Product extends Document {
     long_label: string;
     type: string;
     tag_ids: ObjectId[];
-    suppliers: SupplierSchema[];  // Tableau de fournisseurs avec les détails
+    suppliers: SupplierSchema[];
     dimension_types: string[];
     uvc_ids: ObjectId[];
     brand_ids: ObjectId[];

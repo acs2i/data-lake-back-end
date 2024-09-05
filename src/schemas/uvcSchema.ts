@@ -1,55 +1,57 @@
-import mongoose, { Date, Document, Model, ObjectId, Schema } from "mongoose";
+import mongoose, { Document, Model, ObjectId } from "mongoose";
 
-interface Price {
-  tarif_id: ObjectId;
-  currency: string;
-  supplier_id: ObjectId;
-  price: number[];
-  store: string;
+// Interface pour PriceItem
+interface PriceItemSchema {
+  peau: number; // Prix d'achat
+  tbeu_pb: number; // Taux de base en unité - prix de base
+  tbeu_pmeu: number; // Taux de base en unité - prix modifié
+  _id: ObjectId;
 }
 
+// Interface pour Price
+interface PriceSchema {
+  currency: string; // Devise
+  price: PriceItemSchema[]; // Détails des prix
+  store: string; // Magasin
+}
+
+// Interface pour UVC
 export interface Uvc extends Document {
-  code: string;
-  product_id: ObjectId;
-  dimensions: string[];
-  prices: Price[];
-  eans: string[];
-  status: number;
-  creator_id: ObjectId;
-  additional_fields: any;
+  code: string; // Code de l'UVC
+  dimensions: string[]; // Dimensions de l'UVC
+  eans: string[]; // Liste des codes EAN
+  prices: PriceSchema[]; // Détails des prix
+  status: string; // Statut
+  additional_fields: any; // Champs supplémentaires
 }
 
-const priceSchema = new mongoose.Schema(
-  {
-    tarif_id: { type: mongoose.Types.ObjectId, ref: "tarif", default: "" },
-    currency: { type: String },
-    supplier_id: {
-      type: mongoose.Types.ObjectId,
-      ref: "supplier",
-      default: "",
-    },
-    price: [{ type: Number }],
-    store: { type: String },
-  },
-  { _id: false }
-);
+// Schéma pour PriceItem
+const priceItemSchema = new mongoose.Schema<PriceItemSchema>({
+  peau: { type: Number },
+  tbeu_pb: { type: Number },
+  tbeu_pmeu: { type: Number },
+  _id: { type: mongoose.Types.ObjectId }
+}, { _id: false });
 
-const uvcSchema = new mongoose.Schema<Uvc>(
-  {
-    code: { type: String },
-    product_id: { type: mongoose.Types.ObjectId, ref: "product", default: "" },
-    dimensions: [{ type: String }],
-    prices: [priceSchema],
-    eans: [{ type: String }],
-    status: { type: Number },
-    creator_id: { type: mongoose.Types.ObjectId },
-    additional_fields: {
-      type: Map,
-      of: mongoose.Schema.Types.Mixed,
-    },
-  },
-  { timestamps: true, collection: "uvc" }
-);
+// Schéma pour Price
+const priceSchema = new mongoose.Schema<PriceSchema>({
+  currency: { type: String, default: "" },
+  price: [priceItemSchema],
+  store: { type: String, default: "" }
+}, { _id: false });
+
+// Schéma pour UVC
+const uvcSchema = new mongoose.Schema<Uvc>({
+  code: { type: String },
+  dimensions: [{ type: String }],
+  eans: [{ type: String }],
+  prices: [priceSchema],
+  status: { type: String, default: "A" },
+  additional_fields: {
+    type: Map,
+    of: mongoose.Schema.Types.Mixed
+  }
+}, { timestamps: true, collection: "uvc" });
 
 const UvcModel: Model<Uvc> = mongoose.model<Uvc>("uvc", uvcSchema);
 

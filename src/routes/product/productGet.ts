@@ -150,16 +150,14 @@ router.get(
       }
 
       const data: Product | null | undefined = await ProductModel.findById(id)
-        .populate("brand_ids")
-        .populate("collection_ids")
-        .populate("tag_ids")
-        .populate("uvc_ids")
-        .populate({
-          path: 'suppliers.supplier_id', 
-          model: 'supplier',
-        })
-        .populate("uvc_ids")
-
+      .populate("uvc_ids")
+      .populate("brand_ids")
+      .populate("collection_ids")
+      .populate("tag_ids")
+      .populate({
+        path: 'suppliers.supplier_id',
+        model: 'supplier',
+      });
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
