@@ -120,8 +120,7 @@ router.get(
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
-        .populate("princ_supplier_id")
-        .populate("supplier_ids")
+        .populate("suppliers")
         .populate("uvc_ids")
 
       if (data === null || data === undefined) {
@@ -155,8 +154,10 @@ router.get(
         .populate("collection_ids")
         .populate("tag_ids")
         .populate("uvc_ids")
-        .populate("princ_supplier_id")
-        .populate("supplier_ids")
+        .populate({
+          path: 'suppliers.supplier_id', 
+          model: 'supplier',
+        })
         .populate("uvc_ids")
 
 
