@@ -11,9 +11,7 @@ const router = express.Router();
 router.put(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const product = req.body;
-        const uvc_ids = product.uvc_ids; // Assurer que uvc_ids est bien dans req.body
-
-        console.log("Request body:", req.body); // Ajoute ce log pour vérifier le contenu de la requête
+        const uvc_ids = product.uvc_ids;
 
         if (!product) {
             throw new Error(req.originalUrl + ", msg: product was falsy: " + product);
@@ -25,23 +23,22 @@ router.put(PRODUCT + "/:id", authorizationMiddlewear, async (req: Request, res: 
             throw new Error(req.originalUrl + ", msg: _id was falsy: " + _id);
         }
 
-        // Récupérer l'ancien produit pour une éventuelle gestion des versions ou pour vérifier les données existantes
+        
         const oldProduct: Product | undefined | null = await ProductModel.findById(_id);
 
         if (!oldProduct) {
             throw new Error(req.originalUrl + ", msg: No product found with this id before the update");
         }
 
-        // Si des UVC sont envoyés, les ajouter ou les remplacer dans le produit
         let updatedProductData = { ...product };
         if (uvc_ids && uvc_ids.length > 0) {
             updatedProductData = {
                 ...product,
-                uvc_ids: uvc_ids, // Mettre à jour ou ajouter les UVC associés
+                uvc_ids: uvc_ids,
             };
         }
 
-        // Mise à jour du produit avec les nouvelles données
+     
         const response: UpdateWriteOpResult = await ProductModel.updateOne(
             { _id },
             { $set: updatedProductData }
