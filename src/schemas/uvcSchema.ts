@@ -17,12 +17,12 @@ interface PriceSchema {
 
 // Interface pour UVC
 export interface Uvc extends Document {
+  product_id: ObjectId;
   code: string; // Code de l'UVC
   dimensions: string[]; // Dimensions de l'UVC
   eans: string[]; // Liste des codes EAN
   prices: PriceSchema[]; // Détails des prix
   status: string; // Statut
-  additional_fields: any; // Champs supplémentaires
 }
 
 // Schéma pour PriceItem
@@ -42,15 +42,12 @@ const priceSchema = new mongoose.Schema<PriceSchema>({
 
 // Schéma pour UVC
 const uvcSchema = new mongoose.Schema<Uvc>({
+  product_id: { type: mongoose.Types.ObjectId, ref: "product" },
   code: { type: String },
   dimensions: [{ type: String }],
   eans: [{ type: String }],
   prices: [priceSchema],
   status: { type: String, default: "A" },
-  additional_fields: {
-    type: Map,
-    of: mongoose.Schema.Types.Mixed
-  }
 }, { timestamps: true, collection: "uvc" });
 
 const UvcModel: Model<Uvc> = mongoose.model<Uvc>("uvc", uvcSchema);

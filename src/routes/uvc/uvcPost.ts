@@ -12,7 +12,7 @@ const router = express.Router();
 router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const object = req.body;
-
+        console.log(req.body);
         if (!object) {
             throw new Error(req.originalUrl + ", msg: uvc was falsy: " + object);
         }
