@@ -17,7 +17,7 @@ router.get(
 
       let filter: any = { $and: [] }; // Utilisation d'un objet vide pour stocker les filtres
 
-      const { code, company_name, address, status, country } = req.query;
+      const { code, company_name, address, city, status, country } = req.query;
 
       if (code) {
         const $regEx = new RegExp(code as string, "i");
@@ -31,7 +31,19 @@ router.get(
 
       if (address) {
         const $regEx = new RegExp(address as string, "i");
-        filter.$and.push({ address: $regEx });
+        // Recherche dans les trois champs liés aux adresses
+        filter.$and.push({
+          $or: [
+            { address_1: $regEx },
+            { address_2: $regEx },
+            { address_3: $regEx }
+          ],
+        });
+      }
+
+      if (city) {
+        const $regEx = new RegExp(city as string, "i");
+        filter.$and.push({ city: $regEx });
       }
 
       if (status) {
@@ -63,6 +75,7 @@ router.get(
     }
   }
 );
+
 
 router.get(
   SUPPLIER,

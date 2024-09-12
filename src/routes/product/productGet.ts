@@ -20,80 +20,78 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, brand, collection, dimension,status } =
-        req.query;
+      const { supplier, tag, long_label, brand, collection, dimension, status } = req.query;
 
       const { skip, intLimit } = await generalLimits(req);
+      console.log(req.query)
+      let brandIds: any[] | null | undefined;
+      let collectionIds: any[] | null | undefined;
+      let dimensionIds: any[] | null | undefined;
+      let tagIds: any[] | null | undefined;
+      let supplierIds: any[] | null | undefined;
 
-      let brandIds: Brand[] | null | undefined;
-      let collectionIds: Collection[] | null | undefined;
-      let dimensionIds: Dimension[] | null | undefined;
-      let tagIds: Tag[] | null | undefined;
-      let supplierIds: Supplier[] | null | undefined;
-  
       let filter: any = {};
 
+      // Recherche par marque
       if (brand) {
         const brandRegex = new RegExp(brand as string, "i");
-        brandIds = await BrandModel.find({
-          label: { $regex: brandRegex },
-        }).select("_id");
-        const $in: ObjectId[] = [];
-        brandIds.forEach((doc) => $in.push(doc._id as ObjectId));
-        filter = { ...filter, brand_id: { $in } };
+        brandIds = await BrandModel.find({ label: { $regex: brandRegex } }).select("_id");
+        const $in: ObjectId[] = brandIds.map(doc => doc._id);
+        filter = { ...filter, brand_ids: { $in } };
       }
+      
 
+ 
       if (collection) {
         const collectionRegex = new RegExp(collection as string, "i");
-        collectionIds = await CollectionModel.find({
-          label: { $regex: collectionRegex },
-        }).select("_id");
-        const $in: ObjectId[] = [];
-        collectionIds.forEach((doc) => $in.push(doc._id as ObjectId));
-        filter = { ...filter, collection_id: { $in } };
+        collectionIds = await CollectionModel.find({ label: { $regex: collectionRegex } }).select("_id");
+        const $in: ObjectId[] = collectionIds.map(doc => doc._id);
+        filter = { ...filter, collection_ids: { $in } }; 
       }
 
-      // NOT WOKRING
+   
       if (dimension) {
         const dimensionRegex = new RegExp(dimension as string, "i");
-        dimensionIds = await DimensionModel.find({
-          label: { $regex: dimensionRegex },
-        }).select("_id");
-        const $in: any[] = [];
-        dimensionIds.forEach((doc) => $in.push(doc._id as any));
-        filter = { ...filter, dimension_ids: { $in } };
+        dimensionIds = await DimensionModel.find({ label: { $regex: dimensionRegex } }).select("_id");
+        const $in: any[] = dimensionIds.map(doc => doc._id);
+        filter = { ...filter, dimension_types: { $in } };
       }
 
-      // if the latest dump file does not work
-      if(status) {
-        filter = {...filter, status}
+      // Recherche par statut
+      if (status) {
+        filter = { ...filter, status };
       }
 
+ 
       if (tag) {
-        const tagIdRegex = new RegExp(tag as string, "i");
-        tagIds = await TagModel.find({ name: { $regex: tagIdRegex } }).select(
-          "_id"
-        );
-        const $in: ObjectId[] = [];
-        tagIds.forEach((doc) => $in.push(doc._id as ObjectId));
+        const tagRegex = new RegExp(tag as string, "i");
+        tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
       }
 
+
       if (supplier) {
-        const supplierIdRegex = new RegExp(supplier as string, "i");
-        supplierIds = await SupplierModel.find({
-          label: { $regex: supplierIdRegex },
-        }).select("_id");
-        const $in: ObjectId[] = [];
-        supplierIds.forEach((doc) => $in.push(doc._id as ObjectId));
-        filter = { ...filter, supplier_id: { $in } };
+        const supplierRegex = new RegExp(supplier as string, "i");
+        supplierIds = await SupplierModel.find({ company_name: { $regex: supplierRegex } }).select("_id");
+        const $in: ObjectId[] = supplierIds.map(doc => doc._id);
+        filter = { ...filter, 'suppliers.supplier_id': { $in } }; 
       }
 
+      
       const data: Product[] | null | undefined = await ProductModel.find(filter)
         .skip(skip)
-        .limit(intLimit);
+        .limit(intLimit)
+        .populate("brand_ids")
+        .populate("collection_ids")
+        .populate("tag_ids")
+        .populate({
+          path: 'suppliers.supplier_id',
+          model: 'supplier',
+        })
+        .populate("uvc_ids")
 
-      if (data === null || data === undefined) {
+      if (!data) {
         throw new Error(req.originalUrl + ", msg: find error");
       }
 
@@ -106,6 +104,7 @@ router.get(
     }
   }
 );
+
 
 router.get(
   PRODUCT,
@@ -120,7 +119,10 @@ router.get(
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
-        .populate("suppliers")
+        .populate({
+          path: 'suppliers.supplier_id',
+          model: 'supplier',
+        })
         .populate("uvc_ids")
 
       if (data === null || data === undefined) {
