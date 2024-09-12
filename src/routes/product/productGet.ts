@@ -50,7 +50,12 @@ router.get(
       // Recherche par marque
       if (brand) {
         const brandRegex = new RegExp(brand as string, "i");
-        brandIds = await BrandModel.find({ label: { $regex: brandRegex } }).select("_id");
+        
+        const brandByLabel = await BrandModel.find({ label: { $regex: brandRegex } }).select("_id");
+        const brandByCode = await BrandModel.find({ name: { $regex: brandRegex } }).select("_id");
+        
+        brandIds = [...brandByLabel, ...brandByCode]
+        
         const $in: ObjectId[] = brandIds.map(doc => doc._id);
         filter = { ...filter, brand_ids: { $in } };
       }
@@ -82,7 +87,12 @@ router.get(
       // works
       if (tag) {
         const tagRegex = new RegExp(tag as string, "i");
-        tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        const tagByName = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        const tagByCode = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+
+        // tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        // code 
+        tagIds = [...tagByCode, tagByName]
         const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
       }
