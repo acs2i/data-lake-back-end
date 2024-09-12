@@ -20,10 +20,11 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, long_label, brand, collection, dimension, status } = req.query;
+      const { supplier, tag, reference, long_label, brand, collection, dimension, status } = req.query;
 
       const { skip, intLimit } = await generalLimits(req);
       console.log(req.query)
+      let referenceIds: any[] | null | undefined
       let brandIds: any[] | null | undefined;
       let collectionIds: any[] | null | undefined;
       let dimensionIds: any[] | null | undefined;
@@ -32,6 +33,20 @@ router.get(
 
       let filter: any = {};
 
+
+      // works
+      if(reference) {
+        const referenceRegex = new RegExp(reference as string, "i");
+        filter = { ...filter, reference: referenceRegex}
+      }
+
+      // works 
+      if(long_label) {
+        const long_labelRegex = new RegExp(long_label as string, "i");
+        filter = { ...filter, long_label: long_labelRegex}
+      }
+
+      // works
       // Recherche par marque
       if (brand) {
         const brandRegex = new RegExp(brand as string, "i");
@@ -41,7 +56,7 @@ router.get(
       }
       
 
- 
+      // NOT NEEDED
       if (collection) {
         const collectionRegex = new RegExp(collection as string, "i");
         collectionIds = await CollectionModel.find({ label: { $regex: collectionRegex } }).select("_id");
@@ -49,7 +64,7 @@ router.get(
         filter = { ...filter, collection_ids: { $in } }; 
       }
 
-   
+      // no working
       if (dimension) {
         const dimensionRegex = new RegExp(dimension as string, "i");
         dimensionIds = await DimensionModel.find({ label: { $regex: dimensionRegex } }).select("_id");
@@ -58,11 +73,13 @@ router.get(
       }
 
       // Recherche par statut
+      // works
       if (status) {
-        filter = { ...filter, status };
+        const statusRegex = new RegExp(status as string,'i')
+        filter = { ...filter, status: statusRegex };
       }
 
- 
+      // works
       if (tag) {
         const tagRegex = new RegExp(tag as string, "i");
         tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
@@ -70,14 +87,19 @@ router.get(
         filter = { ...filter, tag_ids: { $in } };
       }
 
-
+      // doesnt work
       if (supplier) {
         const supplierRegex = new RegExp(supplier as string, "i");
         supplierIds = await SupplierModel.find({ company_name: { $regex: supplierRegex } }).select("_id");
-        const $in: ObjectId[] = supplierIds.map(doc => doc._id);
-        filter = { ...filter, 'suppliers.supplier_id': { $in } }; 
+        const $in: ObjectId[] = supplierIds.map(doc => doc._id );
+        // filter = { ...filter, 'suppliers.supplier_id': { $in } }; 
+        const x = {supplier_id: {$in}}
+        // filter = { ...filter, suppliers: { $elemMatch: {supplier_id: { $in }} }}
+        filter = { ...filter, 'suppliers.supplier_id': { $in }}
+
       }
 
+      console.log("FILTR: " , filter)
       
       const data: Product[] | null | undefined = await ProductModel.find(filter)
         .skip(skip)
