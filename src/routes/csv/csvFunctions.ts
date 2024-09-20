@@ -114,13 +114,23 @@ async function Extract(collectionName: string) {
 
 
 
-async function ImportCsv(csvFilePath: string, collectionName: string) {
-    const csvData = fs.readFileSync(csvFilePath, 'utf8');
-    const workbook = XLSX.read(csvData, { type: 'string' });
+async function ImportCsv(csvFilePath: string, fileExt: string, collectionName: string) {
+    let csvData 
+    let workbook;
+    if (fileExt === '.csv') {
+        csvData = fs.readFileSync(csvFilePath, 'utf8');
+        workbook = XLSX.read(csvData, { type: 'string' });
+    } 
+    // else if(fileExt === '.xlsx') {
+    else {
+        csvData = fs.readFileSync(csvFilePath);
+        workbook = XLSX.read(csvData, { type: 'buffer' });
+    }
+
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-  
+
     const import_id = v4();
     const documents = jsonData.map((data: any) => {
     //   data["import_type"] = "import";
@@ -209,7 +219,7 @@ router.post("/csv", upload.single('file'), async (req: Request & any , res: Resp
     if (fileExt === '.csv' || fileExt === '.xlsx') {
     // Use ImportCsv for processing the CSV file
         
-    await ImportCsv(filePath, collection as string);
+    await ImportCsv(filePath, fileExt, collection as string);
 
     // Respond with success
     return res.status(200).send('File processed and data imported successfully');
