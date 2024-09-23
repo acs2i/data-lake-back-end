@@ -9,18 +9,6 @@ interface Contact {
   email: string;
 }
 
-interface Condition {
-  tarif: string;
-  currency: string;
-  rfa: string;
-  net_price: string;
-  labeling: string;
-  paiement_condition: string;
-  franco: string;
-  validate_tarif: string;
-  budget: string;
-}
-
 export interface Supplier extends Document {
   code: string;
   company_name: string;
@@ -36,7 +24,6 @@ export interface Supplier extends Document {
   postal: string;
   country: string;
   contacts?: Contact[];
-  conditions?: Condition[];
   brand_id: ObjectId[];
   status: string;
   creator: any; // it's an object
@@ -55,20 +42,6 @@ const contactSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const conditionSchema = new mongoose.Schema(
-  {
-    tarif: { type: String },
-    currency: { type: String },
-    rfa: { type: String },
-    net_price: { type: String },
-    labeling: { type: String },
-    paiement_condition: { type: String },
-    franco: { type: String },
-    validate_tarif: { type: String },
-    budget: { type: String },
-  },
-  { _id: false }
-);
 
 const supplierSchema = new mongoose.Schema<Supplier>(
   {
@@ -86,17 +59,19 @@ const supplierSchema = new mongoose.Schema<Supplier>(
     postal: { type: String },
     country: { type: String },
     contacts: [contactSchema],
-    conditions: [conditionSchema],
     brand_id: [{type: mongoose.Types.ObjectId, ref: "brand"}],
     status: { type: String },
     creator: {
       type: Map,
       of: String,
     },
-    additional_fields: {
-      type: Map,
-      of: mongoose.Schema.Types.Mixed,
-    },
+    additional_fields: [
+      {
+        label: { type: String},
+        value: { type: String},
+        field_type: { type: String},
+      },
+    ],
   },
   { timestamps: true, collection: "supplier" }
 );
