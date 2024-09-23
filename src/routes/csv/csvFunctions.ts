@@ -112,53 +112,132 @@ async function Extract(collectionName: string) {
 // }
 
 
+function validateColumns(data: any[], requiredKeys: (keyof any)[]): void {
+  if (data.length === 0) {
+    throw new Error('CSV file is empty');
+  }
+
+
+  const csvKeys = Object.keys(data[0]);
+  const missingKeys = requiredKeys.filter(key => !csvKeys.includes(key as string));
+  console.log("data: " , data , " requiredKeys: " , requiredKeys, " csvKeys: " ,csvKeys , "missing keys: " , missingKeys)
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing required columns: ${missingKeys.join(', ')}`);
+  }
+}
 
 
 async function ImportCsv(csvFilePath: string, fileExt: string, collectionName: string) {
-    let csvData 
-    let workbook;
-    if (fileExt === '.csv') {
-        csvData = fs.readFileSync(csvFilePath, 'utf8');
-        workbook = XLSX.read(csvData, { type: 'string' });
-    } 
-    // else if(fileExt === '.xlsx') {
-    else {
-        csvData = fs.readFileSync(csvFilePath);
-        workbook = XLSX.read(csvData, { type: 'buffer' });
+  let csvData;
+  let workbook;
+  if (fileExt === '.csv') {
+    csvData = fs.readFileSync(csvFilePath, 'utf8');
+    workbook = XLSX.read(csvData, { type: 'string' });
+  } else {
+    csvData = fs.readFileSync(csvFilePath);
+    workbook = XLSX.read(csvData, { type: 'buffer' });
+  }
+
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+  // Define your required keys based on your interface
+  // const requiredKeys: (keyof Brand)[] = ['field1', 'field2' /* ... other fields */];
+
+  let requiredKeys: any[] = []
+
+  switch(collectionName) {
+    case "brand": {
+      requiredKeys = ["code", "label","status","creator_id"]
+      break;
     }
+    case "collection": {
+      requiredKeys = ["code", "label","status","creator_id"]
 
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      break;
+    }
+    case "dimension": {
+      requiredKeys = ["code", "label","type","status","creator_id"]
+      break;
+    }
+    case "dimensionGrid": {
+      requiredKeys = ["type", "label","status","dimensions"]
 
-    const import_id = v4();
-    const documents = jsonData.map((data: any) => {
-    //   data["import_type"] = "import";
-    //   data["import_id"] = import_id;
-    //   data["file_name"] = csvFilePath;
-  
-      delete data._id;
-      if (!data["version"]) data["version"] = 1;
-      else data["version"] += 1;
-  
-      return data;
-    });
-  
-    const client = new MongoClient(url as string);
-    await client.connect();
-    
-    try {
-      const db = client.db(dbName);
-      const collection = db.collection(collectionName);
-      await collection.insertMany(documents);
-      console.log("Data inserted successfully");
-    } catch (err) {
-      console.error('Error inserting data:', err);
-    } finally {
-      await client.close();
+      break;
+    }
+    case "dimensionType": {
+      requiredKeys = ["dimension"]
+      break;
+    }
+    case "event": {
+      requiredKeys = ["code","label","type","date_start","date_end"]
+      break;
+    }
+    case "product": {
+      requiredKeys = ["reference","name","short_label","long_label","type","tag_ids","peau","tbeu_pb","tbeu_pmeu","suppliers","dimension_types","uvc_ids","brand_ids","collection_ids","imgPath","status"]
+      break;
+    }
+    case "supplier": {
+      requiredKeys = ["code","company_name","siret","tva","web_url","email","phone","address_1","address_2","address_3","city","postal","country","contacts","conditions","brand_id","status","creator"]
+      break;
+    }
+    case "tag": {
+      requiredKeys = ["code","name","level","tag_grouping_id","status"]
+      break;
+    }
+    case "tagGrouping": {
+      requiredKeys = ["name","level","status"]
+      break;
+    }
+    case "tarif": {
+      requiredKeys = ["code","label"]
+      break;
+    }
+    case "uvc": {
+      requiredKeys = ["peau","tbeu_pb", "tbeu_pmeu"]
+      break;
+    }
+    default: {
+      break;
     }
   }
+
+  console.log("required keys: " , requiredKeys)
+
+  // Validate columns
+  try {
+    validateColumns(jsonData, requiredKeys);
+  } catch (error) {
+    console.error('Validation error:', error);
+    return error; // Exit the function if validation fails
+  }
+
+  const import_id = v4();
+  const documents = jsonData.map((data: any) => {
+    delete data._id;
+    if (!data["version"]) data["version"] = 1;
+    else data["version"] += 1;
+
+    return data;
+  });
+
+  console.log("documents: " , documents)
+
+  const client = new MongoClient(url as string);
+  await client.connect();
   
+  try {
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    await collection.insertMany(documents);
+    console.log("Data inserted successfully");
+  } catch (err) {
+    console.error('Error inserting data:', err);
+  } finally {
+    await client.close();
+  }
+}
 
 // ImportCsv("./csvReceivedFile.csv");
 
@@ -198,6 +277,8 @@ router.post("/csv", upload.single('file'), async (req: Request & any , res: Resp
     try {
 
     const {collection} = req.body;
+
+    console.log("Req body: " , req.bod)
 
     if(!collection) {
         throw new Error("Collcetion wasn't defined")
