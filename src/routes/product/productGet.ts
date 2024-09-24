@@ -95,6 +95,7 @@ router.get(
         const tagByName = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
         const tagByCode = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
         
+        
         const tagIds = [...tagByCode, ...tagByName];
         const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
