@@ -94,13 +94,14 @@ router.get(
         const tagRegex = new RegExp(tag as string, "i");
         const tagByName = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
         const tagByCode = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
-        
+
         
         const tagIds = [...tagByCode, ...tagByName];
         const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
       }
 
+      
       if (sub_family) {
         const subFamilyRegex = new RegExp(sub_family as string, "i");
         const subFamilyByName = await TagModel.find({ name: { $regex: subFamilyRegex }, level: "sous-famille" }).select("_id");
