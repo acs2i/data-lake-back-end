@@ -20,7 +20,7 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, sub_family, reference, long_label, brand, collection, dimension, status } = req.query;
+      const { supplier, tag, sub_family, reference, long_label, brand, collection, dimension, status, name } = req.query;
 
 
       const { skip, intLimit } = await generalLimits(req);
@@ -34,6 +34,10 @@ router.get(
 
       let filter: any = {};
 
+      if(name) {
+        const nameRegex = new RegExp(name as string, "i");
+        filter = { ...filter, name: nameRegex}
+      }
 
       // works
       if(reference) {
