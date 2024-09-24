@@ -15,24 +15,26 @@ router.get(
     try {
       const { intLimit, skip } = await generalLimits(req);
 
-      let filter: any = { $and: [] }; // Utilisation d'un objet vide pour stocker les filtres
+      let filter: any = {}; // Utilisation d'un objet vide pour stocker les filtres
 
       const { code, company_name, address, city, status, country } = req.query;
 
+      const andConditions: any[] = [];
+
+      // Ajouter les conditions si elles existent
       if (code) {
         const $regEx = new RegExp(code as string, "i");
-        filter.$and.push({ code: $regEx });
+        andConditions.push({ code: $regEx });
       }
 
       if (company_name) {
         const $regEx = new RegExp(company_name as string, "i");
-        filter.$and.push({ company_name: $regEx });
+        andConditions.push({ company_name: $regEx });
       }
 
       if (address) {
         const $regEx = new RegExp(address as string, "i");
-        // Recherche dans les trois champs liés aux adresses
-        filter.$and.push({
+        andConditions.push({
           $or: [
             { address_1: $regEx },
             { address_2: $regEx },
@@ -43,23 +45,25 @@ router.get(
 
       if (city) {
         const $regEx = new RegExp(city as string, "i");
-        filter.$and.push({ city: $regEx });
+        andConditions.push({ city: $regEx });
       }
 
-      if (status) {
+      if (status && status !== "") {
         const $regEx = new RegExp(status as string, "i");
-        filter.$and.push({ status: $regEx });
+        andConditions.push({ status: $regEx });
       }
 
       if (country) {
         const $regEx = new RegExp(country as string, "i");
-        filter.$and.push({ country: $regEx });
+        andConditions.push({ country: $regEx });
       }
 
-      if (Object.keys(filter).length === 0) {
-        throw new Error("Aucun critère de recherche valide fourni.");
+      // Si des conditions existent, ajoute l'opérateur $and
+      if (andConditions.length > 0) {
+        filter.$and = andConditions;
       }
 
+      // Effectuer la recherche même si aucun critère n'a été fourni
       const data = await SupplierModel.find(filter).skip(skip).limit(intLimit);
 
       if (!data) {
@@ -75,6 +79,8 @@ router.get(
     }
   }
 );
+
+
 
 
 router.get(
