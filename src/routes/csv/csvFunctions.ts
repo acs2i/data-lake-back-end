@@ -45,6 +45,13 @@ async function jsonToCsv(jsonData: any): Promise<ExcelJS.Buffer> {
     for (const data of jsonData) {
       if (data._id) data._id = data._id.toString();
       if (data.creator_id) data.creator_id = data.creator_id.toString();
+
+      // go through the data and for any arrays we need to return it as string it
+      // for(const key in data) {
+      //   if (Array.isArray(data[key])) {
+      //     data[key] = data[key].toString()
+      //   }
+      // }
     }
   
     // Create a new workbook
@@ -79,7 +86,6 @@ async function Extract(collectionName: string) {
       const data = await fetchDataFromMongoDB(collectionName);
       
       if (data) {
-   
         return await jsonToCsv(data);
         
       }
@@ -112,7 +118,92 @@ async function Extract(collectionName: string) {
 // }
 
 
+function validateColumns(data: any[], requiredKeys: any[]): void {
+  if (data.length === 0) {
+    throw new Error('CSV file is empty');
+  }
 
+  const csvKeys = Object.keys(data[0]);
+
+  console.log("CSV KEYS: "  ,csvKeys)
+
+  const missingKeys = requiredKeys.filter(key => !csvKeys.map((k) => k.toLowerCase().trim()).includes(key as string));
+
+  if (missingKeys.length > 0) {
+    throw new Error(`Missing required columns: ${missingKeys.join(', ')}`);
+  }
+}
+
+function determineRequiredKeys(collectionName: string) : string[]{
+  let requiredKeys: string[] = []
+  switch(collectionName) {
+    case "brand": {
+      requiredKeys = ["code", "label", "status"]
+      break;
+    }
+    case "client": {
+      requiredKeys = ["type"]
+      break;
+    }
+    case "collection": {
+      requiredKeys = ["code", "label", "status"]
+      break;
+    }
+    case "dimension_type": {
+      requiredKeys = ["dimension"]
+      break;
+    }
+    case "dimension_grid": {
+      requiredKeys = ["label", "type" , "dimensions", "status"]
+      break;
+    }
+    case "dimension": {
+      requiredKeys = ["code", "label", "type" , "status"]
+      break;
+    }
+    case "dimension_type": {
+      requiredKeys = ["dimension"]
+      break;
+    }
+    case "event": {
+      requiredKeys = ["code", "label", "type", "date_start", "date_end"]
+
+      break;
+    }
+    case "product": {
+      requiredKeys = ["reference","name", "short_label", "long_label", "type", "tag_ids", 
+        "peau", "tbeu_pb", "tbeu_pmeu", "suppliers","dimension_types", "uvc_ids","brand_ids","collection_ids",
+        "imgPath", "status"
+      ]
+      break;
+    }
+    case "supplier": {
+      requiredKeys = ["code", "company_name" , "siret", "tva", "web_url", "email", "phone", "address_1", "address_2", "address_3" , "city", "postal", "country", "contacts","brand_id","status"]
+      break;
+    }
+    case "tag": {
+      requiredKeys = ["code", "name", "level", "tag_grouping_id", "status"]
+      break
+    }
+    case "tag_grouping": {
+      requiredKeys = ["name", "level","status"]
+
+      break;
+    }
+    case "tarif": {
+      requiredKeys = ["code","label"]
+      break;
+    }
+    case "uvc": {
+      requiredKeys = ["code", "dimensions", "eans", "prices", "status"]
+    }
+    default: {
+      break;
+    }
+  }
+  return requiredKeys;
+
+}
 
 async function ImportCsv(csvFilePath: string, fileExt: string, collectionName: string) {
     let csvData 
@@ -131,27 +222,56 @@ async function ImportCsv(csvFilePath: string, fileExt: string, collectionName: s
     const worksheet = workbook.Sheets[sheetName];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-    const import_id = v4();
+    console.log("json data:  "  ,jsonData)
+    /////////////////////////////////////
+    let requiredKeys: string[] = determineRequiredKeys(collectionName)
+
+
+    try {
+      validateColumns(jsonData, requiredKeys);
+    } catch (error) {
+      console.error('Validation error:', error);
+      return; // Exit the function if validation fails
+    }
+
+    /////////////////////////////////////
+
     const documents = jsonData.map((data: any) => {
-    //   data["import_type"] = "import";
-    //   data["import_id"] = import_id;
-    //   data["file_name"] = csvFilePath;
+      //   data["import_type"] = "import";
+      //   data["import_id"] = import_id;
+      //   data["file_name"] = csvFilePath;
   
       delete data._id;
       if (!data["version"]) data["version"] = 1;
       else data["version"] += 1;
-  
+
+      console.log("DATA: "  ,data)
+      // go through each key and make sure a stringified array is turned into a real array
+      for(const key in data) {
+        if(typeof data[key] === "string" && data[key].startsWith("[") && data[key].endsWith("]")) {
+            let content = data[key].slice(1,-1).trim()
+
+            if(content === '') {
+              data[key] = []
+            } 
+
+            data[key] = content.split(",")
+        }
+      }
+
+
       return data;
+
+
     });
   
     const client = new MongoClient(url as string);
     await client.connect();
-    
     try {
       const db = client.db(dbName);
       const collection = db.collection(collectionName);
       await collection.insertMany(documents);
-      console.log("Data inserted successfully");
+
     } catch (err) {
       console.error('Error inserting data:', err);
     } finally {
