@@ -20,10 +20,10 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, reference, long_label, brand, collection, dimension, status, name } = req.query;
+      const { supplier, tag, sub_family, reference, long_label, brand, collection, dimension, status, name } = req.query;
+
 
       const { skip, intLimit } = await generalLimits(req);
-      console.log(req.query)
       let referenceIds: any[] | null | undefined
       let brandIds: any[] | null | undefined;
       let collectionIds: any[] | null | undefined;
@@ -91,14 +91,23 @@ router.get(
       // works
       if (tag) {
         const tagRegex = new RegExp(tag as string, "i");
-        const tagByName = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
-        const tagByCode = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        const tagByName = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
+        const tagByCode = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
 
-        // tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
-        // code 
-        tagIds = [...tagByCode, tagByName]
+        
+        const tagIds = [...tagByCode, ...tagByName];
         const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
+      }
+      
+      if (sub_family) {
+        const subFamilyRegex = new RegExp(sub_family as string, "i");
+        const subFamilyByName = await TagModel.find({ name: { $regex: subFamilyRegex }, level: "sous-famille" }).select("_id");
+        const subFamilyByCode = await TagModel.find({ name: { $regex: subFamilyRegex }, level: "sous-famille" }).select("_id");
+        
+        const subFamilyIds = [...subFamilyByCode, ...subFamilyByName];
+        const $inSubFamily: ObjectId[] = subFamilyIds.map(doc => doc._id);
+        filter = { ...filter, tag_ids: { $in: $inSubFamily } };
       }
 
       // doesnt work
