@@ -132,16 +132,6 @@ function validateColumns(data: any[], requiredKeys: any[]): void {
   }
 }
 
-  const csvKeys = Object.keys(data[0]);
-
-  console.log("CSV KEYS: "  ,csvKeys)
-
-  const missingKeys = requiredKeys.filter(key => !csvKeys.map((k) => k.toLowerCase().trim()).includes(key as string));
-
-  if (missingKeys.length > 0) {
-    throw new Error(`Missing required columns: ${missingKeys.join(', ')}`);
-  }
-}
 
 function determineRequiredKeys(collectionName: string) : string[]{
   let requiredKeys: string[] = []
