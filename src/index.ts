@@ -9,6 +9,9 @@ import brandPostRoutes from "./routes/brand/brandPost";
 import brandPutRoutes from "./routes/brand/brandPut";
 import brandDeleteRoutes from "./routes/brand/brandDelete";
 
+import csvRoutes from "./routes/csv/csvFunctions";
+
+
 import collectionGetRoutes from "./routes/collection/collectionGet";
 import collectionPostRoutes from "./routes/collection/collectionPost";
 import collectionPutRoutes from "./routes/collection/collectionPut";
@@ -84,6 +87,8 @@ app.use(v1, brandGetRoutes);
 app.use(v1, brandPostRoutes);
 app.use(v1, brandPutRoutes);
 app.use(v1, brandDeleteRoutes); 
+
+app.use(v1, csvRoutes);
 
 app.use(v1, collectionGetRoutes);
 app.use(v1, collectionPostRoutes);

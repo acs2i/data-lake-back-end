@@ -3,11 +3,31 @@ import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { COLLECTION } from "./shared";
-import CollectionModel from "../../schemas/collectionSchema";
+import CollectionModel, { Collection } from "../../schemas/collectionSchema";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
+
+
+router.get(COLLECTION + "/field/:field/value/:value", async (req: Request, res: Response) => {
+    try {
+        const { value , field } = req.params;
+
+        const data : Collection[] | null | undefined = await CollectionModel.findOne({[field] : value}); // we find all in case the edge case of different level families with same name
+    
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+        
+        res.status(OK).json(data);
+    }
+    catch(err) {
+        console.error(err)
+        res.status(INTERNAL_SERVER_ERROR).json({})
+    }
+
+})
 
 router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {

@@ -20,7 +20,8 @@ router.get(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, reference, long_label, brand, collection, dimension, status } = req.query;
+      const { supplier, tag, sub_family, reference, long_label, brand, collection, dimension, status, name } = req.query;
+
 
       const { skip, intLimit } = await generalLimits(req);
       console.log(req.query);
@@ -67,6 +68,7 @@ router.get(
 
       if (tag) {
         const tagRegex = new RegExp(tag as string, "i");
+<<<<<<< HEAD
         const tagIds = await TagModel.find({ 
           $or: [
             { name: { $regex: tagRegex } },
@@ -74,6 +76,25 @@ router.get(
           ]
         }).select("_id");
         filter.tag_ids = { $in: tagIds.map(doc => doc._id) };
+=======
+        const tagByName = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
+        const tagByCode = await TagModel.find({ name: { $regex: tagRegex }, level: "famille" }).select("_id");
+
+        
+        const tagIds = [...tagByCode, ...tagByName];
+        const $in: ObjectId[] = tagIds.map(doc => doc._id);
+        filter = { ...filter, tag_ids: { $in } };
+>>>>>>> 10691bacc46c95ffcc9701fd26bffa571f8235e6
+      }
+      
+      if (sub_family) {
+        const subFamilyRegex = new RegExp(sub_family as string, "i");
+        const subFamilyByName = await TagModel.find({ name: { $regex: subFamilyRegex }, level: "sous-famille" }).select("_id");
+        const subFamilyByCode = await TagModel.find({ name: { $regex: subFamilyRegex }, level: "sous-famille" }).select("_id");
+        
+        const subFamilyIds = [...subFamilyByCode, ...subFamilyByName];
+        const $inSubFamily: ObjectId[] = subFamilyIds.map(doc => doc._id);
+        filter = { ...filter, tag_ids: { $in: $inSubFamily } };
       }
 
       if (supplier) {
