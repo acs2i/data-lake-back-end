@@ -76,7 +76,27 @@ router.get(TAG, authorizationMiddlewear, async(req: Request, res: Response) => {
     }
 })
 
-router.get(TAG + "/:id", async (req: Request, res: Response) => {
+
+router.get(TAG + "/field/:field/value/:value", async (req: Request, res: Response) => {
+    try {
+        const { value , field } = req.params;
+
+        const data : Tag[] | null | undefined = await TagModel.find({[field] : value}); // we find all in case the edge case of different level families with same name
+    
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+        
+        res.status(OK).json(data);
+    }
+    catch(err) {
+        console.error(err)
+        res.status(INTERNAL_SERVER_ERROR).json({})
+    }
+
+})
+
+router.get(TAG + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 
         const id: string | undefined | null = req.params.id;
