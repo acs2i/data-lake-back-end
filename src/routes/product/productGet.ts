@@ -24,7 +24,6 @@ router.get(
 
 
       const { skip, intLimit } = await generalLimits(req);
-      console.log(req.query)
       let referenceIds: any[] | null | undefined
       let brandIds: any[] | null | undefined;
       let collectionIds: any[] | null | undefined;
@@ -100,7 +99,6 @@ router.get(
         const $in: ObjectId[] = tagIds.map(doc => doc._id);
         filter = { ...filter, tag_ids: { $in } };
       }
-
       
       if (sub_family) {
         const subFamilyRegex = new RegExp(sub_family as string, "i");
