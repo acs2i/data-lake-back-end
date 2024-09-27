@@ -18,9 +18,19 @@ export interface Product extends Document {
     long_label: string;
     type: string;
     tag_ids: ObjectId[];
+    tax: number;
     peau: number;
     tbeu_pb: number;
     tbeu_pmeu: number;
+    height: string;
+    width: string;
+    long: string;
+    comment: string;
+    size_unit: string;
+    weigth_unit: string;
+    weight: string;
+    weight_brut: string;
+    weight_net: string;
     suppliers: SupplierSchema[];
     dimension_types: string[];
     uvc_ids: ObjectId[];
@@ -49,11 +59,21 @@ const productSchema = new mongoose.Schema<Product>({
     long_label: { type: String },
     type: { type: String },
     tag_ids: [{ type: mongoose.Types.ObjectId, ref: "tag" }],
-    suppliers: [supplierSchema],  // Utilisation du schéma Supplier
+    suppliers: [supplierSchema],
     dimension_types: [{ type: String }],
+    tax: {type: Number},
     peau: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
+    height: {type: String},
+    width: {type: String},
+    long: {type: String},
+    size_unit: {type: String},
+    weigth_unit: {type: String},
+    weight: {type: String},
+    weight_brut: {type: String},
+    weight_net: {type: String},
+    comment: { type: String, maxlength: 3000 },
     uvc_ids: [{ type: mongoose.Types.ObjectId, ref: "uvc" }],
     brand_ids: [{ type: mongoose.Types.ObjectId, ref: "brand" }],
     collection_ids: [{ type: mongoose.Types.ObjectId, ref: "collection" }],

@@ -68,6 +68,7 @@ import uvcPutRoutes from "./routes/uvc/uvcPut";
 import fieldGetRoutes from "./routes/userField/userFieldGet"
 import fieldPostRoutes from "./routes/userField/userFieldPost"
 
+import unitGetRoutes from "./routes/unit/unitGet"
 import userRoute from "./routes/user/userAuth"
 
 
@@ -148,6 +149,8 @@ app.use(v1, tarifDeleteRoutes)
 
 app.use(v1, fieldGetRoutes)
 app.use(v1, fieldPostRoutes)
+
+app.use(v1, unitGetRoutes)
 
 
 app.listen(port, () => {
