@@ -41,6 +41,9 @@ const priceSchema = new mongoose.Schema<PriceSchema>({
 }, { _id: false });
 
 // Schéma pour UVC
+// Ajouter made_in
+// Ajouter custom_cat
+// Ajouter les mesures et les poids
 const uvcSchema = new mongoose.Schema<Uvc>({
   product_id: { type: mongoose.Types.ObjectId, ref: "product" },
   code: { type: String },

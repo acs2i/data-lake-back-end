@@ -54,6 +54,7 @@ const supplierSchema = new mongoose.Schema<SupplierSchema>(
 );
 
 // Définition du schéma pour les produits
+// Rajouter produit bloqué (boolean), raison du blocage
 const productSchema = new mongoose.Schema<Product>(
   {
     creator_id: { type: mongoose.Types.ObjectId, ref: "user" },
