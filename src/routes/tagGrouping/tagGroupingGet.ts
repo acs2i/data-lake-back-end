@@ -7,6 +7,46 @@ import { TAG_GROUPING } from "./shared"
 
 const router = express.Router()
 
+
+router.get(TAG_GROUPING + "/search",async(req: Request, res: Response) => {
+    try {
+        
+        const {intLimit, skip} = await generalLimits(req);
+
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const {name} = req.query
+    
+    
+        if(name) {
+            const regEx = new RegExp(name as string, "i");
+            filter.$and.push({ name: regEx })
+        } else {
+            throw new Error("No name found")
+        }
+
+
+        const data: TagGrouping[] | null | undefined = await TagGroupingModel.find(filter).skip(skip).limit(intLimit);
+        
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+
+        const total = await TagGroupingModel.countDocuments(filter);
+
+        res.status(200).json({data, total});
+    
+    } catch(err) {
+      console.error(err)
+      res.status(500).json(err);
+    }
+  
+  
+  
+  })
+
+
 router.get(TAG_GROUPING, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
