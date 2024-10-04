@@ -2,11 +2,11 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 // Interface pour SupplierSchema
 interface SupplierSchema {
-  supplier_id: ObjectId; // ID du fournisseur
-  supplier_ref: string; // Référence du fournisseur
-  pcb: string; // PCB
-  custom_cat: string; // Catégorie douanière
-  made_in: string; // Pays d'origine
+  supplier_id: ObjectId;
+  supplier_ref: string;
+  pcb: string;
+  custom_cat: string;
+  made_in: string;
 }
 
 // Interface pour Product
