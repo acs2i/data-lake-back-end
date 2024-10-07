@@ -3,12 +3,31 @@ import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { BRAND } from "./shared";
-import BrandModel from "../../schemas/brandSchema";
+import BrandModel, { Brand } from "../../schemas/brandSchema";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { generalLimits } from "../../services/generalServices";
 
 const router = express.Router();
 
+router.get(BRAND + "/field/:field/value/:value", async (req: Request, res: Response) => {
+    try {
+        const { value , field } = req.params;
+
+        console.log("value:  "  , value, " and filedl: "  , field)
+        const data : Brand[] | null | undefined = await BrandModel.find({[field] : value}); // we find all in case the edge case of different level families with same name
+    
+        if ( data === null ||  data === undefined) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+        
+        res.status(OK).json(data);
+    }
+    catch(err) {
+        console.error(err)
+        res.status(INTERNAL_SERVER_ERROR).json({})
+    }
+
+})
 
 router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
@@ -43,6 +62,7 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
         if (!data) {
             throw new Error(req.originalUrl + ", msg: find error")
         }
+        console.log("counts total of filter: " , req.query)
 
         const total = await BrandModel.countDocuments(filter);
 

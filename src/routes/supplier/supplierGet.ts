@@ -3,7 +3,7 @@ import { SUPPLIER } from "./shared";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
 import { generalLimits } from "../../services/generalServices";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import { BAD_REQUEST } from "../../codes/errors";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
 
 const router = express.Router();
@@ -80,6 +80,27 @@ router.get(
   }
 );
 
+router.get(SUPPLIER + "/field/:field/value/:value", async (req: Request, res: Response) => {
+  try {
+      const { value , field } = req.params;
+
+      const data : Supplier[] | null | undefined = await SupplierModel.find({
+        [field]: { $regex: new RegExp(`^${value}$`, "i") }
+      }); 
+        // we find all in case the edge case of different level families with same name
+  
+      if ( data === null ||  data === undefined) {
+          throw new Error(req.originalUrl + ", msg: find error")
+      }
+      
+      res.status(OK).json(data);
+  }
+  catch(err) {
+      console.error(err)
+      res.status(INTERNAL_SERVER_ERROR).json({})
+  }
+
+})
 
 
 

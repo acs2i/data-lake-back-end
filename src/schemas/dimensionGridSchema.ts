@@ -3,6 +3,7 @@ import mongoose, { Document } from "mongoose"
 
 export interface DimensionGrid extends Document{
     label: string,
+    code: string,
     type: string,
     dimensions: string[]
     status: string;
@@ -10,6 +11,7 @@ export interface DimensionGrid extends Document{
 
 const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
     label: { type: String },
+    code: { type: String },
     type: {type: String},
     dimensions: [{ type: String }],
     status: {type: String},
