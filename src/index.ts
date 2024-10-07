@@ -70,6 +70,15 @@ import uvcPutRoutes from "./routes/uvc/uvcPut";
 import fieldGetRoutes from "./routes/userField/userFieldGet"
 import fieldPostRoutes from "./routes/userField/userFieldPost"
 
+import taxGetRoutes from "./routes/tax/taxGet"
+import taxPostRoutes from "./routes/tax/taxPost"
+import taxPutRoutes from "./routes/tax/taxPut"
+
+import blockGetRoutes from "./routes/block/blockGet"
+import blockPostRoutes from "./routes/block/blockPost"
+import blockPutRoutes from "./routes/block/blockPut"
+
+import unitGetRoutes from "./routes/unit/unitGet"
 import userRoute from "./routes/user/userAuth"
 
 
@@ -153,6 +162,15 @@ app.use(v1, fieldPostRoutes)
 
 app.use(v1, isoGetRoutes)
 
+app.use(v1, unitGetRoutes)
+
+app.use(v1, taxGetRoutes)
+app.use(v1, taxPostRoutes)
+app.use(v1, taxPutRoutes)
+
+app.use(v1, blockGetRoutes)
+app.use(v1, blockPostRoutes)
+app.use(v1, blockPutRoutes)
 
 app.listen(port, () => {
   
