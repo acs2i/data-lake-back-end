@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import UserFieldModel, {Field} from "../../schemas/userFieldSchema";
+import UserFieldModel, { Field } from "../../schemas/userFieldSchema";
 import { OK } from "../../codes/success";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { USERFIELD } from "./shared";
@@ -18,9 +18,10 @@ router.get(
       const { skip, intLimit } = await generalLimits(req);
 
       const data: Field[] | null | undefined = await UserFieldModel.find()
+        .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(intLimit)
- 
+        .limit(intLimit);
+
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
       }
@@ -47,8 +48,7 @@ router.get(
         throw new Error(req.originalUrl + ", msg: id was: " + id);
       }
 
-      const data: Field | null | undefined = await UserFieldModel.findById(id)
-   
+      const data: Field | null | undefined = await UserFieldModel.findById(id);
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
@@ -63,4 +63,3 @@ router.get(
 );
 
 export default router;
-

@@ -56,7 +56,6 @@ export interface Product extends Document {
     weight: string;
     weight_brut: string;
     weight_net: string;
-
 }
 
 // Définition du sous-schéma pour les fournisseurs
@@ -90,12 +89,11 @@ const productSchema = new mongoose.Schema<Product>(
     tbeu_pmeu: { type: Number },
     height: { type: String },
     width: { type: String },
-    long: { type: String },
+    length: { type: String },
     size_unit: { type: String },
     weigth_unit: { type: String },
-    weight: { type: String },
-    weight_brut: { type: String },
-    weight_net: { type: String },
+    gross_weight: { type: String },
+    net_weight: { type: String },
     comment: { type: String, maxlength: 3000 },
     uvc_ids: [{ type: mongoose.Types.ObjectId, ref: "uvc" }],
     brand_ids: [{ type: mongoose.Types.ObjectId, ref: "brand" }],
