@@ -23,6 +23,26 @@ export interface Uvc extends Document {
   eans: string[]; // Liste des codes EAN
   prices: PriceSchema[]; // Détails des prix
   status: string; // Statut
+  collection_code: string,
+  made_in: string,
+  custom_cat: string,
+  measurements: string[],
+  net_weight: number,
+  gross_weight: number
+  height: number,
+  length: number,
+  width: number,
+  blocked: string,
+  blocked_reason_code: string,
+  coulfour: string,
+  visible_on_internet: string,
+  sold_on_internet: string,
+  seuil_internet: string,
+  en_reassort: string,
+  remisegenerale: string    // jake, is this a string
+  fixation: string,
+  ventemetre: string,
+  comment: string
 }
 
 // Schéma pour PriceItem
@@ -48,6 +68,26 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   eans: [{ type: String }],
   prices: [priceSchema],
   status: { type: String, default: "A" },
+  made_in: {type: String},
+  custom_cat: {type :String},
+  measurements: [{type : String}],
+  net_weight: {type: Number},
+  gross_weight: {type: Number},
+  height: {type: Number},
+  length: {type: Number},
+  width: {type: Number},
+  blocked: {type: String},
+  blocked_reason_code: {type: String},
+  coulfour: {type: String},
+  visible_on_internet: {type : String},
+  sold_on_internet: {type : String},
+  seuil_internet: {type : String},
+  en_reassort: {type : String},
+  remisegenerale: {type : String},
+  fixation: {type : String},
+  ventemetre: {type : String},
+  comment: {type : String},
+
 }, { timestamps: true, collection: "uvc" });
 
 const UvcModel: Model<Uvc> = mongoose.model<Uvc>("uvc", uvcSchema);

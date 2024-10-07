@@ -26,7 +26,7 @@ const brandSchema = new mongoose.Schema<Brand>({
         type: Map,
         of: mongoose.Schema.Types.Mixed
       }
-},  { timestamps: true, collection: "brand" })
+},  {     timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "brand" })
 
 const BrandModel: Model<Brand> = mongoose.model<Brand>("brand", brandSchema);
 export default BrandModel

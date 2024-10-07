@@ -13,7 +13,7 @@ interface SupplierSchema {
 export interface Product extends Document {
     creator_id: ObjectId;
     reference: string;
-    name: string;
+    alias: string;
     short_label: string;
     long_label: string;
     type: string;
@@ -28,6 +28,25 @@ export interface Product extends Document {
     collection_ids: ObjectId[];
     imgPath: string;
     status: string;
+    weight_measure_unit: string,
+    net_weight: string,
+    dimension_measure_unit: string,
+    height: string,
+    length: number,
+    width: number,
+    taxcode: number
+    blocked: string,
+    blocked_reason_code: string,
+    coulfour: string,
+    visible_on_internet: string,
+    sold_on_internet: string,
+    seuil_internet: string,
+    en_reassort: string,
+    remisegenerale: string    // jake, is this a string
+    fixation: string,
+    ventemetre: string,
+    comment: string
+    gross_weight: string,
     additional_fields: any;
 }
 
@@ -44,7 +63,7 @@ const supplierSchema = new mongoose.Schema<SupplierSchema>({
 const productSchema = new mongoose.Schema<Product>({
     creator_id: { type: mongoose.Types.ObjectId, ref: "user" },
     reference: { type: String },
-    name: { type: String },
+    alias: { type: String },
     short_label: { type: String },
     long_label: { type: String },
     type: { type: String },
@@ -59,6 +78,26 @@ const productSchema = new mongoose.Schema<Product>({
     collection_ids: [{ type: mongoose.Types.ObjectId, ref: "collection" }],
     imgPath: { type: String },
     status: { type: String, default: "A" },
+    weight_measure_unit: { type: String},
+    net_weight: { type: String},
+    gross_weight: { type: String},
+
+    dimension_measure_unit: { type: String},
+    height: { type: String},
+    length: { type: Number},
+    width: { type: Number},
+    taxcode: { type: Number},
+    blocked: {type: String},
+    blocked_reason_code: {type: String},
+    coulfour: {type: String},
+    visible_on_internet: {type : String},
+    sold_on_internet: {type : String},
+    seuil_internet: {type : String},
+    en_reassort: {type : String},
+    remisegenerale: {type : String},
+    fixation: {type : String},
+    ventemetre: {type : String},
+    comment: {type : String},
     additional_fields: {
         type: Map,
         of: mongoose.Schema.Types.Mixed
