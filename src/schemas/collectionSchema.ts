@@ -27,7 +27,7 @@ const collectionSchema = new mongoose.Schema<Collection>({
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }
-},   { timestamps: true, collection: "collection" })
+},   {     timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "collection" })
 
 const CollectionModel: Model<Collection> = mongoose.model<Collection>("collection", collectionSchema);
 export default CollectionModel

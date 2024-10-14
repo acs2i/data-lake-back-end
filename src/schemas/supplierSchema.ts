@@ -21,6 +21,8 @@ export interface Supplier extends Document {
   address_2: string;
   address_3: string;
   city: string;
+  comment: string;
+  tarif: number;
   postal: string;
   country: string;
   contacts?: Contact[];
@@ -58,6 +60,8 @@ const supplierSchema = new mongoose.Schema<Supplier>(
     city: { type: String },
     postal: { type: String },
     country: { type: String },
+    comment: { type: String},
+    tarif: { type: Number},
     contacts: [contactSchema],
     brand_id: [{type: mongoose.Types.ObjectId, ref: "brand"}],
     status: { type: String },
@@ -73,7 +77,7 @@ const supplierSchema = new mongoose.Schema<Supplier>(
       },
     ],
   },
-  { timestamps: true, collection: "supplier" }
+  { timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "supplier" }
 );
 
 const SupplierModel: Model<Supplier> = mongoose.model<Supplier>(

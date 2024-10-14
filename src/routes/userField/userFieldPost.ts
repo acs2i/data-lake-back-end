@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express"
-import UserFieldModel from "../../schemas/userFieldSchema";
+import UserFieldModel, {Field} from "../../schemas/userFieldSchema";
 import { Document } from "mongoose";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
@@ -18,7 +18,17 @@ router.post(USERFIELD, authorizationMiddlewear, async (req: Request, res: Respon
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const newObject: Document | null | undefined = await new UserFieldModel({...object});
+           // Récupérer le dernier objet trié par `code` pour auto-incrémentation
+      const lastField = await UserFieldModel.findOne().sort({ code: -1 });
+
+      // Incrémenter le code de 1
+      const newCode = lastField ? lastField.code + 1 : 1;
+
+      // Créer la nouvelle taxe avec le code auto-incrémenté
+      const newObject: Field | null | undefined = new UserFieldModel({
+        ...object,
+        code: newCode, // Utiliser le nouveau code
+      });
 
         if(!newObject) {
             throw new Error(req.originalUrl + " msg: brand save did not work for some reason: " + object);
