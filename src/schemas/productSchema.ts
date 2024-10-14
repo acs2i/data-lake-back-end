@@ -45,17 +45,19 @@ export interface Product extends Document {
     remisegenerale: string    // jake, is this a string
     fixation: string,
     ventemetre: string,
-    comment: string
-    gross_weight: string,
-    additional_fields: any;
     name: string;
-    tax: number;
     long: string;
-    size_unit: string;
-    weigth_unit: string;
     weight: string;
     weight_brut: string;
     weight_net: string;
+
+  tax: number;
+
+  comment: string;
+  size_unit: string;
+  weigth_unit: string;
+  gross_weight: string;
+  additional_fields: any;
 }
 
 // Définition du sous-schéma pour les fournisseurs
