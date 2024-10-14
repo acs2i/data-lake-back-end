@@ -13,3 +13,4 @@ db.md
 /src/routes/uvc/*.sh
 *.sh
 *.json
+mapping.txt

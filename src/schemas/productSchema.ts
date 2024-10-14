@@ -32,7 +32,7 @@ export interface Product extends Document {
     net_weight: string,
     dimension_measure_unit: string,
     height: string,
-    length: number,
+    length: string,
     width: string,
     taxcode: number
     blocked: string,
@@ -101,11 +101,7 @@ const productSchema = new mongoose.Schema<Product>(
     imgPath: { type: String },
     status: { type: String, default: "A" },
     weight_measure_unit: { type: String},
-    net_weight: { type: String},
-    gross_weight: { type: String},
-
     dimension_measure_unit: { type: String},
-    length: { type: Number},
     taxcode: { type: Number},
     blocked: {type: String},
     blocked_reason_code: {type: String},

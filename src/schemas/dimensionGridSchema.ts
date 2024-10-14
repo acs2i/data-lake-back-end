@@ -17,7 +17,6 @@ const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
     dimensions: [{ type: String }],
     frn_labels: [{ type: String }],
     status: {type: String},
-    type: {type: String},
 }, { timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "dimension_grid"})
 
 

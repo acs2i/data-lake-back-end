@@ -9,7 +9,7 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear"
 const router = express.Router()
 
 
-router.get(BLOCK, authorizationMiddlewear, async(req: Request, res: Response) => {
+router.get(BLOCK, async(req: Request, res: Response) => {
     try {
         const {intLimit, skip} = await generalLimits(req);
 
