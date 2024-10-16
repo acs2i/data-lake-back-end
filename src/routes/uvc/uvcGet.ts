@@ -43,9 +43,6 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
       console.error(err)
       res.status(500).json(err);
     }
-  
-  
-  
   })
 
 router.get(UVC, authorizationMiddlewear, async( req: Request, res: Response) => {
