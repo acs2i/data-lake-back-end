@@ -17,6 +17,8 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
         const code = req.query.code;
         const name = req.query.name;
         const level = req.query.level;
+        const status = req.query.status;
+
 
         if (code) {
             const regEx = new RegExp(code as string, "i");
@@ -33,6 +35,12 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
             const regEx = new RegExp(level as string, "i");
             filter.$and.push({ level: regEx });
         }
+
+        if (status) {
+            // const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status });
+        }
+
 
         if (!code && !name && !level ) {
             throw new Error(
