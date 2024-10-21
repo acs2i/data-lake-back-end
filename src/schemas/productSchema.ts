@@ -58,6 +58,7 @@ export interface Product extends Document {
   weigth_unit: string;
   gross_weight: string;
   additional_fields: any;
+  creation_date: any;
 }
 
 // Définition du sous-schéma pour les fournisseurs
@@ -76,6 +77,7 @@ const supplierSchema = new mongoose.Schema<SupplierSchema>(
 // Rajouter produit bloqué (boolean), raison du blocage
 const productSchema = new mongoose.Schema<Product>(
   {
+    creation_date: { type: Date || String },
     creator_id: { type: mongoose.Types.ObjectId, ref: "user" },
     reference: { type: String },
     alias: { type: String },

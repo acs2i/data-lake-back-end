@@ -50,8 +50,15 @@ router.get(BRAND + "/search", authorizationMiddlewear, async( req: Request, res:
             filter.$and.push({ label: regEx })
         }
 
+        const status = req.query.status;
+        
+        if(status) {
+            const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status: regEx })
+        }
 
-        if(!code && !label) {
+
+        if(!code && !label && !status) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 

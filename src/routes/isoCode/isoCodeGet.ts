@@ -58,7 +58,7 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
   
   
   
-  })
+})
 
 
 router.get(ISO_CODE, async(req: Request, res: Response) => {

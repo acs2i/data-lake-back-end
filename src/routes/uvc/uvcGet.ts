@@ -17,15 +17,89 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const {code} = req.query
+        const status = req.query.status as string;
+        let eans = req.query.eans as any
     
+
+        console.log("eans: "  ,eans)
+        
+        if(eans && eans.length > 0) {
+
+
+            // lets see if first one can be decoded to determine
+            let canDecode: boolean; 
+
+            try {
+                JSON.parse(eans);
+                canDecode = true;
+            } catch(err) {
+                canDecode = false;
+            }
+           
+
+            // If can decode is equal to true, then it is an array of objects can we should determine what the 
+            // operators are
+            /**
+             *  
+             *  determine if it is just strings or an object, if its an object its will contain
+             *  {
+             *      [property: string] : {
+             *          [operator: string] : value
+             *      } 
+             *  }
+             * 
+             * 
+             *  array of objects
+             *  
+             *  
+            * */
+
+            // If it is an array of objects
+            if(canDecode) {
+
+                const parsedEans = JSON.parse(eans)
+             
+                for(const property in parsedEans) {
+
+                        const operator = parsedEans[property] ; // operator  = property[ean]
+                        
+                        // add additional properties to this logic structure chain
+                        if(property === "length" ) {
+
+                            const eanObj : any= {}
+
+                            // add additional operators to this logic structure chain
+                            if(operator["$eq"] !== undefined) {
+
+
+                                const $size = operator["$eq"];
+
+                                eanObj["$size"] = $size;
+                                
+                            }
+
+                            filter.$and.push({
+                                eans: eanObj
+                            })
+                           
+                        }    
+                }
+            } 
+            // if it is just a string
+            else {
+                filter.$and.push({ eans: { $in: eans }})
+            }
+  
+
+        }   
     
-        if(code) {
-            const regEx = new RegExp(code as string, "i");
-            filter.$and.push({ code: regEx })
-        } else {
-            throw new Error("No code found")
-        }
+        if(status) {
+            // const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status })
+        } 
+
+
+        // will throw error if there is no filter so jake write logic to catch this
 
 
         const data: Uvc[] | null | undefined = await UvcModel.find(filter).skip(skip).limit(intLimit);
@@ -43,9 +117,6 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
       console.error(err)
       res.status(500).json(err);
     }
-  
-  
-  
   })
 
 router.get(UVC, authorizationMiddlewear, async( req: Request, res: Response) => {

@@ -24,7 +24,6 @@ router.put(ISO_CODE + "/:id", authorizationMiddlewear, async (req: Request, res:
             throw new Error(req.originalUrl + ", msg: id was falsy: " + _id);
         }
 
-        console.log("object: " , object , " id: "  ,_id)
         const response: UpdateWriteOpResult = await IsoModel.updateOne({ _id }, { $set:object })
  
         if(response.acknowledged === true && response.matchedCount === 1 && response.modifiedCount === 1) {

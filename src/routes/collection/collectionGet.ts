@@ -10,6 +10,44 @@ import { generalLimits } from "../../services/generalServices";
 const router = express.Router();
 
 
+
+router.get(COLLECTION + "/change-to-date-format", async(req: Request, res: Response) => {
+  try {
+    await CollectionModel.updateMany(
+      { 
+        creation_date: { $type: "string", $ne: ''  }, 
+        modification_date: { $type: "string", $ne: ''  }
+      },
+      [
+        {
+          $set: {
+            creation_date: {
+              $dateFromString: {
+                dateString: "$creation_date"
+              }
+            },
+            modification_date: {
+              $dateFromString: {
+                dateString: "$modification_date"
+              }
+            }
+          }
+        }
+      ]
+    );
+
+
+    res.status(200)
+
+
+    
+  } catch(error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+})
+
+
 router.get(COLLECTION + "/field/:field/value/:value", async (req: Request, res: Response) => {
     try {
         const { value , field } = req.params;
@@ -28,6 +66,8 @@ router.get(COLLECTION + "/field/:field/value/:value", async (req: Request, res: 
     }
 
 })
+
+
 
 router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
