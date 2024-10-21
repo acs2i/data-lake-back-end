@@ -16,7 +16,7 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const {iso1, iso2, iso3, countryName} = req.query
+        const {alpha2Code, alpha3Code, numeric, countryName} = req.query
     
         if(countryName) {
             const regEx = new RegExp(countryName as string, "i");
@@ -25,19 +25,19 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
 
         console.log("filter: "  ,filter)
     
-        if(iso1) {
-            const regEx = new RegExp(iso1 as string, "i");
-            filter.$and.push({ iso1: regEx })
+        if(alpha2Code) {
+            const regEx = new RegExp(alpha2Code as string, "i");
+            filter.$and.push({ alpha2Code: regEx })
         }
 
-        if(iso2) {
-            const regEx = new RegExp(iso2 as string, "i");
-            filter.$and.push({ iso2: regEx })
+        if(alpha3Code) {
+            const regEx = new RegExp(alpha3Code as string, "i");
+            filter.$and.push({ alpha3Code: regEx })
         }
 
-        if(iso3) {
-            const regEx = new RegExp(iso3 as string, "i");
-            filter.$and.push({ iso3: regEx })
+        if(numeric) {
+            const regEx = new RegExp(numeric as string, "i");
+            filter.$and.push({ numeric: regEx })
         }
 
         const data: IsoCode[] | null | undefined = await IsoModel.find(filter).skip(skip).limit(intLimit);
