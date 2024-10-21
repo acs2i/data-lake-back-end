@@ -5,6 +5,8 @@ export interface Dimension extends Document {
     label: string,
     type: string,
     status: string,
+    creation_date: Date,
+    modification_date: Date
     creator_id: ObjectId
     additional_fields?: any
 
@@ -20,7 +22,7 @@ const dimensionSchema = new mongoose.Schema<Dimension>({
         type: Map,
         of: mongoose.Schema.Types.Mixed
     }
-},  { timestamps: true, collection: "dimension" })
+},  {     timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "dimension" })
 
 const DimensionModel: Model<Dimension> = mongoose.model<Dimension>("dimension", dimensionSchema);
 export default DimensionModel

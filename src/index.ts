@@ -44,6 +44,9 @@ import productPostRoutes from "./routes/product/productPost";
 import productPutRoutes from "./routes/product/productPut";
 import productDeleteRoutes from "./routes/product/productDelete";
 
+import isoCodeGetRoutes from "./routes/isoCode/isoCodeGet"
+import isoCodePutRoutes from "./routes/isoCode/isoCodePut"
+
 import supplierGetRoutes from "./routes/supplier/supplierGet"
 import supplierPostRoutes from "./routes/supplier/supplierPost"
 import supplierPutRoutes from "./routes/supplier/supplierPut"
@@ -157,6 +160,10 @@ app.use(v1, tarifDeleteRoutes)
 
 app.use(v1, fieldGetRoutes)
 app.use(v1, fieldPostRoutes)
+
+app.use(v1, isoCodeGetRoutes)
+app.use(v1, isoCodePutRoutes)
+
 
 app.use(v1, unitGetRoutes)
 

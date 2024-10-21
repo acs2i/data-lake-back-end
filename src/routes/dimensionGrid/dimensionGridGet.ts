@@ -31,6 +31,53 @@ router.get(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: Re
     }
 })
 
+router.get(DIMENSION_GRID + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
+    try {
+        
+        const { intLimit , skip} = await generalLimits(req);
+        
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const code = req.query.code;
+
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx })
+        }
+
+        const label = req.query.label;
+
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx })
+        }
+
+
+        if(!code && !label) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        }
+
+
+        const data: DimensionGrid[] | null | undefined = await DimensionGridModel.find(filter).skip(skip).limit(intLimit);
+
+
+        if (!data) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+        console.log("counts total of filter: " , req.query)
+
+        const total = await DimensionGridModel.countDocuments(filter);
+
+
+        res.status(OK).json({data, total})
+
+    } catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
+})
+
 router.get(DIMENSION_GRID + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
 

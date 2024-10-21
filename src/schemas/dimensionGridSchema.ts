@@ -6,6 +6,7 @@ export interface DimensionGrid extends Document{
     code: string,
     type: string,
     dimensions: string[]
+    frn_labels: string[],
     status: string;
 }
 
@@ -14,8 +15,9 @@ const dimensionGridSchema = new mongoose.Schema<DimensionGrid>({
     code: { type: String },
     type: {type: String},
     dimensions: [{ type: String }],
+    frn_labels: [{ type: String }],
     status: {type: String},
-}, {timestamps: true, collection: "dimension_grid"})
+}, { timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "dimension_grid"})
 
 
 const DimensionGridModel = mongoose.model<DimensionGrid>("dimension_grid",dimensionGridSchema )
