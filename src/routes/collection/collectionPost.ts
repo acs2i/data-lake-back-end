@@ -22,9 +22,9 @@ router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Respo
 
         const {code} = object;
         
-        const doesExist : Document | null | undefined = await CollectionModel.findOne({code });
+        const doesExist : Document | null | undefined = await CollectionModel.findOne({ code });
 
-        if(doesExist) throw new Error("This collection with the following code already exists: " + code);
+        if(doesExist) throw new Error("Une collection avec le code suivant existe déjà: " + code);
 
         const newObject: Document | null | undefined = new CollectionModel({...object });
 
