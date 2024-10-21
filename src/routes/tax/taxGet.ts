@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express"
 import { TAX } from "../tax/shared"
+import { Document } from "mongoose";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors"
 import { generalLimits } from "../../services/generalServices"
 import TaxModel, {Tax} from "../../schemas/taxSchema"
@@ -27,6 +28,52 @@ router.get(TAX, authorizationMiddlewear, async(req: Request, res: Response) => {
         console.error(err)
         res.status(INTERNAL_SERVER_ERROR).json({})
     }
+})
+
+router.get(TAX + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
+    try {
+
+        const {intLimit, skip} = await generalLimits(req);
+
+
+        let filter: any = { $and: [] }  // any to make typescript stop complaining
+
+        const code = req.query.code;
+
+        if(code) {
+            const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code: regEx })
+        }
+        
+        const label = req.query.label;
+
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+            filter.$and.push({ label: regEx })
+        }
+        
+        if(!code && !label) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        }
+
+
+        // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
+        const data: Document[] | null | undefined = await TaxModel.find(filter).skip(skip).limit(intLimit);
+
+
+        if (!data) {
+            throw new Error(req.originalUrl + ", msg: find error")
+        }
+
+        const total = await TaxModel.countDocuments(filter);
+
+        res.status(OK).json({data, total})
+
+    } catch(err) {
+        console.error(err);
+        res.status(INTERNAL_SERVER_ERROR).json(err)
+    }
+
 })
 
 
