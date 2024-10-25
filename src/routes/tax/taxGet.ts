@@ -41,8 +41,8 @@ router.get(TAX + "/search", authorizationMiddlewear, async( req: Request, res: R
         const code = req.query.code;
 
         if(code) {
-            const regEx = new RegExp(code as string, "i");
-            filter.$and.push({ code: regEx })
+            // const regEx = new RegExp(code as string, "i");
+            filter.$and.push({ code })
         }
         
         const label = req.query.label;
@@ -58,8 +58,15 @@ router.get(TAX + "/search", authorizationMiddlewear, async( req: Request, res: R
             // const regEx = new RegExp(status as string, "i");
             filter.$and.push({ status })
         }
+
+        const rate = req.query.rate;
+
+        if(rate) {
+            const regEx = new RegExp(rate as string, "i");
+            filter.$and.push({ rate })
+        }
         
-        if(!code && !label && !status) {
+        if(!code && !label && !status && !rate) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 

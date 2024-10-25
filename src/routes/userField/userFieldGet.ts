@@ -48,8 +48,8 @@ router.get(USERFIELD + "/search", authorizationMiddlewear, async( req: Request, 
       const code = req.query.code;
 
       if(code) {
-          const regEx = new RegExp(code as string, "i");
-          filter.$and.push({ code: regEx })
+          // const regEx = new RegExp(code as number, "i");
+          filter.$and.push({ code })
       }
       
       const label = req.query.label;

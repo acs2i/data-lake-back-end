@@ -6,10 +6,6 @@ export interface IsoCode extends Document {
     alpha2Code: string;
     alpha3Code: string;
     countryName: string
-    //iso 1
-    // iso 2
-    // iso 3
-    // nom du pays 
 }
 const isoCodeSchema = new mongoose.Schema<IsoCode>({
     countryName: { type: String },

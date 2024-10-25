@@ -16,33 +16,32 @@ router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
 
         let filter: any = { $and: [] }  // any to make typescript stop complaining
 
-        const {alpha2Code, alpha3Code, numeric, countryName, status} = req.query
+        const {alpha2Code, alpha3Code, numeric, countryName} = req.query
     
         if(countryName) {
-            const regEx = new RegExp(countryName as string, "i");
-            filter.$and.push({ countryName: regEx })
+            // const regEx = new RegExp(countryName as string, "i");
+            filter.$and.push({ countryName })
         }
 
-        console.log("filter: "  ,filter)
+        // console.log("filter: "  ,filter)
     
         if(alpha2Code) {
-            const regEx = new RegExp(alpha2Code as string, "i");
-            filter.$and.push({ alpha2Code: regEx })
+            // const regEx = new RegExp(alpha2Code as string, "i");
+            filter.$and.push({ alpha2Code })
         }
 
         if(alpha3Code) {
-            const regEx = new RegExp(alpha3Code as string, "i");
-            filter.$and.push({ alpha3Code: regEx })
+            // const regEx = new RegExp(alpha3Code as string, "i");
+            filter.$and.push({ alpha3Code })
         }
 
         if(numeric) {
-            const regEx = new RegExp(numeric as string, "i");
-            filter.$and.push({ numeric: regEx })
+            // const regEx = new RegExp(numeric as string, "i");
+            filter.$and.push({ numeric })
         }
 
-        if(status) {
-            // const regEx = new RegExp(status as string, "i");
-            filter.$and.push({ status })
+        if(!countryName && !alpha2Code && !alpha3Code && !numeric) {
+            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
         const data: IsoCode[] | null | undefined = await IsoModel.find(filter).skip(skip).limit(intLimit);

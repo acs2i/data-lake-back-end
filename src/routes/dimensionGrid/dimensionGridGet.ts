@@ -33,49 +33,53 @@ router.get(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: Re
 
 router.get(DIMENSION_GRID + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
     try {
-        
-        const { intLimit , skip} = await generalLimits(req);
-        
+
+        const {intLimit, skip} = await generalLimits(req);
+
+
         let filter: any = { $and: [] }  // any to make typescript stop complaining
+        
+        const label = req.query.label;
+
+        if(label) {
+            const regEx = new RegExp(label as string, "i");
+
+            filter.$and.push({ label: regEx })
+        }
 
         const code = req.query.code;
 
         if(code) {
             const regEx = new RegExp(code as string, "i");
+
             filter.$and.push({ code: regEx })
         }
 
-        const label = req.query.label;
+        const type = req.query.type;
 
-        if(label) {
-            const regEx = new RegExp(label as string, "i");
-            filter.$and.push({ label: regEx })
+        if(type) {
+            const regEx = new RegExp(type as string, "i");
+
+            filter.$and.push({ type: regEx })
         }
 
+        
         const status = req.query.status;
 
         if(status) {
             // const regEx = new RegExp(status as string, "i");
             filter.$and.push({ status })
         }
-
-        if(!code && !label && !status) {
-            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
+        
+        if(!code && !label && !type && !status) {
+            throw new Error(req.originalUrl + ", msg: code, label and type were falsy. Probably means code, label and type were undefined")
         }
 
-
-        const data: DimensionGrid[] | null | undefined = await DimensionGridModel.find(filter).skip(skip).limit(intLimit);
-
-
-        if (!data) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-        console.log("counts total of filter: " , req.query)
-
+        const data  = await DimensionGridModel.find(filter).skip(skip).limit(intLimit)
+        
         const total = await DimensionGridModel.countDocuments(filter);
 
-
-        res.status(OK).json({data, total})
+        res.status(OK).send({ data , total})
 
     } catch(err) {
         console.error(err);
