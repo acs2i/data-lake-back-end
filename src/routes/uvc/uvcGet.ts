@@ -19,9 +19,9 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
 
         const status = req.query.status as string;
         let eans = req.query.eans as any
-    
+        let creation_date = req.query.creation_date as any
 
-        console.log("eans: "  ,eans)
+
         
         if(eans && eans.length > 0) {
 
@@ -68,6 +68,7 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
 
                             const eanObj : any= {}
 
+
                             // add additional operators to this logic structure chain
                             if(operator["$eq"] !== undefined) {
 
@@ -75,14 +76,25 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
                                 const $size = operator["$eq"];
 
                                 eanObj["$size"] = $size;
-                                
+                                filter.$and.push({
+                                    eans: eanObj
+                                })
+                            }
+                            if(operator["$gt"] !== undefined) {
+                                const $size = operator["$gt"]
+                                console.log("SIZE: " , $size)
+                                const q = { "$expr": {
+                                    "$gt": [
+                                        {$size: "$eans"},
+                                        $size
+                                    ]
+                                }}
+                                filter.$and.push(q)
                             }
 
-                            filter.$and.push({
-                                eans: eanObj
-                            })
-                           
-                        }    
+
+
+                                               }    
                 }
             } 
             // if it is just a string
@@ -98,6 +110,13 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
             filter.$and.push({ status })
         } 
 
+        
+      if(creation_date) {
+        const o = { creation_date : {$gt: new Date(creation_date as string)}}
+        filter = {...filter, ...o}
+      }
+
+
 
         // will throw error if there is no filter so jake write logic to catch this
 
@@ -109,8 +128,9 @@ router.get(UVC + "/search",async(req: Request, res: Response) => {
         }
 
 
-        const total = await UvcModel.countDocuments(filter);
 
+
+        const total = await UvcModel.countDocuments(filter);
         res.status(200).json({data, total});
     
     } catch(err) {

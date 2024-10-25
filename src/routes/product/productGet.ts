@@ -201,7 +201,6 @@ router.get(PRODUCT + "/bar-graph-data", authorizationMiddlewear, async (req:Requ
           map[c[tooLong].label] = tally;
           count++;
         }
-        console.log("MAP: " , map , "tally: " , tally , " too long: " , tooLong, " c too long: " , c[tooLong]._id)
       }
   
      
@@ -243,7 +242,6 @@ router.get(
 
 
       if(creation_date) {
-        console.log("Creation dat: "  , creation_date)
         const o = { creation_date : {$gt: new Date(creation_date as string)}}
         filter = {...filter, ...o}
       }
@@ -327,8 +325,6 @@ router.get(
         filter = { ...filter, 'suppliers.supplier_id': { $in }}
 
       }
-
-      console.log("FILT JAKE R: " , filter)
       
       const data: Product[] | null | undefined = await ProductModel.find(filter)
         .skip(skip)
@@ -346,7 +342,6 @@ router.get(
         throw new Error(req.originalUrl + ", msg: find error");
       }
 
-      console.log("data: " , data)
 
       const total = await ProductModel.countDocuments(filter);
 
