@@ -40,8 +40,15 @@ router.get(DIMENSION + "/search", authorizationMiddlewear, async( req: Request, 
             filter.$and.push({ type: regEx })
         }
 
+        
+        const status = req.query.status;
 
-        if(!label && !code && !type) {
+        if(status) {
+            // const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status })
+        }
+        
+        if(!code && !label && !type && !status) {
             throw new Error(req.originalUrl + ", msg: code, label and type were falsy. Probably means code, label and type were undefined")
         }
 

@@ -52,8 +52,14 @@ router.get(DIMENSION_GRID + "/search", authorizationMiddlewear, async( req: Requ
             filter.$and.push({ label: regEx })
         }
 
+        const status = req.query.status;
 
-        if(!code && !label) {
+        if(status) {
+            // const regEx = new RegExp(status as string, "i");
+            filter.$and.push({ status })
+        }
+
+        if(!code && !label && !status) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
