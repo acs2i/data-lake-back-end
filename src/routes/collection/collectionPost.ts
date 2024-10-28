@@ -18,6 +18,16 @@ router.post(COLLECTION, authorizationMiddlewear, async (req: Request, res: Respo
             throw new Error(req.originalUrl + ", msg: collection was falsy: " + object)
         }
 
+        // Vérifier si le code existe déjà
+        const existingCollection = await CollectionModel.findOne({ code: req.body.code });
+        
+        if (existingCollection) {
+            return res.status(409).json({  // 409 Conflict
+                message: "Une marque avec ce code existe déjà",
+                error: "DUPLICATE_CODE"
+            });
+        }
+
         // Check to see if the code already exists and if so through an error
 
         const {code} = object;

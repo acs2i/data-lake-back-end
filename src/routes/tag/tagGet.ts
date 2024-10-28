@@ -42,7 +42,7 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
         }
 
 
-        if (!code && !name && !level ) {
+        if (!code && !name && !level && !status) {
             throw new Error(
                 req.originalUrl +
                     ", msg: All of the parameters were falsy. Probably means they were undefined"
