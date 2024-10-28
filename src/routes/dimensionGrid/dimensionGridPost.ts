@@ -16,14 +16,11 @@ router.post(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: R
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        const existingGridDimension = await DimensionGridModel.findOne({ code: req.body.code });
+        const {code} = object;
         
-        if (existingGridDimension) {
-            return res.status(409).json({  // 409 Conflict
-                message: "Une marque avec ce code existe déjà",
-                error: "DUPLICATE_CODE"
-            });
-        }
+        const doesExist : Document | null | undefined = await DimensionGridModel.findOne({ code });
+
+        if(doesExist) throw new Error("Une collection avec le code suivant existe déjà: " + code);
 
         const newObject: DimensionGrid | null | undefined = await new DimensionGridModel({...object});
 
