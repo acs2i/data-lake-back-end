@@ -21,7 +21,7 @@ router.get(
       const data: Field[] | null | undefined = await UserFieldModel.find()
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(intLimit);
+  
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
