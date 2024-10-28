@@ -8,7 +8,6 @@ export interface CustomField {
 
 
 export interface Field extends Document {
-  creator_id: ObjectId;
   code: number;
   label: string;
   apply_to: string;
@@ -18,15 +17,14 @@ export interface Field extends Document {
 
 
 const userFieldSchema = new mongoose.Schema<Field>({
-  creator_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   code: { type: Number},
-  label: { type: String, required: true },
-  apply_to: { type: String, required: true },
+  label: { type: String},
+  apply_to: { type: String},
   additional_fields: [
     {
-      field_type: { type: String, required: true },
+      field_type: { type: String},
       options: { type: [String] },
-      value: { type: mongoose.Schema.Types.Mixed, required: true },
+      value: { type: mongoose.Schema.Types.Mixed},
     },
   ],
   status: { type: String},
