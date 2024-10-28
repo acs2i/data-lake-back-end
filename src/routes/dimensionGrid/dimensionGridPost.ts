@@ -16,6 +16,15 @@ router.post(DIMENSION_GRID, authorizationMiddlewear, async (req: Request, res: R
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
+        const existingGridDimension = await DimensionGridModel.findOne({ code: req.body.code });
+        
+        if (existingGridDimension) {
+            return res.status(409).json({  // 409 Conflict
+                message: "Une marque avec ce code existe déjà",
+                error: "DUPLICATE_CODE"
+            });
+        }
+
         const newObject: DimensionGrid | null | undefined = await new DimensionGridModel({...object});
 
         if(!newObject) {

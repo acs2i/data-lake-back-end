@@ -16,6 +16,16 @@ router.post(DIMENSION, authorizationMiddlewear, async (req: Request, res: Respon
             throw new Error(req.originalUrl + ", msg: dimension was falsy: " + object)
         }
 
+        // Vérifier si le code existe déjà
+        const existingDimension = await DimensionModel.findOne({ code: req.body.code });
+        
+        if (existingDimension) {
+            return res.status(409).json({  // 409 Conflict
+                message: "Une marque avec ce code existe déjà",
+                error: "DUPLICATE_CODE"
+            });
+        }
+
         const newObject: Dimension | null | undefined = await new DimensionModel({...object});
 
         if(!newObject) {

@@ -15,6 +15,16 @@ router.post(TAG, authorizationMiddlewear, async (req: Request, res: Response) =>
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
+        // Vérifier si le code existe déjà
+        const existingTag = await TagModel.findOne({ code: req.body.code });
+
+        if (existingTag) {
+            return res.status(409).json({  // 409 Conflict
+                message: "Une marque avec ce code existe déjà",
+                error: "DUPLICATE_CODE"
+            });
+        }
+
         const newObject: Tag | null | undefined = new TagModel({...object});
 
         if(!newObject) {
