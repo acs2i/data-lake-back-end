@@ -117,10 +117,13 @@ const productSchema = new mongoose.Schema<Product>(
     remisegenerale: {type : String},
     fixation: {type : String},
     ventemetre: {type : String},
-    additional_fields: {
-        type: Map,
-        of: mongoose.Schema.Types.Mixed
-    }
+    additional_fields: [
+      {
+        label: { type: String},
+        value: { type: String},
+        field_type: { type: String},
+      },
+    ],
 }, { timestamps: true, collection: "product" });
 
 
