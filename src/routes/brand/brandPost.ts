@@ -8,23 +8,21 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 
 const router = express.Router();
 
+
 router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
+        // expects brand 
         const object = req.body;
 
         if(!object) {
             throw new Error(req.originalUrl + ", msg: object was falsy: " + object)
         }
 
-        // Vérifier si le code existe déjà
-        const existingBrand = await BrandModel.findOne({ code: req.body.code });
+        const {code} = object;
         
-        if (existingBrand) {
-            return res.status(409).json({  // 409 Conflict
-                message: "Une marque avec ce code existe déjà",
-                error: "DUPLICATE_CODE"
-            });
-        }
+        const doesExist : Document | null | undefined = await BrandModel.findOne({ code });
+        
+        if(doesExist) throw new Error("Une collection avec le code suivant existe déjà: " + code);
 
         const newObject: Document | null | undefined = await new BrandModel({...object});
 
@@ -35,11 +33,14 @@ router.post(BRAND, authorizationMiddlewear, async (req: Request, res: Response) 
         const savedObject: Document | null | undefined = await newObject.save({timestamps: true});
         
         res.status(OK).json(savedObject);
+        
     }
     catch(err) {
         console.error(err);
         res.status(INTERNAL_SERVER_ERROR).json(err)
     }
-});
+
+
+})
 
 export default router;
