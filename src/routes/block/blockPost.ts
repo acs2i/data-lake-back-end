@@ -18,6 +18,16 @@ router.post(
         throw new Error(req.originalUrl + ", msg: object was falsy: " + object);
       }
 
+      // Vérifier si le code existe déjà
+      const existingBlock = await BlockModel.findOne({ code: req.body.code });
+        
+      if (existingBlock) {
+          return res.status(409).json({  // 409 Conflict
+              message: "Une marque avec ce code existe déjà",
+              error: "DUPLICATE_CODE"
+          });
+      }
+
       // Récupérer le dernier objet trié par `code` pour auto-incrémentation
       const lastBlock = await BlockModel.findOne().sort({ code: -1 });
 
