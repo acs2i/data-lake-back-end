@@ -19,7 +19,6 @@ router.get(
       const { skip, intLimit } = await generalLimits(req);
 
       const data: Field[] | null | undefined = await UserFieldModel.find()
-        .sort({ createdAt: -1 })
         .skip(skip)
   
 
