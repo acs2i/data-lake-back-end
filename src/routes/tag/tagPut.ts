@@ -6,6 +6,7 @@ import TagModel from "../../schemas/tagSchema";
 import { OK } from "../../codes/success";
 import { UpdateWriteOpResult } from "mongoose";
 import { exportToCSV } from "../../services/csvExportUtil";
+import { getFormattedDate } from "../../services/formatDate";
 
 const router = express.Router();
 
@@ -33,17 +34,11 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
       response.matchedCount === 1 &&
       response.modifiedCount === 1
     ) {
+        
       // Définir les champs spécifiques à exporter
       const fieldsToExport = ["level", "code", "name", "status"];
-      const now = new Date();
-      const formattedDate =
-        now.getFullYear().toString() +
-        String(now.getMonth() + 1).padStart(2, "0") +
-        String(now.getDate()).padStart(2, "0") +
-        "_" +
-        String(now.getHours()).padStart(2, "0") +
-        String(now.getMinutes()).padStart(2, "0") +
-        String(now.getSeconds()).padStart(2, "0");
+      const formattedDate = getFormattedDate();
+
       // Appel à la fonction d'export CSV avec les champs sélectionnés
       const csvFilePath = await exportToCSV(
         object,

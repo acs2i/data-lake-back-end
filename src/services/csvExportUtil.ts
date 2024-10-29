@@ -27,23 +27,27 @@ export async function exportToCSV(
         const dataToExport = fieldsToExport.length > 0 
             ? fieldsToExport.reduce((acc, field) => {
                 if (data[field] !== undefined) {
-                    // Tronque la valeur si elle dépasse maxLength et l'entoure de guillemets
+                    // Tronque la valeur si elle dépasse maxLength
                     const value = data[field].toString();
-                    acc[field] = value.length > maxLength ? `"${value.slice(0, maxLength)}..."` : value;
+                    acc[field] = value.length > maxLength ? value.slice(0, maxLength) + "..." : value;
                 }
                 return acc;
               }, {} as Record<string, any>)
             : Object.keys(data).reduce((acc, key) => {
                 const value = data[key].toString();
-                acc[key] = value.length > maxLength ? `"${value.slice(0, maxLength)}..."` : value;
+                acc[key] = value.length > maxLength ? value.slice(0, maxLength) + "..." : value;
                 return acc;
               }, {} as Record<string, any>);
 
         const opts = { 
             fields: fieldsToExport.length > 0 ? fieldsToExport : Object.keys(data),
-            delimiter: ";" // Définit le séparateur de colonnes comme point-virgule
+            delimiter: ";", // Définit le séparateur de colonnes comme point-virgule
+            quote: '"'      // Ajoute les guillemets uniquement si nécessaire
         };
-        const csv = parse(dataToExport, opts);
+        let csv = parse(dataToExport, opts);
+
+        // Supprimer les guillemets dans le CSV généré
+        csv = csv.replace(/"/g, "");
 
         // Utiliser un nom unique avec horodatage pour éviter les conflits
         const filePath = path.join(exportsDir, `${fileName}.csv`);
