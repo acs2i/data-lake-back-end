@@ -26,7 +26,7 @@ const tagSchema = new mongoose.Schema<Tag>(
     },
     creator_id: { type: mongoose.Types.ObjectId },
   },
-  {     timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' },   collection: "tag" }
+  {timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' },   collection: "tag" }
 );
 
 const TagModel = mongoose.model<Tag>("tag", tagSchema);

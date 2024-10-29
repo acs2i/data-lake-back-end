@@ -70,6 +70,7 @@ import uvcPutRoutes from "./routes/uvc/uvcPut";
 
 import fieldGetRoutes from "./routes/userField/userFieldGet"
 import fieldPostRoutes from "./routes/userField/userFieldPost"
+import fieldPutRoutes from "./routes/userField/userFieldPut"
 
 import taxGetRoutes from "./routes/tax/taxGet"
 import taxPostRoutes from "./routes/tax/taxPost"
@@ -160,6 +161,7 @@ app.use(v1, tarifDeleteRoutes)
 
 app.use(v1, fieldGetRoutes)
 app.use(v1, fieldPostRoutes)
+app.use(v1, fieldPutRoutes)
 
 app.use(v1, isoCodeGetRoutes)
 app.use(v1, isoCodePutRoutes)

@@ -22,6 +22,7 @@ router.post(TAG, authorizationMiddlewear, async (req: Request, res: Response) =>
         if(doesExist) throw new Error("Une collection avec le code suivant existe déjà: " + code);
 
         const newObject: Tag | null | undefined = new TagModel({...object});
+        
 
         if(!newObject) {
             throw new Error(req.originalUrl + " msg: newObject save did not work for some reason: " + newObject);
@@ -36,6 +37,8 @@ router.post(TAG, authorizationMiddlewear, async (req: Request, res: Response) =>
         console.error(err)
         res.status(INTERNAL_SERVER_ERROR).json(err)
     }
+
+    
 })
 
 
