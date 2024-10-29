@@ -4,7 +4,6 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import TagModel from "../../schemas/tagSchema";
 import { OK } from "../../codes/success";
-import { UpdateWriteOpResult } from "mongoose";
 import { exportToCSV } from "../../services/csvExportUtil";
 import { getFormattedDate } from "../../services/formatDate";
 
@@ -12,10 +11,12 @@ const router = express.Router();
 
 router.put(TAG + "/:id", async (req: Request, res: Response) => {
   try {
-    const object = req.body;
+    const { updateEntry, ...object } = req.body;
 
     if (!object) {
-      throw new Error(req.originalUrl + ", msg: tag was falsy: " + object);
+      throw new Error(
+        req.originalUrl + ", msg: tag was falsy: " + JSON.stringify(object)
+      );
     }
 
     const _id = req.params.id;
@@ -24,35 +25,44 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
       throw new Error(req.originalUrl + ", msg: id was falsy: " + _id);
     }
 
-    const response: UpdateWriteOpResult = await TagModel.updateOne(
-      { _id },
-      { $set: object }
+    // Récupérer le document pour mise à jour
+    const tag = await TagModel.findById(_id);
+    if (!tag) {
+      return res.status(404).json({ msg: "Tag not found" });
+    }
+
+    // Mettre à jour les champs modifiés
+    Object.assign(tag, object);
+
+    // Générer le nom du fichier exporté
+    const formattedDate = getFormattedDate();
+    const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
+    const fieldsToExport = ["level", "code", "name", "status"];
+
+    // Exportation CSV avec tous les champs du document
+    const csvFilePath = await exportToCSV(
+      tag.toObject(), // Convertir le document Mongoose en objet
+      fileName,
+      fieldsToExport
     );
 
-    if (
-      response.acknowledged === true &&
-      response.matchedCount === 1 &&
-      response.modifiedCount === 1
-    ) {
-        
-      // Définir les champs spécifiques à exporter
-      const fieldsToExport = ["level", "code", "name", "status"];
-      const formattedDate = getFormattedDate();
-
-      // Appel à la fonction d'export CSV avec les champs sélectionnés
-      const csvFilePath = await exportToCSV(
-        object,
-        `PREREF_Y2_CLASS_${formattedDate}`,
-        fieldsToExport
-      );
-
-      res.status(OK).json({
-        msg: "Tag updated successfully",
-        csvFilePath, // Retourne le chemin du fichier CSV dans la réponse
+    // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
+    if (updateEntry) {
+      tag.updates.push({
+        updated_at: updateEntry.updated_at,
+        updated_by: updateEntry.updated_by,
+        changes: updateEntry.changes,
+        file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
       });
-    } else {
-      res.status(INTERNAL_SERVER_ERROR).json({ msg: "Tag was not updated" });
     }
+
+    // Sauvegarder les modifications et l'historique
+    await tag.save();
+
+    res.status(OK).json({
+      msg: "Tag updated successfully",
+      csvFilePath,
+    });
   } catch (err) {
     console.error(err);
     res.status(INTERNAL_SERVER_ERROR).json({});
