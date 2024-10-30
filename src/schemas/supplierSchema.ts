@@ -9,6 +9,11 @@ interface Contact {
   email: string;
 }
 
+interface Buyer {
+  family: string;
+  user: string;
+}
+
 export interface Supplier extends Document {
   code: string;
   company_name: string;
@@ -30,6 +35,8 @@ export interface Supplier extends Document {
   status: string;
   creator: any; // it's an object
   additional_fields?: any;
+  admin: string;
+  buyers: Buyer[];
 }
 
 const contactSchema = new mongoose.Schema(
@@ -42,6 +49,13 @@ const contactSchema = new mongoose.Schema(
     email: { type: String },
   },
   { _id: false }
+);
+
+const buyerSchema = new mongoose.Schema(
+  {
+    family: { type: String },
+    user: { type: String },
+  },
 );
 
 
@@ -76,6 +90,8 @@ const supplierSchema = new mongoose.Schema<Supplier>(
         field_type: { type: String},
       },
     ],
+    admin: {type: String},
+    buyers: [buyerSchema],
   },
   { timestamps: { createdAt: 'creation_date', updatedAt: 'modification_date' }, collection: "supplier" }
 );
