@@ -5,10 +5,9 @@ import { parse } from "json2csv";
 /**
  * Nettoie et formate une valeur pour l'export CSV.
  * @param value - Valeur à nettoyer
- * @param maxLength - Longueur maximale
  * @returns Valeur nettoyée et formatée
  */
-function sanitizeValue(value: any, maxLength: number): string {
+function sanitizeValue(value: any): string {
     if (value === null || value === undefined) {
         return "";
     }
@@ -24,32 +23,20 @@ function sanitizeValue(value: any, maxLength: number): string {
         cleanValue = `"${cleanValue.replace(/"/g, '""')}"`;  // Double les guillemets existants
     }
 
-    // Tronquer si nécessaire
-    if (cleanValue.length > maxLength) {
-        // Si la valeur est entre guillemets, on préserve le format
-        if (cleanValue.startsWith('"') && cleanValue.endsWith('"')) {
-            cleanValue = `"${cleanValue.slice(1, maxLength-4)}...""`; // -4 pour "..."
-        } else {
-            cleanValue = `${cleanValue.slice(0, maxLength-3)}...`; // -3 pour ...
-        }
-    }
-
     return cleanValue;
 }
 
 /**
- * Exporte les données fournies en CSV avec des champs spécifiques et un format amélioré.
+ * Exporte les données fournies en CSV avec des champs spécifiques.
  * @param data - Les données à exporter.
  * @param fileName - Le nom du fichier CSV (optionnel).
  * @param fieldsToExport - Tableau de champs spécifiques à exporter.
- * @param maxLength - Longueur maximale des valeurs de cellule.
  * @returns Le chemin du fichier CSV généré.
  */
 export async function exportToCSV(
     data: Record<string, any>, 
     fileName: string = "export", 
-    fieldsToExport: string[] = [], 
-    maxLength: number = 20
+    fieldsToExport: string[] = []
 ): Promise<string> {
     try {
         const exportsDir = "/var/sftp/y2tst/out";
@@ -58,12 +45,12 @@ export async function exportToCSV(
         const dataToExport = fieldsToExport.length > 0 
             ? fieldsToExport.reduce((acc, field) => {
                 if (data[field] !== undefined) {
-                    acc[field] = sanitizeValue(data[field], maxLength);
+                    acc[field] = sanitizeValue(data[field]);
                 }
                 return acc;
               }, {} as Record<string, any>)
             : Object.keys(data).reduce((acc, key) => {
-                acc[key] = sanitizeValue(data[key], maxLength);
+                acc[key] = sanitizeValue(data[key]);
                 return acc;
               }, {} as Record<string, any>);
 
@@ -93,14 +80,14 @@ export async function exportToCSV(
 }
 
 /**
- * Exemple d'utilisation avec différents cas de figure:
+ * Exemple d'utilisation:
  * 
  * const testData = {
  *   name: "John; Doe",
  *   description: "Contains; semicolons and \"quotes\"",
  *   notes: "Multiple\nlines\tand\ttabs",
- *   longText: "This is a very long text that needs to be truncated...",
+ *   longText: "This is a very long text that will not be truncated anymore",
  * };
  * 
- * await exportToCSV(testData, "test_export", [], 20);
+ * await exportToCSV(testData, "test_export");
  */
