@@ -10,7 +10,7 @@ interface Contact {
 }
 
 interface Buyer {
-  family: string;
+  family: string[];
   user: string;
 }
 
@@ -33,7 +33,7 @@ export interface Supplier extends Document {
   contacts?: Contact[];
   brand_id: ObjectId[];
   status: string;
-  creator: any; // it's an object
+  creator: any;
   additional_fields?: any;
   admin: string;
   buyers: Buyer[];
@@ -53,7 +53,7 @@ const contactSchema = new mongoose.Schema(
 
 const buyerSchema = new mongoose.Schema(
   {
-    family: { type: String },
+    family: [{ type: String }],
     user: { type: String },
   },
 );

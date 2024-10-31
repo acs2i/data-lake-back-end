@@ -19,33 +19,36 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
         const level = req.query.level;
         const status = req.query.status;
 
-
+        // Créez une condition $or pour `code` et `name`
+        const orConditions = [];
         if (code) {
-            const regEx = new RegExp(code as string, "i");
-            filter.$and.push({ code: regEx });
+            const regExCode = new RegExp(code as string, "i");
+            orConditions.push({ code: regExCode });
         }
 
-
         if (name) {
-            const regEx = new RegExp(name as string, "i");
-            filter.$and.push({ name: regEx });
+            const regExName = new RegExp(name as string, "i");
+            orConditions.push({ name: regExName });
+        }
+
+        if (orConditions.length > 0) {
+            filter.$and.push({ $or: orConditions });
         }
 
         if (level) {
-            const regEx = new RegExp(level as string, "i");
-            filter.$and.push({ level: regEx });
+            const regExLevel = new RegExp(level as string, "i");
+            filter.$and.push({ level: regExLevel });
         }
 
         if (status) {
-            // const regEx = new RegExp(status as string, "i");
             filter.$and.push({ status });
         }
 
-
-        if (!code && !name && !level && !status) {
+        // Vérifiez s'il y a des conditions, sinon renvoyez une erreur
+        if (filter.$and.length === 0) {
             throw new Error(
                 req.originalUrl +
-                    ", msg: All of the parameters were falsy. Probably means they were undefined"
+                ", msg: All of the parameters were falsy. Probably means they were undefined"
             );
         }
 
@@ -63,6 +66,7 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
         res.status(INTERNAL_SERVER_ERROR).json(err);
     }
 });
+
 
 router.get(TAG, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
