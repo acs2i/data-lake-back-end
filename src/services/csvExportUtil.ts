@@ -3,35 +3,30 @@ import path from "path";
 import { parse } from "json2csv";
 
 /**
- * Nettoie et formate une valeur pour l'export CSV.
+ * Nettoie et formate une valeur pour l'export CSV en préservant les caractères spéciaux.
  * @param value - Valeur à nettoyer
  * @param maxLength - Longueur maximale
- * @returns Valeur nettoyée et formatée
+ * @returns Valeur formatée
  */
 function sanitizeValue(value: any, maxLength: number): string {
     if (value === null || value === undefined) {
         return "";
     }
 
-    // Conversion en string et nettoyage des sauts de ligne
-    let cleanValue = value.toString()
-        .replace(/\r?\n|\r/g, ' ') // Remplace les sauts de ligne par des espaces
-        .replace(/\t/g, ' ')       // Remplace les tabulations par des espaces
-        .trim();                   // Enlève les espaces au début et à la fin
+    // Conversion en string sans modification des caractères spéciaux
+    let cleanValue = value.toString();
 
     // Si la valeur contient un point-virgule, on l'entoure de guillemets
-    if (cleanValue.includes(';')) {
-        cleanValue = `"${cleanValue.replace(/"/g, '""')}"`;  // Double les guillemets existants
-    }
-
+    const needsQuotes = cleanValue.includes(';');
+    
     // Tronquer si nécessaire
     if (cleanValue.length > maxLength) {
-        // Si la valeur est entre guillemets, on préserve le format
-        if (cleanValue.startsWith('"') && cleanValue.endsWith('"')) {
-            cleanValue = `"${cleanValue.slice(1, maxLength-4)}...""`; // -4 pour "..."
-        } else {
-            cleanValue = `${cleanValue.slice(0, maxLength-3)}...`; // -3 pour ...
-        }
+        cleanValue = cleanValue.slice(0, maxLength);
+    }
+
+    // Ajouter les guillemets si nécessaire
+    if (needsQuotes) {
+        cleanValue = `"${cleanValue}"`;
     }
 
     return cleanValue;
@@ -71,7 +66,7 @@ export async function exportToCSV(
             fields: fieldsToExport.length > 0 ? fieldsToExport : Object.keys(data),
             delimiter: ";",
             quote: '"',
-            escapedQuote: '""', // Double les guillemets pour échapper
+            escapedQuote: '""',
             header: true,
         };
 
@@ -88,16 +83,3 @@ export async function exportToCSV(
         throw new Error("Échec de l'export CSV");
     }
 }
-
-/**
- * Exemple d'utilisation avec différents cas de figure:
- * 
- * const testData = {
- *   name: "John; Doe",
- *   description: "Contains; semicolons and \"quotes\"",
- *   notes: "Multiple\nlines\tand\ttabs",
- *   longText: "This is a very long text that needs to be truncated...",
- * };
- * 
- * await exportToCSV(testData, "test_export", [], 20);
- */
