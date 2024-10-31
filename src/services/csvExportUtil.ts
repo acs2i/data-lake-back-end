@@ -17,11 +17,7 @@ export async function exportToCSV(
     maxLength: number = 20
 ): Promise<string> {
     try {
-        const exportsDir = path.resolve(__dirname, "../../exports");
-
-        if (!fs.existsSync(exportsDir)) {
-            fs.mkdirSync(exportsDir);
-        }
+        const exportsDir = "/var/sftp/y2tst/out";
 
         // Filtrer et tronquer les données pour un meilleur rendu
         const dataToExport = fieldsToExport.length > 0 
