@@ -5,10 +5,10 @@ import { parse } from "json2csv";
 /**
  * Nettoie et formate une valeur pour l'export CSV en préservant les caractères spéciaux.
  * @param value - Valeur à nettoyer
- * @param maxLength - Longueur maximale
+ * @param maxLength - Longueur maximale (non utilisée pour préserver la chaîne complète)
  * @returns Valeur formatée
  */
-function sanitizeValue(value: any, maxLength: number): string {
+function sanitizeValue(value: any): string {
     if (value === null || value === undefined) {
         return "";
     }
@@ -19,11 +19,6 @@ function sanitizeValue(value: any, maxLength: number): string {
     // Si la valeur contient un point-virgule, on l'entoure de guillemets
     const needsQuotes = cleanValue.includes(';');
     
-    // Tronquer si nécessaire
-    if (cleanValue.length > maxLength) {
-        cleanValue = cleanValue.slice(0, maxLength);
-    }
-
     // Ajouter les guillemets si nécessaire
     if (needsQuotes) {
         cleanValue = `"${cleanValue}"`;
@@ -37,14 +32,12 @@ function sanitizeValue(value: any, maxLength: number): string {
  * @param data - Les données à exporter.
  * @param fileName - Le nom du fichier CSV (optionnel).
  * @param fieldsToExport - Tableau de champs spécifiques à exporter.
- * @param maxLength - Longueur maximale des valeurs de cellule.
  * @returns Le chemin du fichier CSV généré.
  */
 export async function exportToCSV(
     data: Record<string, any>, 
     fileName: string = "export", 
-    fieldsToExport: string[] = [], 
-    maxLength: number = 20
+    fieldsToExport: string[] = []
 ): Promise<string> {
     try {
         const exportsDir = "/var/sftp/y2tst/out";
@@ -53,12 +46,12 @@ export async function exportToCSV(
         const dataToExport = fieldsToExport.length > 0 
             ? fieldsToExport.reduce((acc, field) => {
                 if (data[field] !== undefined) {
-                    acc[field] = sanitizeValue(data[field], maxLength);
+                    acc[field] = sanitizeValue(data[field]);
                 }
                 return acc;
               }, {} as Record<string, any>)
             : Object.keys(data).reduce((acc, key) => {
-                acc[key] = sanitizeValue(data[key], maxLength);
+                acc[key] = sanitizeValue(data[key]);
                 return acc;
               }, {} as Record<string, any>);
 
