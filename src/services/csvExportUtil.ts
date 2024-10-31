@@ -47,7 +47,8 @@ export async function exportToCSV(
         const opts = { 
             fields: fieldsToExport.length > 0 ? fieldsToExport : Object.keys(data),
             delimiter: ";",
-            quote: '',           // Désactive les guillemets
+            quote: '"',
+            escapedQuote: '""', // Double les guillemets pour échapper
             header: true,
         };
 
