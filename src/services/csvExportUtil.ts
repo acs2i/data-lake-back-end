@@ -3,47 +3,66 @@ import path from "path";
 import { parse } from "json2csv";
 
 /**
- * Exporte les données fournies en CSV avec des champs spécifiques et un format amélioré.
+ * Nettoie et formate une valeur pour l'export CSV.
+ * @param value - Valeur à nettoyer
+ * @returns Valeur nettoyée et formatée
+ */
+function sanitizeValue(value: any): string {
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    // Conversion en string et nettoyage des sauts de ligne
+    let cleanValue = value.toString()
+        .replace(/\r?\n|\r/g, ' ') // Remplace les sauts de ligne par des espaces
+        .replace(/\t/g, ' ')       // Remplace les tabulations par des espaces
+        .trim();                   // Enlève les espaces au début et à la fin
+
+    // Si la valeur contient un point-virgule, on l'entoure de guillemets
+    if (cleanValue.includes(';')) {
+        cleanValue = `"${cleanValue.replace(/"/g, '""')}"`;  // Double les guillemets existants
+    }
+
+    return cleanValue;
+}
+
+/**
+ * Exporte les données fournies en CSV avec des champs spécifiques.
  * @param data - Les données à exporter.
  * @param fileName - Le nom du fichier CSV (optionnel).
  * @param fieldsToExport - Tableau de champs spécifiques à exporter.
- * @param maxLength - Longueur maximale des valeurs de cellule.
  * @returns Le chemin du fichier CSV généré.
  */
 export async function exportToCSV(
     data: Record<string, any>, 
     fileName: string = "export", 
-    fieldsToExport: string[] = [], 
-    maxLength: number = 20
+    fieldsToExport: string[] = []
 ): Promise<string> {
     try {
-        const exportsDir = path.resolve(__dirname, "../../exports");
+        const exportsDir = "/var/sftp/y2tst/out";
 
-        if (!fs.existsSync(exportsDir)) {
-            fs.mkdirSync(exportsDir);
-        }
-
-        // Filtrer et tronquer les données pour un meilleur rendu
+        // Filtrer et nettoyer les données
         const dataToExport = fieldsToExport.length > 0 
             ? fieldsToExport.reduce((acc, field) => {
                 if (data[field] !== undefined) {
-                    // Tronque la valeur si elle dépasse maxLength
-                    const value = data[field].toString();
-                    acc[field] = value.length > maxLength ? value.slice(0, maxLength) + "..." : value;
+                    acc[field] = sanitizeValue(data[field]);
                 }
                 return acc;
               }, {} as Record<string, any>)
             : Object.keys(data).reduce((acc, key) => {
-                const value = data[key].toString();
-                acc[key] = value.length > maxLength ? value.slice(0, maxLength) + "..." : value;
+                acc[key] = sanitizeValue(data[key]);
                 return acc;
               }, {} as Record<string, any>);
 
         const opts = { 
             fields: fieldsToExport.length > 0 ? fieldsToExport : Object.keys(data),
-            delimiter: ";", // Définit le séparateur de colonnes comme point-virgule
-            quote: '"'      // Ajoute les guillemets uniquement si nécessaire
+            delimiter: ";",
+            quote: '"',
+            escapedQuote: '""', // Double les guillemets pour échapper
+            header: true,
         };
+
+        // Générer le CSV
         let csv = parse(dataToExport, opts);
 
         // Supprimer les guillemets dans le CSV généré
@@ -59,3 +78,16 @@ export async function exportToCSV(
         throw new Error("Échec de l'export CSV");
     }
 }
+
+/**
+ * Exemple d'utilisation:
+ * 
+ * const testData = {
+ *   name: "John; Doe",
+ *   description: "Contains; semicolons and \"quotes\"",
+ *   notes: "Multiple\nlines\tand\ttabs",
+ *   longText: "This is a very long text that will not be truncated anymore",
+ * };
+ * 
+ * await exportToCSV(testData, "test_export");
+ */
