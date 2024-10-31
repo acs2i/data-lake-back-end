@@ -5,7 +5,6 @@ import { parse } from "json2csv";
 /**
  * Nettoie et formate une valeur pour l'export CSV en préservant les caractères spéciaux.
  * @param value - Valeur à nettoyer
- * @param maxLength - Longueur maximale (non utilisée pour préserver la chaîne complète)
  * @returns Valeur formatée
  */
 function sanitizeValue(value: any): string {
@@ -13,22 +12,12 @@ function sanitizeValue(value: any): string {
         return "";
     }
 
-    // Conversion en string sans modification des caractères spéciaux
-    let cleanValue = value.toString();
-
-    // Si la valeur contient un point-virgule, on l'entoure de guillemets
-    const needsQuotes = cleanValue.includes(';');
-    
-    // Ajouter les guillemets si nécessaire
-    if (needsQuotes) {
-        cleanValue = `"${cleanValue}"`;
-    }
-
-    return cleanValue;
+    // Retourner la valeur telle quelle sans aucune modification
+    return value.toString();
 }
 
 /**
- * Exporte les données fournies en CSV avec des champs spécifiques et un format amélioré.
+ * Exporte les données fournies en CSV avec des champs spécifiques.
  * @param data - Les données à exporter.
  * @param fileName - Le nom du fichier CSV (optionnel).
  * @param fieldsToExport - Tableau de champs spécifiques à exporter.
@@ -42,7 +31,7 @@ export async function exportToCSV(
     try {
         const exportsDir = "/var/sftp/y2tst/out";
 
-        // Filtrer et nettoyer les données
+        // Filtrer les données
         const dataToExport = fieldsToExport.length > 0 
             ? fieldsToExport.reduce((acc, field) => {
                 if (data[field] !== undefined) {
@@ -58,8 +47,7 @@ export async function exportToCSV(
         const opts = { 
             fields: fieldsToExport.length > 0 ? fieldsToExport : Object.keys(data),
             delimiter: ";",
-            quote: '"',
-            escapedQuote: '""',
+            quote: '',           // Désactive les guillemets
             header: true,
         };
 
