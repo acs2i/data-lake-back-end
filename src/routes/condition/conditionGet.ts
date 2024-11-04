@@ -16,7 +16,7 @@ router.get(CONDITION + "/:supplierId", authorizationMiddlewear, async (req: Requ
         }
 
         // Rechercher toutes les conditions qui ont `supplier_id` égal à l'id fourni
-        const conditions: Condition[] = await ConditionModel.find({ supplier_id: supplierId });
+        const conditions: Condition[] = await ConditionModel.find({ supplier_id: supplierId }).populate("brand_id");
 
         if (conditions.length === 0) {
             return res.status(OK).json({ message: "No conditions found for this supplier" });
