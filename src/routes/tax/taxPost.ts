@@ -4,6 +4,8 @@ import { TAX } from "../tax/shared";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import TaxModel, { Tax } from "../../schemas/taxSchema";
+import { exportToCSV } from "../../services/csvExportUtil";
+import { getFormattedDate } from "../../services/formatDate";
 
 const router = express.Router();
 
@@ -42,7 +44,23 @@ router.post(
         timestamps: true,
       });
 
-      res.status(OK).json(savedObject);
+      // Générer le CSV après la sauvegarde
+      const formattedDate = getFormattedDate();
+      const fileName = `PREREF_Y2_TAX_${formattedDate}.csv`;
+      const fieldsToExport = ["code", "label", "rate", "status"];
+
+      // Exportation CSV avec tous les champs du document
+      const csvFilePath = await exportToCSV(
+        savedObject?.toObject(),
+        fileName,
+        fieldsToExport
+      );
+
+      res.status(OK).json({
+        savedObject,
+        csvFilePath,
+        msg: "Tax created successfully"
+      });
     } catch (err) {
       console.error(err);
       res.status(INTERNAL_SERVER_ERROR).json(err);

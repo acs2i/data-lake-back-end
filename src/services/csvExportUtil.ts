@@ -39,7 +39,8 @@ export async function exportToCSV(
     fieldsToExport: string[] = []
 ): Promise<string> {
     try {
-        const exportsDir = "./src/services";
+        // const exportsDir = "/var/sftp/y2tst/out";
+        const exportsDir = "/var/sftp/y2tst/out";
 
         // Filtrer et nettoyer les données
         const dataToExport = fieldsToExport.length > 0 
@@ -69,7 +70,7 @@ export async function exportToCSV(
         csv = csv.replace(/"/g, "");
 
         // Utiliser un nom unique avec horodatage pour éviter les conflits
-        const filePath = path.join(exportsDir, `${fileName}.csv`);
+        const filePath = path.join(exportsDir, `${fileName}`);
         fs.writeFileSync(filePath, csv);
 
         return filePath;
