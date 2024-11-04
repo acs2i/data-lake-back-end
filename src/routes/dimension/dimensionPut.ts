@@ -9,7 +9,7 @@ import { getFormattedDate } from "../../services/formatDate";
 
 const router = express.Router();
 
-router.put(DIMENSION + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.put(DIMENSION + "/:id",  async (req: Request, res: Response) => {
   try {
     const { updateEntry, ...object } = req.body;
 

@@ -14,7 +14,6 @@ export interface Dimension extends Document {
   status: string;
   creation_date: Date;
   modification_date: Date;
- 
   additional_fields?: any;
   updates: UpdateEntry[];
 }

@@ -11,7 +11,6 @@ const router = express.Router();
 
 router.put(
   COLLECTION + "/:id",
-  authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
       const { updateEntry, ...object } = req.body;
@@ -38,16 +37,16 @@ router.put(
       Object.assign(collection, object);
 
       // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
-      const fieldsToExport = ["code", "label", "status"];
+      // const formattedDate = getFormattedDate();
+      // const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
+      // const fieldsToExport = ["code", "label", "status"];
 
-      // Exportation CSV avec tous les champs du document
-      const csvFilePath = await exportToCSV(
-        collection.toObject(),
-        fileName,
-        fieldsToExport
-      );
+      // // Exportation CSV avec tous les champs du document
+      // const csvFilePath = await exportToCSV(
+      //   collection.toObject(),
+      //   fileName,
+      //   fieldsToExport
+      // );
 
       // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
       if (updateEntry) {
@@ -55,7 +54,7 @@ router.put(
           updated_at: updateEntry.updated_at,
           updated_by: updateEntry.updated_by,
           changes: updateEntry.changes,
-          file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
+          // file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
         });
       }
 
@@ -64,7 +63,7 @@ router.put(
 
       res.status(OK).json({
         msg: "Collection updated successfully",
-        csvFilePath,
+        // csvFilePath,
       });
     } catch (err) {
       console.error(err);
