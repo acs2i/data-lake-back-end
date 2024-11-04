@@ -69,7 +69,7 @@ export async function exportToCSV(
         csv = csv.replace(/"/g, "");
 
         // Utiliser un nom unique avec horodatage pour éviter les conflits
-        const filePath = path.join(exportsDir, `${fileName}.csv`);
+        const filePath = path.join(exportsDir, `${fileName}`);
         fs.writeFileSync(filePath, csv);
 
         return filePath;
