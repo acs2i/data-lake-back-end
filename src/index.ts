@@ -80,6 +80,9 @@ import blockGetRoutes from "./routes/block/blockGet"
 import blockPostRoutes from "./routes/block/blockPost"
 import blockPutRoutes from "./routes/block/blockPut"
 
+import conditioPostRoutes from "./routes/condition/conditionsPost"
+import conditioGetRoutes from "./routes/condition/conditionGet"
+
 import unitGetRoutes from "./routes/unit/unitGet"
 import userRoute from "./routes/user/userAuth"
 
@@ -176,6 +179,9 @@ app.use(v1, taxPutRoutes)
 app.use(v1, blockGetRoutes)
 app.use(v1, blockPostRoutes)
 app.use(v1, blockPutRoutes)
+
+app.use(v1, conditioPostRoutes)
+app.use(v1, conditioGetRoutes)
 
 app.listen(port, () => {
   
