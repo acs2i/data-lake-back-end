@@ -380,7 +380,7 @@ router.post(PRODUCT + '/product-batch', async (req: Request, res: Response) => {
           suppliers: processedSuppliers,
           brand_ids: processedBrandIds,
           collection_ids: processedCollectionIds,
-          status: 'draft'
+          status: 'A'
         };
 
         return processedProduct;
