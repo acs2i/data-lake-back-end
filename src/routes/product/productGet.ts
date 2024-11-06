@@ -15,13 +15,12 @@ import { ObjectId, Types } from "mongoose";
 const { ObjectId } = Types;
 const router = express.Router();
 
-
 // router.get(PRODUCT + "/change-to-date-format", async(req: Request, res: Response) => {
 // console.log("HEREEE")
 //   try {
 
 //     // await ProductModel.updateMany(
-//     //   { 
+//     //   {
 //     //     $or: [
 //     //       { "creation_date": { $eq: null } },   // Match documents where creation_date is null
 //     //       { "creation_date": { $exists: false } }  // Match documents where creation_date is undefined
@@ -33,10 +32,10 @@ const router = express.Router();
 //     //     }
 //     //   }
 //     // );
-    
+
 //     // await ProductModel.updateMany(
-//     //   { 
-//     //     creation_date: { $type: "string", $ne: ''  }, 
+//     //   {
+//     //     creation_date: { $type: "string", $ne: ''  },
 //     //     modification_date: { $type: "string", $ne: ''  }
 //     //   },
 //     //   [
@@ -58,8 +57,8 @@ const router = express.Router();
 //     // );
 
 //     await ProductModel.updateMany(
-//       { 
-//         creation_date: { $type: "string", $ne: "" }, 
+//       {
+//         creation_date: { $type: "string", $ne: "" },
 //         modification_date: { $type: "string", $ne: "" }
 //       },
 //       [
@@ -89,11 +88,10 @@ const router = express.Router();
 //         }
 //       ]
 //     );
-    
 
 //     // await ProductModel.updateMany(
-//     //   { 
-//     //     creation_date: { $type: "string", $ne: "" }, 
+//     //   {
+//     //     creation_date: { $type: "string", $ne: "" },
 //     //     modification_date: { $type: "string", $ne: "" }
 //     //   },
 //     //   [
@@ -117,7 +115,6 @@ const router = express.Router();
 //     //     }
 //     //   ]
 //     // );
-    
 
 //     // // Perform the aggregation
 //     // const result = await ProductModel.aggregate(pipeline)
@@ -126,17 +123,11 @@ const router = express.Router();
 
 //     res.status(200)
 
-
-    
 //   } catch(error) {
 //     console.error(error);
 //     res.status(500).json(error);
 //   }
 // })
-
-
-
-
 
 // router.get(PRODUCT + "/aggregate", async(req: Request, res: Response) => {
 
@@ -149,14 +140,14 @@ const router = express.Router();
 //         }
 //       }, {
 //         '$lookup': {
-//           'from': 'collection', 
-//           'localField': 'collection_ids', 
-//           'foreignField': '_id', 
+//           'from': 'collection',
+//           'localField': 'collection_ids',
+//           'foreignField': '_id',
 //           'as': 'collections'
 //         }
 //       }, {
 //         '$group': {
-//           '_id': '$collection_ids', 
+//           '_id': '$collection_ids',
 //           'count': {
 //             '$sum': 1
 //           }
@@ -172,7 +163,6 @@ const router = express.Router();
 //     res.status(500).json(err);
 //   }
 
-
 // })
 
 // This isn't good practice but you mfs can't distinguish a good practice vs a bad one soooooo =)
@@ -183,55 +173,66 @@ const router = express.Router();
 // })
 
 // Again bad practice but yall dont gaf so neither do i anymore
-router.get(PRODUCT + "/bar-graph-data", authorizationMiddlewear, async (req:Request, res:Response) => {
+router.get(
+  PRODUCT + "/bar-graph-data",
+  authorizationMiddlewear,
+  async (req: Request, res: Response) => {
+    try {
+      let count = 0;
+      let tooLong = 0;
+      const map: { [key: string]: number } = {};
+      while (count !== 5) {
+        const c = (await CollectionModel.find()
+          .sort({ creation_date: -1 })
+          .limit(100)) as any[];
 
-  try {
-    let count = 0;
-    let tooLong = 0;
-    const map : { [key: string] : number }= { }
-    while(count !== 5) {
-
-      const c = await CollectionModel.find().sort({creation_date: -1}).limit(100) as any[]
-
-      if(c[tooLong] && c[tooLong]._id) {
-        const tally = await ProductModel.countDocuments({
-          collection_ids: { $in: [ c[tooLong]._id ] }  // Check if the collectionId matches an element in the array
-        });
-        if(tally > 0) {
-          map[c[tooLong].label] = tally;
-          count++;
+        if (c[tooLong] && c[tooLong]._id) {
+          const tally = await ProductModel.countDocuments({
+            collection_ids: { $in: [c[tooLong]._id] }, // Check if the collectionId matches an element in the array
+          });
+          if (tally > 0) {
+            map[c[tooLong].label] = tally;
+            count++;
+          }
         }
+
+        tooLong++; // just to make sure this doesn't spin forever
+        if (tooLong === 100) break;
       }
-  
-     
-      tooLong++;  // just to make sure this doesn't spin forever
-      if(tooLong === 100) break;
+
+      res.status(200).json(map);
+    } catch (error) {
+      console.error(
+        "I can't believe that I'm taking orders from a guy that writes caca boom for an error message: ",
+        error
+      );
+      res.status(500).json(error);
     }
-  
-  
-    res.status(200).json(map)
-
-  } catch(error) {
-    console.error("I can't believe that I'm taking orders from a guy that writes caca boom for an error message: " , error)
-    res.status(500).json(error)
   }
-
-
-  
-
-})
+);
 
 router.get(
   PRODUCT + "/search",
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { supplier, tag, sub_family, reference, long_label, brand, collection, dimension, status, name, creation_date } = req.query;
-
+      const {
+        supplier,
+        tag,
+        sub_family,
+        reference,
+        long_label,
+        brand,
+        collection,
+        dimension,
+        status,
+        name,
+        creation_date,
+      } = req.query;
 
       const { skip, intLimit } = await generalLimits(req);
-      console.log(req.query)
-      let referenceIds: any[] | null | undefined
+      console.log(req.query);
+      let referenceIds: any[] | null | undefined;
       let brandIds: any[] | null | undefined;
       let collectionIds: any[] | null | undefined;
       let dimensionIds: any[] | null | undefined;
@@ -240,108 +241,120 @@ router.get(
 
       let filter: any = {};
 
-
-      if(creation_date) {
-        const o = { creation_date : {$gt: new Date(creation_date as string)}}
-        filter = {...filter, ...o}
+      if (creation_date) {
+        const o = { creation_date: { $gt: new Date(creation_date as string) } };
+        filter = { ...filter, ...o };
       }
 
-      if(name) {
+      if (name) {
         const nameRegex = new RegExp(name as string, "i");
-        filter = { ...filter, name: nameRegex}
+        filter = { ...filter, name: nameRegex };
       }
 
       // works
-      if(reference) {
+      if (reference) {
         const referenceRegex = new RegExp(reference as string, "i");
-        filter = { ...filter, reference: referenceRegex}
+        filter = { ...filter, reference: referenceRegex };
       }
 
-      // works 
-      if(long_label) {
+      // works
+      if (long_label) {
         const long_labelRegex = new RegExp(long_label as string, "i");
-        filter = { ...filter, long_label: long_labelRegex}
+        filter = { ...filter, long_label: long_labelRegex };
       }
 
       // works
       // Recherche par marque
       if (brand) {
         const brandRegex = new RegExp(brand as string, "i");
-        
-        const brandByLabel = await BrandModel.find({ label: { $regex: brandRegex } }).select("_id");
-        const brandByCode = await BrandModel.find({ name: { $regex: brandRegex } }).select("_id");
-        
-        brandIds = [...brandByLabel, ...brandByCode]
-        
-        const $in: ObjectId[] = brandIds.map(doc => doc._id);
+
+        const brandByLabel = await BrandModel.find({
+          label: { $regex: brandRegex },
+        }).select("_id");
+        const brandByCode = await BrandModel.find({
+          name: { $regex: brandRegex },
+        }).select("_id");
+
+        brandIds = [...brandByLabel, ...brandByCode];
+
+        const $in: ObjectId[] = brandIds.map((doc) => doc._id);
         filter = { ...filter, brand_ids: { $in } };
       }
-      
 
       // NOT NEEDED
       if (collection) {
         const collectionRegex = new RegExp(collection as string, "i");
-        collectionIds = await CollectionModel.find({ label: { $regex: collectionRegex } }).select("_id");
-        const $in: ObjectId[] = collectionIds.map(doc => doc._id);
-        filter = { ...filter, collection_ids: { $in } }; 
+        collectionIds = await CollectionModel.find({
+          label: { $regex: collectionRegex },
+        }).select("_id");
+        const $in: ObjectId[] = collectionIds.map((doc) => doc._id);
+        filter = { ...filter, collection_ids: { $in } };
       }
 
       // no working
       if (dimension) {
         const dimensionRegex = new RegExp(dimension as string, "i");
-        dimensionIds = await DimensionModel.find({ label: { $regex: dimensionRegex } }).select("_id");
-        const $in: any[] = dimensionIds.map(doc => doc._id);
+        dimensionIds = await DimensionModel.find({
+          label: { $regex: dimensionRegex },
+        }).select("_id");
+        const $in: any[] = dimensionIds.map((doc) => doc._id);
         filter = { ...filter, dimension_types: { $in } };
       }
 
       // Recherche par statut
       // works
       if (status) {
-        const statusRegex = new RegExp(status as string,'i')
+        const statusRegex = new RegExp(status as string, "i");
         filter = { ...filter, status: statusRegex };
       }
 
       // works
       if (tag) {
         const tagRegex = new RegExp(tag as string, "i");
-        const tagByName = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
-        const tagByCode = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
+        const tagByName = await TagModel.find({
+          name: { $regex: tagRegex },
+        }).select("_id");
+        const tagByCode = await TagModel.find({
+          name: { $regex: tagRegex },
+        }).select("_id");
 
         // tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
-        // code 
-        tagIds = [...tagByCode, tagByName]
-        const $in: ObjectId[] = tagIds.map(doc => doc._id);
+        // code
+        tagIds = [...tagByCode, tagByName];
+        const $in: ObjectId[] = tagIds.map((doc) => doc._id);
         filter = { ...filter, tag_ids: { $in } };
       }
 
       // doesnt work
       if (supplier) {
         const supplierRegex = new RegExp(supplier as string, "i");
-        supplierIds = await SupplierModel.find({ company_name: { $regex: supplierRegex } }).select("_id");
-        const $in: ObjectId[] = supplierIds.map(doc => doc._id );
-        // filter = { ...filter, 'suppliers.supplier_id': { $in } }; 
-        const x = {supplier_id: {$in}}
+        supplierIds = await SupplierModel.find({
+          company_name: { $regex: supplierRegex },
+        }).select("_id");
+        const $in: ObjectId[] = supplierIds.map((doc) => doc._id);
+        // filter = { ...filter, 'suppliers.supplier_id': { $in } };
+        const x = { supplier_id: { $in } };
         // filter = { ...filter, suppliers: { $elemMatch: {supplier_id: { $in }} }}
-        filter = { ...filter, 'suppliers.supplier_id': { $in }}
-
+        filter = { ...filter, "suppliers.supplier_id": { $in } };
       }
-      
+
       const data: Product[] | null | undefined = await ProductModel.find(filter)
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(intLimit)
+        .sort({ creation_date: -1 })
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
         .populate({
-          path: 'suppliers.supplier_id',
-          model: 'supplier',
+          path: "suppliers.supplier_id",
+          model: "supplier",
         })
-        .populate("uvc_ids")
+        .populate("uvc_ids");
 
       if (!data) {
         throw new Error(req.originalUrl + ", msg: find error");
       }
-
 
       const total = await ProductModel.countDocuments(filter);
 
@@ -353,7 +366,6 @@ router.get(
   }
 );
 
-
 router.get(
   PRODUCT,
   authorizationMiddlewear,
@@ -362,16 +374,17 @@ router.get(
       const { skip, intLimit } = await generalLimits(req);
 
       const data: Product[] | null | undefined = await ProductModel.find()
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(intLimit)
         .populate("brand_ids")
         .populate("collection_ids")
         .populate("tag_ids")
         .populate({
-          path: 'suppliers.supplier_id',
-          model: 'supplier',
+          path: "suppliers.supplier_id",
+          model: "supplier",
         })
-        .populate("uvc_ids")
+        .populate("uvc_ids");
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
@@ -400,14 +413,14 @@ router.get(
       }
 
       const data: Product | null | undefined = await ProductModel.findById(id)
-      .populate("uvc_ids")
-      .populate("brand_ids")
-      .populate("collection_ids")
-      .populate("tag_ids")
-      .populate({
-        path: 'suppliers.supplier_id',
-        model: 'supplier',
-      });
+        .populate("uvc_ids")
+        .populate("brand_ids")
+        .populate("collection_ids")
+        .populate("tag_ids")
+        .populate({
+          path: "suppliers.supplier_id",
+          model: "supplier",
+        });
 
       if (data === null || data === undefined) {
         throw new Error(req.originalUrl + ", msg: find error");
@@ -420,7 +433,5 @@ router.get(
     }
   }
 );
-
-
 
 export default router;
