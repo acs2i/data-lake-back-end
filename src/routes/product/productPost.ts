@@ -1,14 +1,13 @@
 import express, { Request, Response } from "express";
-import mongoose from "mongoose";
 import ProductModel, { Product } from "../../schemas/productSchema";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { PRODUCT } from "./shared";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
-import TagModel from "../../schemas/tagSchema";
-import BrandModel from "../../schemas/brandSchema";
-import SupplierModel from "../../schemas/supplierSchema";
-import CollectionModel from "../../schemas/collectionSchema";
+import TagModel, { Tag } from "../../schemas/tagSchema";
+import BrandModel, { Brand } from "../../schemas/brandSchema";
+import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
+import CollectionModel, { Collection } from "../../schemas/collectionSchema";
 
 
 interface ProductData {
@@ -88,18 +87,17 @@ router.post(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      const { code } = req.body; // Assurez-vous que le code est extrait correctement
+      const { code } = req.body;
 
-      console.log("Requête reçue avec code:", code); // Loggez le code reçu
+      console.log("Requête reçue avec code:", code);
 
       if (!code) {
         return res.status(400).json({ message: "Code non fourni" });
       }
 
-      // Recherche du tag par code
       const foundTag = await TagModel.findOne({ code }, "_id code");
 
-      console.log("Tag trouvé:", foundTag); // Loggez le tag trouvé
+      console.log("Tag trouvé:", foundTag);
 
       if (!foundTag) {
         return res.status(404).json({ message: "Tag non trouvé pour ce code" });
@@ -114,34 +112,33 @@ router.post(
 );
 
 router.post(PRODUCT, authorizationMiddlewear, async (req: Request, res: Response) => {
-    try {
-        const product = req.body;
-        const uvc_ids = product.uvc_ids;
+  try {
+      const product = req.body;
+      const uvc_ids = product.uvc_ids;
 
-        if (!product) {
-            throw new Error(req.originalUrl + ", msg: product was falsy: " + JSON.stringify(product));
-        }
+      if (!product) {
+          throw new Error(req.originalUrl + ", msg: product was falsy: " + JSON.stringify(product));
+      }
 
-        // Création du produit avec les IDs des UVC fournis
-        const newProduct = new ProductModel({
-            ...product,
-            uvc_ids,
-            version: 1,
-        });
+      const newProduct = new ProductModel({
+          ...product,
+          uvc_ids,
+          version: 1,
+      });
 
-        const savedProduct = await newProduct.save({ timestamps: true });
-        res.status(OK).json(savedProduct);
+      const savedProduct = await newProduct.save({ timestamps: true });
+      res.status(OK).json(savedProduct);
 
-    } catch (err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR).json({ error: "erreur" });
-    }
+  } catch (err) {
+      console.error(err);
+      res.status(INTERNAL_SERVER_ERROR).json({ error: "erreur" });
+  }
 });
 
 async function fetchTagId(code: string): Promise<string> {
   const tag = await TagModel.findOne({ code });
   if (!tag) {
-    return ""; // Retourne une chaîne vide si le tag n'est pas trouvé au lieu de throw
+    return "";
   }
   return tag._id.toString();
 }
@@ -152,7 +149,7 @@ async function fetchSupplierId(supplierId: string): Promise<string> {
   const supplier = await SupplierModel.findOne({ 
     code: code,
     company_name: company_name
-  });
+  }) as Supplier;
 
   if (!supplier) {
     throw new Error(`Supplier not found for code: ${code} and company: ${company_name}`);
@@ -162,7 +159,7 @@ async function fetchSupplierId(supplierId: string): Promise<string> {
 }
 
 async function fetchBrandId(brandId: string): Promise<string> {
-  const brand = await BrandModel.findOne({ label: brandId });
+  const brand = await BrandModel.findOne({ label: brandId }) as Brand;
   if (!brand) {
     throw new Error(`Brand not found for id: ${brandId}`);
   }
@@ -170,7 +167,7 @@ async function fetchBrandId(brandId: string): Promise<string> {
 }
 
 async function fetchCollectionId(collectionId: string): Promise<string> {
-  const collection = await CollectionModel.findOne({ code: collectionId });
+  const collection = await CollectionModel.findOne({ code: collectionId }) as Collection;
   if (!collection) {
     throw new Error(`Collection not found for id: ${collectionId}`);
   }
@@ -187,12 +184,10 @@ router.post(PRODUCT + '/product-batch', async (req: Request, res: Response) => {
 
     const processedProducts = await Promise.all(
       productsData.map(async (productData) => {
-        // Traitement des tags
         const processedTagIds = await Promise.all(
           productData.tag_ids.map(code => fetchTagId(code))
         );
 
-        // Traitement des suppliers
         const processedSuppliers = await Promise.all(
           productData.suppliers.map(async supplier => ({
             ...supplier,
@@ -200,17 +195,14 @@ router.post(PRODUCT + '/product-batch', async (req: Request, res: Response) => {
           }))
         );
 
-        // Traitement des brands
         const processedBrandIds = await Promise.all(
           productData.brand_ids.map(brandId => fetchBrandId(brandId))
         );
 
-        // Traitement des collections
         const processedCollectionIds = await Promise.all(
           productData.collection_ids.map(collectionId => fetchCollectionId(collectionId))
         );
 
-        // Create processed product object
         const processedProduct: ProcessedProduct = {
           ...productData,
           tag_ids: processedTagIds.filter(id => id !== ""),
