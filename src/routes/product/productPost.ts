@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import mongoose from 'mongoose';
 import ProductModel, { Product } from "../../schemas/productSchema";
 import { OK } from "../../codes/success";
 import { INTERNAL_SERVER_ERROR } from "../../codes/errors";
@@ -8,7 +9,6 @@ import TagModel, { Tag } from "../../schemas/tagSchema";
 import BrandModel, { Brand } from "../../schemas/brandSchema";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
 import CollectionModel, { Collection } from "../../schemas/collectionSchema";
-
 
 interface ProductData {
   creator_id: string;
@@ -53,30 +53,7 @@ interface ProductData {
   }>;
 }
 
-interface ProcessedProduct {
-  creator_id: string;
-  reference: string;
-  name: string;
-  short_label: string;
-  long_label: string;
-  type: string;
-  tag_ids: string[];
-  suppliers: Array<{
-    supplier_id: string;
-    supplier_ref: number;
-    pcb: string;
-    custom_cat: string;
-    made_in: string;
-  }>;
-  dimension_types: string;
-  brand_ids: string[];
-  collection_ids: string[];
-  peau: number;
-  tbeu_pb: number;
-  tbeu_pmeu: number;
-  imgPath: string;
-  status: string;
-  additional_fields: any[];
+interface ProcessedProduct extends Omit<ProductData, 'uvc'> {
   uvc: any[];
 }
 
@@ -95,7 +72,7 @@ router.post(
         return res.status(400).json({ message: "Code non fourni" });
       }
 
-      const foundTag = await TagModel.findOne({ code }, "_id code");
+      const foundTag = await TagModel.findOne({ code }).lean();
 
       console.log("Tag trouvé:", foundTag);
 
@@ -113,30 +90,30 @@ router.post(
 
 router.post(PRODUCT, authorizationMiddlewear, async (req: Request, res: Response) => {
   try {
-      const product = req.body;
-      const uvc_ids = product.uvc_ids;
+    const product = req.body;
+    const uvc_ids = product.uvc_ids;
 
-      if (!product) {
-          throw new Error(req.originalUrl + ", msg: product was falsy: " + JSON.stringify(product));
-      }
+    if (!product) {
+      throw new Error(req.originalUrl + ", msg: product was falsy: " + JSON.stringify(product));
+    }
 
-      const newProduct = new ProductModel({
-          ...product,
-          uvc_ids,
-          version: 1,
-      });
+    const newProduct = new ProductModel({
+      ...product,
+      uvc_ids,
+      version: 1,
+    });
 
-      const savedProduct = await newProduct.save({ timestamps: true });
-      res.status(OK).json(savedProduct);
+    const savedProduct = await newProduct.save();
+    res.status(OK).json(savedProduct);
 
   } catch (err) {
-      console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json({ error: "erreur" });
+    console.error(err);
+    res.status(INTERNAL_SERVER_ERROR).json({ error: "erreur" });
   }
 });
 
 async function fetchTagId(code: string): Promise<string> {
-  const tag = await TagModel.findOne({ code });
+  const tag = await TagModel.findOne({ code }).lean();
   if (!tag) {
     return "";
   }
@@ -149,7 +126,7 @@ async function fetchSupplierId(supplierId: string): Promise<string> {
   const supplier = await SupplierModel.findOne({ 
     code: code,
     company_name: company_name
-  }) as Supplier;
+  }).lean();
 
   if (!supplier) {
     throw new Error(`Supplier not found for code: ${code} and company: ${company_name}`);
@@ -159,7 +136,7 @@ async function fetchSupplierId(supplierId: string): Promise<string> {
 }
 
 async function fetchBrandId(brandId: string): Promise<string> {
-  const brand = await BrandModel.findOne({ label: brandId }) as Brand;
+  const brand = await BrandModel.findOne({ label: brandId }).lean();
   if (!brand) {
     throw new Error(`Brand not found for id: ${brandId}`);
   }
@@ -167,7 +144,7 @@ async function fetchBrandId(brandId: string): Promise<string> {
 }
 
 async function fetchCollectionId(collectionId: string): Promise<string> {
-  const collection = await CollectionModel.findOne({ code: collectionId }) as Collection;
+  const collection = await CollectionModel.findOne({ code: collectionId }).lean();
   if (!collection) {
     throw new Error(`Collection not found for id: ${collectionId}`);
   }
@@ -222,6 +199,5 @@ router.post(PRODUCT + '/product-batch', async (req: Request, res: Response) => {
     res.status(400).json({ error: (error as Error).message });
   }
 });
-
 
 export default router;
