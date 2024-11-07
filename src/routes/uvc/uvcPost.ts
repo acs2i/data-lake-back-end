@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { UVC } from './shared';
-import { INTERNAL_SERVER_ERROR } from '../../codes/errors';
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../../codes/errors';
 import { Document } from 'mongoose';
 import { OK } from '../../codes/success';
 import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
@@ -18,16 +18,17 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
 
         // Initialisation du générateur EAN
         const eanGenerator = new EANGenerator(
-            "300",     // Préfixe
-            "12345",   // Talon
-            4         // Longueur du compteur
+            "02000",     // Préfixe
+            "0",   // Talon
+            6         // Longueur du compteur
         );
 
         // Si pas d'EAN, en générer un
         if (!object.ean) {
             try {
-                const newEan = await eanGenerator.generateEAN();
-                object.ean = newEan;
+                const { ean, barcodePath } = await eanGenerator.generateEAN();
+                object.ean = ean;
+                object.barcodePath = barcodePath; // Stockage du chemin de l'image
             } catch (error) {
                 console.error("Erreur lors de la génération de l'EAN:", error);
                 throw error;
@@ -38,6 +39,9 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
             if (foundEan) {
                 throw new Error(req.originalUrl + " msg: Ean already exists: " + JSON.stringify(object));
             }
+            // Générer le code-barres pour l'EAN existant
+            const barcodePath = eanGenerator.generateBarcode(object.ean);
+            object.barcodePath = barcodePath;
         }
 
         // Si l'array eans n'existe pas, le créer
