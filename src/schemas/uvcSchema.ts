@@ -31,6 +31,7 @@ export interface Uvc extends Document {
   gross_weight: number
   height: number,
   length: number,
+  ean: string,
   width: number,
   blocked: string,
   blocked_reason_code: string,
@@ -80,6 +81,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   length: {type: Number},
   width: {type: Number},
   blocked: {type: String},
+  ean: {type: String},
   blocked_reason_code: {type: String},
   coulfour: {type: String},
   visible_on_internet: {type : String},
