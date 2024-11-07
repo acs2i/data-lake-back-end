@@ -14,7 +14,6 @@ export interface Tag extends Document {
   tag_grouping_id: mongoose.Types.ObjectId;
   status: string;
   additional_fields?: any;
-  creator_id: mongoose.Types.ObjectId;
   last_modified_by: mongoose.Types.ObjectId;
   creation_date: Date;
   modification_date: Date;
@@ -35,7 +34,6 @@ const tagSchema = new mongoose.Schema<Tag>(
       type: Map,
       of: mongoose.Schema.Types.Mixed,
     },
-    creator_id: { type: mongoose.Schema.Types.ObjectId },
     last_modified_by: { type: mongoose.Schema.Types.ObjectId },
     updates: [
       {
