@@ -5,6 +5,7 @@ import { generalLimits } from "../../services/generalServices";
 import authorizationMiddlewear from "../../middlewears/applicationMiddlewear";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../../codes/errors";
 import { OK } from "../../codes/success";
+import { exportToCSV } from "../../services/csvExportUtil";
 
 const router = express.Router();
 
@@ -130,6 +131,43 @@ router.get(
   }
 );
 
+router.get(SUPPLIER + "/export/:id", async (req, res) => {
+  const id = req.params.id;
+  console.log(id)
+  try {
+      // Récupère le supplier depuis la base de données
+      const supplier = await SupplierModel.findById(id);
+
+      if (!supplier) {
+          return res.status(404).json({ error: "Supplier not found" });
+      }
+
+      // Nom du fichier CSV
+      const fileName = `supplier_export_${new Date().toISOString()}.csv`;
+      console.log(fileName)
+      // Champs à inclure dans le CSV
+      const fieldsToExport = [
+          "code", "company_name", "phone", "email", "web_url",
+          "siret", "tva", "address_1", "address_2", "address_3",
+          "city", "postal", "country", "currency"
+      ];
+
+      // Générer le fichier CSV et obtenir le chemin du fichier
+      const filePath = await exportToCSV(supplier, fileName, fieldsToExport);
+
+      // Envoyer le fichier en tant que réponse pour le téléchargement
+      res.download(filePath, fileName, (err) => {
+          if (err) {
+              console.error("Erreur lors du téléchargement du fichier CSV :", err);
+              res.status(500).send("Erreur lors du téléchargement du fichier CSV");
+          }
+      });
+  } catch (error) {
+      console.error("Erreur lors de l'export CSV :", error);
+      res.status(500).json({ error: "Erreur lors de l'export CSV" });
+  }
+});
+
 router.get(
   SUPPLIER + "/:id",
   authorizationMiddlewear,
@@ -157,5 +195,8 @@ router.get(
     }
   }
 );
+
+
+
 
 export default router;

@@ -91,26 +91,45 @@ router.post(
 router.post(PRODUCT, authorizationMiddlewear, async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    const uvc_ids = product.uvc_ids;
+    console.log("Requête reçue pour création de produit avec données :", product);
 
     if (!product) {
-      throw new Error(req.originalUrl + ", msg: product was falsy: " + JSON.stringify(product));
+      console.error("Erreur : produit falsy", product);
+      return res.status(400).json({ error: "Données de produit manquantes", status: 400 });
     }
 
+    // Vérifie si le produit existe déjà avec cette référence
+    const existingProduct = await ProductModel.findOne({ reference: product.reference });
+    if (existingProduct) {
+      console.log("Erreur : Produit existe déjà avec cette référence.");
+      return res.status(400).json({
+        error: "Cette référence existe déjà. Veuillez la modifier pour valider la création",
+        status: 400,
+      });
+    }
+
+    // Création du produit si la référence n'existe pas
     const newProduct = new ProductModel({
       ...product,
-      uvc_ids,
+      uvc_ids: product.uvc_ids,
       version: 1,
     });
 
     const savedProduct = await newProduct.save();
-    res.status(OK).json(savedProduct);
+    console.log("Produit sauvegardé avec succès :", savedProduct);
+    return res.status(200).json(savedProduct);
 
   } catch (err) {
-    console.error(err);
-    res.status(INTERNAL_SERVER_ERROR).json({ error: "erreur" });
+    console.error("Erreur inattendue lors de la création du produit :", err);
+    return res.status(500).json({
+      error: "Erreur interne du serveur lors de la création du produit.",
+      status: 500,
+      details:  "Erreur inconnue",
+    });
   }
 });
+
+
 
 async function fetchTagId(code: string): Promise<string> {
   const tag = await TagModel.findOne({ code }).lean();
