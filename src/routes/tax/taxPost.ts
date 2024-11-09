@@ -45,20 +45,20 @@ router.post(
       });
 
       // Générer le CSV après la sauvegarde
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_TAX_${formattedDate}.csv`;
-      const fieldsToExport = ["code", "label", "rate", "status"];
+      // const formattedDate = getFormattedDate();
+      // const fileName = `PREREF_Y2_TAX_${formattedDate}.csv`;
+      // const fieldsToExport = ["code", "label", "rate", "status"];
 
       // Exportation CSV avec tous les champs du document
-      const csvFilePath = await exportToCSV(
-        savedObject?.toObject(),
-        fileName,
-        fieldsToExport
-      );
+      // const csvFilePath = await exportToCSV(
+      //   savedObject?.toObject(),
+      //   fileName,
+      //   fieldsToExport
+      // );
 
       res.status(OK).json({
         savedObject,
-        csvFilePath,
+        // csvFilePath,
         msg: "Tax created successfully"
       });
     } catch (err) {
