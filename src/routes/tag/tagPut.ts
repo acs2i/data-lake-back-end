@@ -52,7 +52,7 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
         updated_at: updateEntry.updated_at,
         updated_by: updateEntry.updated_by,
         changes: updateEntry.changes,
-        file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
+        file_name: fileName, 
       });
     }
 
