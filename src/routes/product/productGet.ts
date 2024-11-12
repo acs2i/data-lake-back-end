@@ -395,6 +395,40 @@ router.get(
 );
 
 router.get(
+  PRODUCT,
+  authorizationMiddlewear,
+  async (req: Request, res: Response) => {
+    try {
+      const { skip, intLimit } = await generalLimits(req);
+
+      const data: Product[] | null | undefined = await ProductModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(intLimit)
+        .populate("brand_ids")
+        .populate("collection_ids")
+        .populate("tag_ids")
+        .populate({
+          path: "suppliers.supplier_id",
+          model: "supplier",
+        })
+        .populate("uvc_ids");
+
+      if (data === null || data === undefined) {
+        throw new Error(req.originalUrl + ", msg: find error");
+      }
+
+      const total = await ProductModel.countDocuments({});
+
+      res.status(OK).json({ data, total });
+    } catch (err) {
+      console.error(err);
+      res.status(INTERNAL_SERVER_ERROR).json(err);
+    }
+  }
+);
+
+router.get(
   PRODUCT + "/:id",
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
