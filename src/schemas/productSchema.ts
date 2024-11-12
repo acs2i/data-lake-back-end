@@ -18,7 +18,7 @@ export interface Product extends Document {
     long_label: string;
     type: string;
     tag_ids: ObjectId[];
-    peau: number;
+    paeu: number;
     tbeu_pb: number;
     tbeu_pmeu: number;
     suppliers: SupplierSchema[];
@@ -59,6 +59,7 @@ export interface Product extends Document {
   gross_weight: string;
   additional_fields: any;
   creation_date: any;
+  updatedAt: any;
 }
 
 // Définition du sous-schéma pour les fournisseurs
@@ -88,7 +89,7 @@ const productSchema = new mongoose.Schema<Product>(
     suppliers: [supplierSchema],
     dimension_types: [{ type: String }],
     tax: { type: Number },
-    peau: { type: Number },
+    paeu: { type: Number },
     tbeu_pb: { type: Number },
     tbeu_pmeu: { type: Number },
     height: { type: String },

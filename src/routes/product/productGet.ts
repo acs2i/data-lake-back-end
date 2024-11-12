@@ -11,6 +11,8 @@ import DimensionModel, { Dimension } from "../../schemas/dimensionSchema";
 import TagModel, { Tag } from "../../schemas/tagSchema";
 import SupplierModel, { Supplier } from "../../schemas/supplierSchema";
 import { ObjectId, Types } from "mongoose";
+import { exportToCSV } from "../../services/csvExportAll";
+import { getFormattedDate } from "../../services/formatDate";
 
 const { ObjectId } = Types;
 const router = express.Router();
@@ -219,183 +221,175 @@ router.get(
       const {
         supplier,
         tag,
-        sub_family,
         reference,
         long_label,
         brand,
         collection,
-        dimension,
         status,
         name,
         creation_date,
+        exportToCsv
       } = req.query;
-
-      const { skip, intLimit } = await generalLimits(req);
-      console.log(req.query);
-      let referenceIds: any[] | null | undefined;
-      let brandIds: any[] | null | undefined;
-      let collectionIds: any[] | null | undefined;
-      let dimensionIds: any[] | null | undefined;
-      let tagIds: any[] | null | undefined;
-      let supplierIds: any[] | null | undefined;
 
       let filter: any = {};
 
-      if (creation_date) {
-        const o = { creation_date: { $gt: new Date(creation_date as string) } };
-        filter = { ...filter, ...o };
-      }
+      if (creation_date) filter.creation_date = { $gt: new Date(creation_date as string) };
+      if (name) filter.name = new RegExp(name as string, "i");
+      if (reference) filter.reference = new RegExp(reference as string, "i");
+      if (long_label) filter.long_label = new RegExp(long_label as string, "i");
+      if (status) filter.status = new RegExp(status as string, "i");
 
-      if (name) {
-        const nameRegex = new RegExp(name as string, "i");
-        filter = { ...filter, name: nameRegex };
-      }
-
-      // works
-      if (reference) {
-        const referenceRegex = new RegExp(reference as string, "i");
-        filter = { ...filter, reference: referenceRegex };
-      }
-
-      // works
-      if (long_label) {
-        const long_labelRegex = new RegExp(long_label as string, "i");
-        filter = { ...filter, long_label: long_labelRegex };
-      }
-
-      // works
-      // Recherche par marque
       if (brand) {
         const brandRegex = new RegExp(brand as string, "i");
-
-        const brandByLabel = await BrandModel.find({
-          label: { $regex: brandRegex },
+        const brandIds = await BrandModel.find({
+          $or: [{ label: { $regex: brandRegex } }, { name: { $regex: brandRegex } }]
         }).select("_id");
-        const brandByCode = await BrandModel.find({
-          name: { $regex: brandRegex },
-        }).select("_id");
-
-        brandIds = [...brandByLabel, ...brandByCode];
-
-        const $in: ObjectId[] = brandIds.map((doc) => doc._id);
-        filter = { ...filter, brand_ids: { $in } };
+        filter.brand_ids = { $in: brandIds.map(b => b._id) };
       }
 
-      // NOT NEEDED
       if (collection) {
         const collectionRegex = new RegExp(collection as string, "i");
-        collectionIds = await CollectionModel.find({
-          label: { $regex: collectionRegex },
+        const collectionIds = await CollectionModel.find({
+          label: { $regex: collectionRegex }
         }).select("_id");
-        const $in: ObjectId[] = collectionIds.map((doc) => doc._id);
-        filter = { ...filter, collection_ids: { $in } };
+        filter.collection_ids = { $in: collectionIds.map(c => c._id) };
       }
 
-      // no working
-      if (dimension) {
-        const dimensionRegex = new RegExp(dimension as string, "i");
-        dimensionIds = await DimensionModel.find({
-          label: { $regex: dimensionRegex },
-        }).select("_id");
-        const $in: any[] = dimensionIds.map((doc) => doc._id);
-        filter = { ...filter, dimension_types: { $in } };
-      }
-
-      // Recherche par statut
-      // works
-      if (status) {
-        const statusRegex = new RegExp(status as string, "i");
-        filter = { ...filter, status: statusRegex };
-      }
-
-      // works
-      if (tag) {
-        const tagRegex = new RegExp(tag as string, "i");
-        const tagByName = await TagModel.find({
-          name: { $regex: tagRegex },
-        }).select("_id");
-        const tagByCode = await TagModel.find({
-          name: { $regex: tagRegex },
-        }).select("_id");
-
-        // tagIds = await TagModel.find({ name: { $regex: tagRegex } }).select("_id");
-        // code
-        tagIds = [...tagByCode, tagByName];
-        const $in: ObjectId[] = tagIds.map((doc) => doc._id);
-        filter = { ...filter, tag_ids: { $in } };
-      }
-
-      // doesnt work
       if (supplier) {
         const supplierRegex = new RegExp(supplier as string, "i");
-        supplierIds = await SupplierModel.find({
-          company_name: { $regex: supplierRegex },
+        const supplierIds = await SupplierModel.find({
+          company_name: { $regex: supplierRegex }
         }).select("_id");
-        const $in: ObjectId[] = supplierIds.map((doc) => doc._id);
-        // filter = { ...filter, 'suppliers.supplier_id': { $in } };
-        const x = { supplier_id: { $in } };
-        // filter = { ...filter, suppliers: { $elemMatch: {supplier_id: { $in }} }}
-        filter = { ...filter, "suppliers.supplier_id": { $in } };
+        filter["suppliers.supplier_id"] = { $in: supplierIds.map(s => s._id) };
       }
 
-      const data: Product[] | null | undefined = await ProductModel.find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(intLimit)
+      const query = ProductModel.find(filter)
         .sort({ creation_date: -1 })
-        .populate("brand_ids")
-        .populate("collection_ids")
-        .populate("tag_ids")
+        .populate({
+          path: "brand_ids",
+          select: "code name"
+        })
+        .populate({
+          path: "collection_ids",
+          select: "code label"
+        })
+        .populate({
+          path: "tag_ids",
+          select: "code name"
+        })
         .populate({
           path: "suppliers.supplier_id",
-          model: "supplier",
-        })
-        .populate("uvc_ids");
+          select: "code company_name"
+        });
 
-      if (!data) {
-        throw new Error(req.originalUrl + ", msg: find error");
+        if (exportToCsv === 'true') {
+          const products = await query.lean();
+      
+          const formatNumber = (value: any): string => {
+              const num = parseFloat(value);
+              return isNaN(num) ? '0.000' : num.toFixed(3);
+          };
+      
+          const formatPrice = (value: any): string => {
+              const num = parseFloat(value);
+              return isNaN(num) ? '0.00' : num.toFixed(2);
+          };
+      
+          const formatDate = (date: Date | string | undefined) => {
+              if (!date) return '';
+              return new Date(date).toLocaleString('fr-FR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+              });
+          };
+      
+          // S'assurer que products est un tableau non vide
+          if (!Array.isArray(products) || products.length === 0) {
+              throw new Error("No products found to export");
+          }
+      
+          const transformedProducts = products.map(product => ({
+              reference: product.reference || '',
+              alias: product.alias || '',
+              long_label: product.long_label || '',
+              short_label: product.short_label || '',
+              type: product.type || '',
+              brandcode: (product.brand_ids?.[0] as any)?.code || '',
+              famcode: (product.tag_ids?.[0] as any)?.code || '',
+              sfamcode: (product.tag_ids?.[1] as any)?.code || '',
+              ssfamcode: (product.tag_ids?.[2] as any)?.code || '',
+              collectioncode: (product.collection_ids?.[0] as any)?.code || '',
+              supplier: (product.suppliers?.[0]?.supplier_id as any)?.code || '',
+              supplierref: product.suppliers?.[0]?.supplier_ref || '',
+              pcb: product.suppliers?.[0]?.pcb || '',
+              madein: product.suppliers?.[0]?.made_in || '',
+              custom_category: product.suppliers?.[0]?.custom_cat || '',
+              weightmeasureunit: product.weight_measure_unit || '',
+              netweight: formatNumber(product.net_weight),
+              grossweight: formatNumber(product.gross_weight),
+              dimensionmeasureunit: product.dimension_measure_unit || '',
+              height: formatNumber(product.height),
+              length: formatNumber(product.length),
+              width: formatNumber(product.width),
+              taxcode: product.taxcode || '',
+              paeu: formatPrice(product.paeu),
+              tbeu_pb: formatPrice(product.tbeu_pb),
+              tbeu_pmeu: formatPrice(product.tbeu_pmeu),
+              comment: product.comment || '',
+              blocked: product.blocked || '',
+              "01_coulfour": product.coulfour || '',
+              "02_actif": 'D',
+              "03_visiblesurinternet": product.visible_on_internet || 'Non',
+              "04_ventesurinternet": product.sold_on_internet || 'Non',
+              "05_seuilinternet": product.seuil_internet || '',
+              "06_enreassort": product.en_reassort || '',
+              "07_remisegenerale": product.remisegenerale || '',
+              "08_fixation": product.fixation || '',
+              "09_ventemetre": product.ventemetre || '',
+              "10_commentaire": '',
+              status: product.status || '',
+              creationdate: formatDate(product.creation_date),
+              modificationdate: formatDate(product.updatedAt)
+          }));
+      
+          const formattedDate = getFormattedDate();
+          const fileName = `PREREF_Y2_ART_${formattedDate}.csv`;
+      
+          const fieldsToExport = [
+              'reference', 'alias', 'long_label', 'short_label', 'type',
+              'brandcode', 'famcode', 'sfamcode', 'ssfamcode', 'collectioncode',
+              'supplier', 'supplierref', 'pcb', 'madein', 'custom_category',
+              'weightmeasureunit', 'netweight', 'grossweight', 'dimensionmeasureunit',
+              'height', 'length', 'width', 'taxcode', 'paeu', 'tbeu_pb', 'tbeu_pmeu',
+              'comment', 'blocked', '01_coulfour', '02_actif', '03_visiblesurinternet',
+              '04_ventesurinternet', '05_seuilinternet', '06_enreassort',
+              '07_remisegenerale', '08_fixation', '09_ventemetre', '10_commentaire',
+              'status', 'creationdate', 'modificationdate'
+          ];
+      
+          const csvFilePath = await exportToCSV(transformedProducts, fileName, fieldsToExport);
+      
+          return res.status(OK).json({
+              csvFilePath,
+              totalExported: products.length,
+              msg: "Products exported successfully"
+          });
       }
 
+      // Si pas d'export, on applique la pagination
+      const { skip, intLimit } = await generalLimits(req);
+      const data = await query.skip(skip).limit(intLimit);
       const total = await ProductModel.countDocuments(filter);
 
-      res.status(200).json({ data, total });
+      return res.status(OK).json({ data, total });
+
     } catch (err) {
       console.error(err);
-      res.status(500).json(err);
-    }
-  }
-);
-
-router.get(
-  PRODUCT,
-  authorizationMiddlewear,
-  async (req: Request, res: Response) => {
-    try {
-      const { skip, intLimit } = await generalLimits(req);
-
-      const data: Product[] | null | undefined = await ProductModel.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(intLimit)
-        .populate("brand_ids")
-        .populate("collection_ids")
-        .populate("tag_ids")
-        .populate({
-          path: "suppliers.supplier_id",
-          model: "supplier",
-        })
-        .populate("uvc_ids");
-
-      if (data === null || data === undefined) {
-        throw new Error(req.originalUrl + ", msg: find error");
-      }
-
-      const total = await ProductModel.countDocuments({});
-
-      res.status(OK).json({ data, total });
-    } catch (err) {
-      console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err);
+      return res.status(INTERNAL_SERVER_ERROR).json(err);
     }
   }
 );
@@ -435,3 +429,14 @@ router.get(
 );
 
 export default router;
+
+function formatNumber(value: any): any {
+  const num = parseFloat(value);
+  return isNaN(num) ? '0.000' : num.toFixed(3);
+}
+
+function formatPrice(value: any): any {
+  const num = parseFloat(value);
+  return isNaN(num) ? '0.00' : num.toFixed(2);
+}
+
