@@ -17,61 +17,60 @@ router.post(
       const object = req.body;
 
       if (!object) {
-        throw new Error(req.originalUrl + ", msg: object was falsy: " + object);
+        return res.status(400).json({
+          error: "Données de tag manquantes",
+          status: 400,
+        });
       }
 
-      const { code } = object;
+      const { level, code } = object;
 
-      const doesExist: Document | null | undefined = await TagModel.findOne({
-        code,
-      });
-
-      if (doesExist)
-        throw new Error(
-          "Une collection avec le code suivant existe déjà: " + code
-        );
-
-      const newObject: Tag | null | undefined = new TagModel({ ...object });
-
-      if (!newObject) {
-        throw new Error(
-          req.originalUrl +
-            " msg: newObject save did not work for some reason: " +
-            newObject
-        );
+      // Vérifiez que les valeurs de level et code sont bien définies
+      if (!level || !code) {
+        return res.status(400).json({
+          error: "Le niveau (level) et le code sont requis pour créer un tag",
+          status: 400,
+        });
       }
 
+      // Log pour vérifier les valeurs de level et code
+      console.log("Vérification du tag avec level:", level, "et code:", code);
 
-      let csvFilePath;
-      const savedObject: Tag | null | undefined = await newObject.save({
-        timestamps: true,
-      });
+      // Vérifiez si un tag avec le même niveau et code existe déjà
+      const doesExist = await TagModel.findOne({ level, code });
+
+      if (doesExist) {
+        console.log("Conflit détecté : un tag avec ce niveau et code existe déjà.");
+        return res.status(409).json({
+          msg: `Un tag avec le niveau "${level}" et le code "${code}" existe déjà.`,
+          status: 409,
+        });
+      }
+
+      // Création du tag si la combinaison level-code n'existe pas
+      const newObject = new TagModel({ ...object });
+      const savedObject = await newObject.save();
 
       if (savedObject) {
-        // Only execute CSV export if save was successful
-        // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
-      const fieldsToExport = ["type", "code", "label", "status"];
+        const formattedDate = getFormattedDate();
+        const fileName = `PREREF_Y2_TAG_${formattedDate}.csv`;
+        const fieldsToExport = ["level", "code", "label", "status"];
+        const csvFilePath = await exportToCSV(savedObject.toObject(), fileName, fieldsToExport);
 
-        // Exportation CSV avec tous les champs du document
-        csvFilePath = await exportToCSV(
-          savedObject?.toObject(),
-          fileName,
-          fieldsToExport
-        );
-
-        res.status(OK).json({
+        res.status(200).json({
           savedObject,
           csvFilePath,
-          msg: "Tag created successfully",
+          msg: "Tag créé avec succès",
         });
       } else {
-        throw new Error("Failed to save the object");
+        throw new Error("Échec de la sauvegarde de l'objet");
       }
     } catch (err) {
       console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err);
+      res.status(500).json({
+        error: "Erreur interne du serveur lors de la création du tag",
+        status: 500,
+      });
     }
   }
 );

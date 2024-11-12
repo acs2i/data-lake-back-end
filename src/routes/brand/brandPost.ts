@@ -15,56 +15,38 @@ router.post(
   authorizationMiddlewear,
   async (req: Request, res: Response) => {
     try {
-      // expects brand
       const object = req.body;
 
       if (!object) {
-        throw new Error(req.originalUrl + ", msg: object was falsy: " + object);
+        return res.status(400).json({
+          error: "Données de marque manquantes",
+          status: 400,
+        });
       }
 
       const { code } = object;
 
-      const doesExist: Document | null | undefined = await BrandModel.findOne({
-        code,
-      });
+      // Vérifiez si une marque avec le même code existe déjà
+      const doesExist = await BrandModel.findOne({ code });
 
-      if (doesExist)
-        throw new Error(
-          "Une collection avec le code suivant existe déjà: " + code
-        );
-
-      const newObject: Document | null | undefined = await new BrandModel({
-        ...object,
-      });
-
-      if (!newObject) {
-        throw new Error(
-          req.originalUrl +
-            " msg: brand save did not work for some reason: " +
-            object
-        );
+      if (doesExist) {
+        return res.status(409).json({
+          msg: `Une marque avec le code "${code}" existe déjà.`,
+          status: 409,
+        });
       }
 
-      let csvFilePath;
-      const savedObject: Document | null | undefined = await newObject.save({
-        timestamps: true,
-      });
+      // Création de la marque si le code n'existe pas
+      const newObject = new BrandModel({ ...object });
+      const savedObject = await newObject.save({ timestamps: true });
 
       if (savedObject) {
-        // Only execute CSV export if save was successful
-        // Générer le nom du fichier exporté
         const formattedDate = getFormattedDate();
         const fileName = `PREREF_Y2_MAR_${formattedDate}.csv`;
         const fieldsToExport = ["code", "label", "status"];
+        const csvFilePath = await exportToCSV(savedObject.toObject(), fileName, fieldsToExport);
 
-        // Exportation CSV avec tous les champs du document
-        csvFilePath = await exportToCSV(
-          savedObject?.toObject(),
-          fileName,
-          fieldsToExport
-        );
-
-        res.status(OK).json({
+        res.status(200).json({
           savedObject,
           csvFilePath,
           msg: "Brand created successfully",
@@ -74,7 +56,10 @@ router.post(
       }
     } catch (err) {
       console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err);
+      res.status(500).json({
+        error: "Erreur interne du serveur lors de la création de la marque",
+        status: 500,
+      });
     }
   }
 );

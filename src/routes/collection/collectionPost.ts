@@ -18,68 +18,48 @@ router.post(
       const object = req.body;
 
       if (!object) {
-        throw new Error(
-          req.originalUrl + ", msg: collection was falsy: " + object
-        );
+        return res.status(400).json({ error: "Données de collection manquantes" });
       }
-
-      // Check to see if the code already exists and if so through an error
 
       const { code } = object;
+      const doesExist = await CollectionModel.findOne({ code });
 
-      const doesExist: Document | null | undefined =
-        await CollectionModel.findOne({ code });
-
-      if (doesExist)
-        throw new Error(
-          "Une collection avec le code suivant existe déjà: " + code
-        );
-
-      const newObject: Document | null | undefined = new CollectionModel({
-        ...object,
-      });
-
-      if (!newObject) {
-        throw new Error(
-          req.originalUrl +
-            " msg: collection save did not work for some reason: " +
-            object
-        );
+      if (doesExist) {
+        console.log("Erreur : Collection existe déjà avec ce code.");
+        return res.status(409).json({
+          msg: "Une collection avec le code suivant existe déjà: " + code,
+          status: 409,
+        });
       }
 
-      let csvFilePath;
-      const savedCollection: Document | null | undefined = await newObject.save(
-        { timestamps: true }
-      );
+      // Création de la nouvelle collection si le code n'existe pas
+      const newObject = new CollectionModel({ ...object });
+      const savedCollection = await newObject.save({ timestamps: true });
 
       if (savedCollection) {
-        // Only execute CSV export if save was successful
-        // Générer le nom du fichier exporté
-        // Générer le nom du fichier exporté
         const formattedDate = getFormattedDate();
         const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
         const fieldsToExport = ["code", "label", "status"];
+        const csvFilePath = await exportToCSV(savedCollection.toObject(), fileName, fieldsToExport);
 
-        // Exportation CSV avec tous les champs du document
-        csvFilePath = await exportToCSV(
-          savedCollection?.toObject(),
-          fileName,
-          fieldsToExport
-        );
-
-        res.status(OK).json({
+        res.status(200).json({
           savedCollection,
           csvFilePath,
-          msg: "Collection created successfully",
+          msg: "Collection créée avec succès",
         });
       } else {
-        throw new Error("Failed to save the object");
+        throw new Error("Échec de la sauvegarde de la collection");
       }
+
     } catch (err) {
-      console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err);
+      console.error("Erreur lors de la création de la collection :", err);
+      res.status(500).json({
+        error: "Erreur interne du serveur lors de la création de la collection",
+        status: 500,
+      });
     }
   }
 );
+
 
 export default router;
