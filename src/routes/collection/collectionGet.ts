@@ -111,7 +111,7 @@ router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request,
 
 
         // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const data: Document[] | null | undefined = await CollectionModel.find(filter).skip(skip).limit(intLimit);
+        const data: Document[] | null | undefined = await CollectionModel.find(filter).sort({ creation_date: -1 }).skip(skip).limit(intLimit);
 
 
         if (!data) {
@@ -134,7 +134,7 @@ router.get(COLLECTION, authorizationMiddlewear, async(req: Request, res: Respons
      
         const {skip, intLimit} = await generalLimits(req);
 
-        const documents: Document[] | null | undefined = await CollectionModel.find().sort({ createdAt: -1 }).skip(skip).limit(intLimit);
+        const documents: Document[] | null | undefined = await CollectionModel.find().sort({ creation_date: -1 }).skip(skip).limit(intLimit);
 
         if ( documents === null ||  documents === undefined) {
             throw new Error(req.originalUrl + ", msg: find error")

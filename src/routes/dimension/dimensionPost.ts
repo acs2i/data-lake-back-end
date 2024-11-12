@@ -17,65 +17,53 @@ router.post(
       const object = req.body;
 
       if (!object) {
-        throw new Error(
-          req.originalUrl + ", msg: dimension was falsy: " + object
-        );
+        return res.status(400).json({
+          error: "Données de dimension manquantes",
+          status: 400
+        });
       }
 
-      const { code } = object;
+      const { type, code } = object;
 
-      const doesExist: Document | null | undefined =
-        await DimensionModel.findOne({ code });
+      // Vérifiez si une dimension avec le même type et code existe déjà
+      const doesExist = await DimensionModel.findOne({ type, code });
 
-      if (doesExist)
-        throw new Error(
-          "Une collection avec le code suivant existe déjà: " + code
-        );
-
-      const newObject: Dimension | null | undefined = await new DimensionModel({
-        ...object,
-      });
-
-      if (!newObject) {
-        throw new Error(
-          req.originalUrl +
-            " msg: dimension save did not work for some reason: " +
-            object
-        );
+      if (doesExist) {
+        return res.status(409).json({
+          msg: `Une dimension avec le type "${type}" et le code "${code}" existe déjà.`,
+          status: 409
+        });
       }
 
-      let csvFilePath;
-      const result: Dimension | null | undefined = await newObject.save({
-        timestamps: true,
-      });
+      // Création de la dimension si la combinaison type-code n'existe pas
+      const newObject = new DimensionModel({ ...object });
+      const result = await newObject.save({ timestamps: true });
 
       if (result) {
-        // Only execute CSV export if save was successful
-        // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
-      const fieldsToExport = ["type", "code", "label", "status"];
+        const formattedDate = getFormattedDate();
+        const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
+        const fieldsToExport = ["type", "code", "label", "status"];
 
-        // Exportation CSV avec tous les champs du document
-        csvFilePath = await exportToCSV(
-          result?.toObject(),
-          fileName,
-          fieldsToExport
-        );
+        const csvFilePath = await exportToCSV(result.toObject(), fileName, fieldsToExport);
 
-        res.status(OK).json({
+        res.status(200).json({
           result,
           csvFilePath,
-          msg: "Dimension created successfully",
+          msg: "Dimension créée avec succès"
         });
       } else {
-        throw new Error("Failed to save the object");
+        throw new Error("Échec de la sauvegarde de l'objet");
       }
     } catch (err) {
       console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err);
+      res.status(500).json({
+        error: "Erreur interne du serveur lors de la création de la dimension",
+        status: 500
+      });
     }
   }
 );
+
+
 
 export default router;
