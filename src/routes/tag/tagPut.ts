@@ -35,16 +35,16 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
     Object.assign(tag, object);
 
     // Générer le nom du fichier exporté
-    const formattedDate = getFormattedDate();
-    const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
-    const fieldsToExport = ["level", "code", "name", "status"];
+    // const formattedDate = getFormattedDate();
+    // const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
+    // const fieldsToExport = ["level", "code", "name", "status"];
 
     // Exportation CSV avec tous les champs du document
-    const csvFilePath = await exportToCSV(
-      tag.toObject(), // Convertir le document Mongoose en objet
-      fileName,
-      fieldsToExport
-    );
+    // const csvFilePath = await exportToCSV(
+    //   tag.toObject(), // Convertir le document Mongoose en objet
+    //   fileName,
+    //   fieldsToExport
+    // );
 
     // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
     if (updateEntry) {
@@ -52,17 +52,40 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
         updated_at: updateEntry.updated_at,
         updated_by: updateEntry.updated_by,
         changes: updateEntry.changes,
-        file_name: fileName, 
+        // file_name: fileName,
       });
     }
 
     // Sauvegarder les modifications et l'historique
-    await tag.save();
+    // await tag.save();
 
-    res.status(OK).json({
-      msg: "Tag updated successfully",
-      csvFilePath,
-    });
+    // res.status(OK).json({
+    //   msg: "Tag updated successfully",
+    //   csvFilePath,
+    // });
+
+    const result = await tag.save();
+
+    if (result) {
+      // Générer le nom du fichier exporté
+      const formattedDate = getFormattedDate();
+      const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
+      const fieldsToExport = ["level", "code", "name", "status"];
+
+      // Exportation CSV avec tous les champs du document
+      const csvFilePath = await exportToCSV(
+        tag.toObject(), // Convertir le document Mongoose en objet
+        fileName,
+        fieldsToExport
+      );
+
+      res.status(OK).json({
+        msg: "Tag updated successfully",
+        csvFilePath,
+      });
+    } else {
+      throw new Error("Failed to save the object");
+    }
   } catch (err) {
     console.error(err);
     res.status(INTERNAL_SERVER_ERROR).json({});

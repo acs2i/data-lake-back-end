@@ -9,29 +9,46 @@ import { getFormattedDate } from "../../services/formatDate";
 
 const router = express.Router();
 
-router.put(BLOCK + "/:id", authorizationMiddlewear, async (req: Request, res: Response) => {
+router.put(
+  BLOCK + "/:id",
+  authorizationMiddlewear,
+  async (req: Request, res: Response) => {
     try {
-        const { updateEntry, ...object } = req.body;
+      const { updateEntry, ...object } = req.body;
 
-        if (!object) {
-            throw new Error(req.originalUrl + ", msg: block was falsy: " + JSON.stringify(object));
-        }
+      if (!object) {
+        throw new Error(
+          req.originalUrl + ", msg: block was falsy: " + JSON.stringify(object)
+        );
+      }
 
-        const _id = req.params.id;
+      const _id = req.params.id;
 
-        if (!_id) {
-            throw new Error(req.originalUrl + ", msg: id was falsy: " + _id);
-        }
+      if (!_id) {
+        throw new Error(req.originalUrl + ", msg: id was falsy: " + _id);
+      }
 
-        // Récupérer le document pour mise à jour
-        const block = await BlockModel.findById(_id);
-        if (!block) {
-            return res.status(404).json({ msg: "Block not found" });
-        }
+      // Récupérer le document pour mise à jour
+      const block = await BlockModel.findById(_id);
+      if (!block) {
+        return res.status(404).json({ msg: "Block not found" });
+      }
 
-        // Mettre à jour les champs modifiés
-        Object.assign(block, object);
+      // Mettre à jour les champs modifiés
+      Object.assign(block, object);
 
+      // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
+      if (updateEntry) {
+        block.updates.push({
+          updated_at: updateEntry.updated_at,
+          updated_by: updateEntry.updated_by,
+          changes: updateEntry.changes,
+        });
+      }
+
+      const result = await block.save();
+
+      if (result) {
         // Générer le nom du fichier exporté
         const formattedDate = getFormattedDate();
         const fileName = `PREREF_Y2_BLOCK_${formattedDate}.csv`;
@@ -39,32 +56,22 @@ router.put(BLOCK + "/:id", authorizationMiddlewear, async (req: Request, res: Re
 
         // Exportation CSV avec les champs sélectionnés
         const csvFilePath = await exportToCSV(
-            block.toObject(),
-            fileName,
-            fieldsToExport
+          block.toObject(),
+          fileName,
+          fieldsToExport
         );
-
-        // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
-        if (updateEntry) {
-            block.updates.push({
-                updated_at: updateEntry.updated_at,
-                updated_by: updateEntry.updated_by,
-                changes: updateEntry.changes,
-                file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
-            });
-        }
-
-        // Sauvegarder les modifications et l'historique
-        await block.save();
-
         res.status(OK).json({
-            msg: "Block updated successfully",
-            csvFilePath,
+          msg: "Block updated successfully",
+          csvFilePath,
         });
+      } else {
+        throw new Error("Failed to save the object");
+      }
     } catch (err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR).json({});
+      console.error(err);
+      res.status(INTERNAL_SERVER_ERROR).json({});
     }
-});
+  }
+);
 
 export default router;
