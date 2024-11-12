@@ -1,122 +1,125 @@
-import { parse } from "json2csv";
-import fs from "fs";
-import path from "path";
 import { Transform } from 'stream';
 import { pipeline } from 'stream/promises';
+import fs from 'fs';
+import path from 'path';
 
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 5000;
+const BUFFER_SIZE = 64 * 1024;
 
-// Transformer pour traiter les données par lots
-class BatchTransformer extends Transform {
-    private batch: Record<string, any>[] = [];
-    private readonly fieldsToExport: string[];
-    private isFirstBatch = true;
+class FastCSVTransform extends Transform {
+    private buffer: string[] = [];
+    private readonly fields: string[];
+    private isFirstChunk = true;
+    private readonly delimiter: string;
 
-    constructor(fieldsToExport: string[]) {
+    constructor(fields: string[]) {
         super({ objectMode: true });
-        this.fieldsToExport = fieldsToExport;
+        this.fields = fields;
+        this.delimiter = ';';
     }
 
     _transform(chunk: Record<string, any>, encoding: string, callback: Function) {
-        this.batch.push(chunk);
+        if (this.isFirstChunk) {
+            this.buffer.push(this.fields.join(this.delimiter));
+            this.isFirstChunk = false;
+        }
 
-        if (this.batch.length >= BATCH_SIZE) {
-            this.processBatch();
+        const line = this.fields.map(field => {
+            const value = chunk[field];
+            return this.formatValue(value);
+        }).join(this.delimiter);
+
+        this.buffer.push(line);
+
+        if (this.buffer.length >= BATCH_SIZE) {
+            this.flushBuffer();
         }
 
         callback();
     }
 
     _flush(callback: Function) {
-        if (this.batch.length > 0) {
-            this.processBatch();
-        }
+        this.flushBuffer();
         callback();
     }
 
-    private processBatch() {
-        const cleanedData = this.batch.map(item => {
-            return this.fieldsToExport.reduce((acc, field) => {
-                acc[field] = sanitizeValue(item[field]);
-                return acc;
-            }, {} as Record<string, any>);
-        });
-
-        const opts = {
-            fields: this.fieldsToExport,
-            delimiter: ";",
-            quote: '"',
-            escapedQuote: '""',
-            header: this.isFirstBatch,
-        };
-
-        let csv = parse(cleanedData, opts);
-        if (!this.isFirstBatch) {
-            // Supprimer l'en-tête pour les lots suivants
-            csv = csv.substring(csv.indexOf('\n') + 1);
+    private formatValue(value: any): string {
+        if (value === null || value === undefined) {
+            return '';
         }
 
-        // Supprimer les guillemets
-        csv = csv.replace(/"/g, "");
+        const stringValue = String(value)
+            .replace(/\r?\n|\r/g, ' ')
+            .replace(/\t/g, ' ')
+            .trim();
 
-        this.push(csv);
-        this.batch = [];
-        this.isFirstBatch = false;
+        return stringValue.includes(';') 
+            ? `"${stringValue.replace(/"/g, '""')}"` 
+            : stringValue;
+    }
+
+    private flushBuffer(): void {
+        if (this.buffer.length > 0) {
+            this.push(this.buffer.join('\n') + '\n');
+            this.buffer = [];
+        }
     }
 }
 
-function sanitizeValue(value: any): string {
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    let cleanValue = value.toString()
-        .replace(/\r?\n|\r/g, ' ')
-        .replace(/\t/g, ' ')
-        .trim();
-
-    if (cleanValue.includes(';')) {
-        cleanValue = `"${cleanValue.replace(/"/g, '""')}"`;
-    }
-
-    return cleanValue;
-}
-
-// Export asynchrone avec streaming
 export async function exportToCSV(
     data: Record<string, any>[],
     fileName: string = "export",
-    fieldsToExport: string[] = []
+    fields: string[] = []
 ): Promise<string> {
     try {
         const exportsDir = "/var/sftp/y2tst/out";
-        const filePath = path.join(exportsDir, `${fileName}`);
+        const filePath = path.join(exportsDir, fileName);
 
-        // Créer le flux de lecture à partir du tableau
+        const writeStream = fs.createWriteStream(filePath, {
+            flags: 'w',
+            encoding: 'utf8' as BufferEncoding,
+            highWaterMark: BUFFER_SIZE,
+        });
+
+        const transformStream = new FastCSVTransform(fields);
+
         const readStream = new Transform({
             objectMode: true,
+            highWaterMark: BATCH_SIZE,
             transform(chunk, encoding, callback) {
                 callback(null, chunk);
             }
         });
 
-        // Remplir le flux de lecture
-        data.forEach(item => readStream.push(item));
-        readStream.push(null); // Signaler la fin des données
+        setImmediate(async () => {
+            for (let i = 0; i < data.length; i++) {
+                if (!readStream.push(data[i])) {
+                    await new Promise(resolve => readStream.once('drain', resolve));
+                }
+            }
+            readStream.push(null);
+        });
 
-        // Créer le flux d'écriture
-        const writeStream = fs.createWriteStream(filePath);
-
-        // Utiliser pipeline pour gérer le streaming de manière fiable
         await pipeline(
             readStream,
-            new BatchTransformer(fieldsToExport),
+            transformStream,
             writeStream
-        );
+        ).catch((error: Error) => {
+            throw new Error(`Pipeline failed: ${error.message}`);
+        });
 
         return filePath;
     } catch (error) {
-        console.error("Erreur lors de l'export CSV :", error);
-        throw new Error("Échec de l'export CSV");
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error("CSV Export error:", errorMessage);
+        throw new Error(`CSV Export failed: ${errorMessage}`);
     }
+}
+
+// Types d'export
+export interface CSVExportOptions {
+    fileName: string;
+    fields: string[];
+    batchSize?: number;
+    bufferSize?: number;
 }
