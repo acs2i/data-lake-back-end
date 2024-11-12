@@ -41,27 +41,34 @@ router.post(
         );
       }
 
+
+      let csvFilePath;
       const savedObject: Tag | null | undefined = await newObject.save({
         timestamps: true,
       });
 
-      // Générer le CSV après la sauvegarde
+      if (savedObject) {
+        // Only execute CSV export if save was successful
+        // Générer le nom du fichier exporté
       const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
-      const fieldsToExport = ["level", "code", "name", "status"];
+      const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
+      const fieldsToExport = ["type", "code", "label", "status"];
 
-      // Exportation CSV avec tous les champs du document
-      const csvFilePath = await exportToCSV(
-        savedObject?.toObject(),
-        fileName,
-        fieldsToExport
-      );
+        // Exportation CSV avec tous les champs du document
+        csvFilePath = await exportToCSV(
+          savedObject?.toObject(),
+          fileName,
+          fieldsToExport
+        );
 
-      res.status(OK).json({
-        savedObject,
-        csvFilePath,
-        msg: "Tax created successfully",
-      });
+        res.status(OK).json({
+          savedObject,
+          csvFilePath,
+          msg: "Tag created successfully",
+        });
+      } else {
+        throw new Error("Failed to save the object");
+      }
     } catch (err) {
       console.error(err);
       res.status(INTERNAL_SERVER_ERROR).json(err);

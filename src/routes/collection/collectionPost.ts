@@ -47,27 +47,34 @@ router.post(
         );
       }
 
+      let csvFilePath;
       const savedCollection: Document | null | undefined = await newObject.save(
         { timestamps: true }
       );
 
-      // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
-      const fieldsToExport = ["code", "label", "status"];
+      if (savedCollection) {
+        // Only execute CSV export if save was successful
+        // Générer le nom du fichier exporté
+        // Générer le nom du fichier exporté
+        const formattedDate = getFormattedDate();
+        const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
+        const fieldsToExport = ["code", "label", "status"];
 
-      // Exportation CSV avec tous les champs du document
-      const csvFilePath = await exportToCSV(
-        savedCollection?.toObject(),
-        fileName,
-        fieldsToExport
-      );
+        // Exportation CSV avec tous les champs du document
+        csvFilePath = await exportToCSV(
+          savedCollection?.toObject(),
+          fileName,
+          fieldsToExport
+        );
 
-      res.status(OK).json({
-        savedCollection,
-        csvFilePath,
-        msg: "Tax created successfully",
-      });
+        res.status(OK).json({
+          savedCollection,
+          csvFilePath,
+          msg: "Collection created successfully",
+        });
+      } else {
+        throw new Error("Failed to save the object");
+      }
     } catch (err) {
       console.error(err);
       res.status(INTERNAL_SERVER_ERROR).json(err);
