@@ -1,5 +1,13 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
 
+
+export interface UpdateEntry {
+  updated_at: Date;
+  updated_by: string;
+  changes: Record<string, any>;
+  file_name?: string;
+}
+
 // Interface pour SupplierSchema
 interface SupplierSchema {
   supplier_id: ObjectId;
@@ -60,6 +68,7 @@ export interface Product extends Document {
   additional_fields: any;
   creation_date: any;
   updatedAt: any;
+  updates: UpdateEntry[];
 }
 
 // Définition du sous-schéma pour les fournisseurs
@@ -123,6 +132,14 @@ const productSchema = new mongoose.Schema<Product>(
         label: { type: String},
         value: { type: String},
         field_type: { type: String},
+      },
+    ],
+    updates: [
+      {
+        updated_at: { type: Date },
+        updated_by: { type: String },
+        changes: { type: Map, of: mongoose.Schema.Types.Mixed },
+        file_name: { type: String },
       },
     ],
 }, { timestamps: true, collection: "product" });

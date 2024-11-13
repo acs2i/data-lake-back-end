@@ -270,7 +270,7 @@ router.get(
       }
 
       const query = ProductModel.find(filter)
-        .sort({ creation_date: -1 })
+        .sort({ _id: -1 })
         .populate({
           path: "brand_ids",
           select: "code name",
@@ -453,7 +453,7 @@ router.get(
       const { skip, intLimit } = await generalLimits(req);
 
       const data: Product[] | null | undefined = await ProductModel.find()
-        .sort({ createdAt: -1 })
+        .sort({ creation_date: -1 })
         .skip(skip)
         .limit(intLimit)
         .populate("brand_ids")
