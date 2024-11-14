@@ -66,7 +66,7 @@ router.get(TAX + "/search", authorizationMiddlewear, async( req: Request, res: R
             filter.$and.push({ rate })
         }
         
-        if(!code && !label && !rate) {
+        if(!code && !label && !rate && !status) {
             throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
         }
 
