@@ -36,58 +36,45 @@ router.get(
   }
 );
 
-router.get(USERFIELD + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
+router.get(USERFIELD + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
   try {
+    const { intLimit, skip } = await generalLimits(req);
 
-      const {intLimit, skip} = await generalLimits(req);
+    let filter: any = { $and: [] };
 
+    const code = req.query.code;
+    if (code) filter.$and.push({ code });
 
-      let filter: any = { $and: [] }  // any to make typescript stop complaining
+    const label = req.query.label;
+    if (label) {
+      const regEx = new RegExp(label as string, "i");
+      filter.$and.push({ label: regEx });
+    }
 
-      const code = req.query.code;
+    const status = req.query.status;
+    if (status) filter.$and.push({ status });
 
-      if(code) {
-          // const regEx = new RegExp(code as number, "i");
-          filter.$and.push({ code })
-      }
-      
-      const label = req.query.label;
+    const applyTo = req.query.applyTo;
+    if (applyTo) filter.$and.push({ apply_to: applyTo });
 
-      if(label) {
-          const regEx = new RegExp(label as string, "i");
-          filter.$and.push({ label: regEx })
-      }
+    if (!code && !label && !status && !applyTo) {
+      throw new Error(
+        req.originalUrl +
+          ", msg: All parameters were falsy. Probably means they were undefined"
+      );
+    }
 
-      const status = req.query.status;
+    const data = await UserFieldModel.find(filter).skip(skip).limit(intLimit);
+    if (!data) throw new Error(req.originalUrl + ", msg: find error");
 
-      if(status) {
-          // const regEx = new RegExp(status as string, "i");
-          filter.$and.push({ status })
-      }
-      
-      if(!code && !label && !status) {
-          throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
-      }
-
-
-      // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-      const data: Document[] | null | undefined = await UserFieldModel.find(filter).skip(skip).limit(intLimit);
-
-
-      if (!data) {
-          throw new Error(req.originalUrl + ", msg: find error")
-      }
-
-      const total = await UserFieldModel.countDocuments(filter);
-
-      res.status(OK).json({data, total})
-
-  } catch(err) {
-      console.error(err);
-      res.status(INTERNAL_SERVER_ERROR).json(err)
+    const total = await UserFieldModel.countDocuments(filter);
+    res.status(OK).json({ data, total });
+  } catch (err) {
+    console.error(err);
+    res.status(INTERNAL_SERVER_ERROR).json(err);
   }
+});
 
-})
 
 router.get(
   USERFIELD + "/:id",

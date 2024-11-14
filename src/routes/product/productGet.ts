@@ -273,7 +273,7 @@ router.get(
         .sort({ _id: -1 })
         .populate({
           path: "brand_ids",
-          select: "code name",
+          select: "code label",
         })
         .populate({
           path: "collection_ids",

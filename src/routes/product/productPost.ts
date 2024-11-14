@@ -119,7 +119,7 @@ async function fetchBrandId(brandId: string): Promise<string> {
 }
 
 async function fetchCollectionId(collectionId: string): Promise<string> {
-  const collection = await CollectionModel.findOne({ code: collectionId }).lean();
+  const collection = await CollectionModel.findOne({ label: collectionId }).lean();
   if (!collection) {
     throw new Error(`Collection not found for id: ${collectionId}`);
   }
@@ -254,7 +254,7 @@ async function fetchBrandLabel(brandId: string): Promise<string> {
 
 async function fetchCollectionLabel(collectionId: string): Promise<string> {
   const collection = await CollectionModel.findOne({ code: collectionId }).lean();
-  return collection ? collection.code : "Unknown Collection";
+  return collection ? collection.label : "Unknown Collection";
 }
 
 router.post(PRODUCT + '/product-batch', async (req: Request, res: Response) => {

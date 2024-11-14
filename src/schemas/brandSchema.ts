@@ -23,7 +23,7 @@ const brandSchema = new mongoose.Schema<Brand>({
         type: String
     },
     label: {
-        type: String
+        type: String,
     },
     status: {
         type: String

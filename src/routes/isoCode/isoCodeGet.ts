@@ -9,60 +9,55 @@ import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
 const router: Router = express.Router();
 const ISO_CODE = "/iso-code"
 
-router.get(ISO_CODE + "/search",async(req: Request, res: Response) => {
+router.get(ISO_CODE + "/search", async (req: Request, res: Response) => {
     try {
-        
-        const {intLimit, skip} = await generalLimits(req);
-
-        let filter: any = { $and: [] }  // any to make typescript stop complaining
-
-        const {alpha2Code, alpha3Code, numeric, countryName} = req.query
-    
-        if(countryName) {
-            // const regEx = new RegExp(countryName as string, "i");
-            filter.$and.push({ countryName })
-        }
-
-        // console.log("filter: "  ,filter)
-    
-        if(alpha2Code) {
-            // const regEx = new RegExp(alpha2Code as string, "i");
-            filter.$and.push({ alpha2Code })
-        }
-
-        if(alpha3Code) {
-            // const regEx = new RegExp(alpha3Code as string, "i");
-            filter.$and.push({ alpha3Code })
-        }
-
-        if(numeric) {
-            // const regEx = new RegExp(numeric as string, "i");
-            filter.$and.push({ numeric })
-        }
-
-        if(!countryName && !alpha2Code && !alpha3Code && !numeric) {
-            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
-        }
-
-        const data: IsoCode[] | null | undefined = await IsoModel.find(filter).skip(skip).limit(intLimit);
-        
-        if ( data === null ||  data === undefined) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-
-        const total = await IsoModel.countDocuments(filter);
-
-        res.status(200).json({data, total});
-    
-    } catch(err) {
-      console.error(err)
+      const { intLimit, skip } = await generalLimits(req);
+      let filter: any = { $and: [] };
+  
+      const { alpha2Code, alpha3Code, numeric, countryName } = req.query;
+  
+      if (countryName) {
+        const regEx = new RegExp(countryName as string, "i");
+        filter.$and.push({ countryName: regEx });
+      }
+  
+      if (alpha2Code) {
+        const regEx = new RegExp(alpha2Code as string, "i");
+        filter.$and.push({ alpha2Code: regEx });
+      }
+  
+      if (alpha3Code) {
+        const regEx = new RegExp(alpha3Code as string, "i");
+        filter.$and.push({ alpha3Code: regEx });
+      }
+  
+      if (numeric) {
+        const regEx = new RegExp(numeric as string, "i");
+        filter.$and.push({ numeric: regEx });
+      }
+  
+      if (filter.$and.length === 0) {
+        throw new Error(
+          req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined"
+        );
+      }
+  
+      const data: IsoCode[] | null | undefined = await IsoModel.find(filter)
+        .skip(skip)
+        .limit(intLimit);
+  
+      if (data === null || data === undefined) {
+        throw new Error(req.originalUrl + ", msg: find error");
+      }
+  
+      const total = await IsoModel.countDocuments(filter);
+      res.status(200).json({ data, total });
+    } catch (err) {
+      console.error(err);
       res.status(500).json(err);
     }
+  });
   
-  
-  
-})
 
 
 router.get(ISO_CODE, async(req: Request, res: Response) => {
