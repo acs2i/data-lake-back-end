@@ -43,7 +43,8 @@ export interface Uvc extends Document {
   remisegenerale: string    // jake, is this a string
   fixation: string,
   ventemetre: string,
-  comment: string
+  comment: string,
+  barcodePath: string
 }
 
 // Schéma pour PriceItem
@@ -92,6 +93,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   fixation: {type : String},
   ventemetre: {type : String},
   comment: {type : String},
+  barcodePath: {type : String},
 
 }, { timestamps: true, collection: "uvc" });
 

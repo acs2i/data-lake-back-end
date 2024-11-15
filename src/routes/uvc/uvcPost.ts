@@ -16,26 +16,38 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
             throw new Error(req.originalUrl + ", msg: uvc was falsy: " + object);
         }
 
-        // Initialisation du générateur EAN
+        // Rechercher par EAN plutôt que par _id
+        const existingUvc = object.ean ? await UvcModel.findOne({ ean: object.ean }) : null;
+
+        if (existingUvc) {
+            // Si l'UVC existe déjà, garder son EAN et son barcodePath
+            object.ean = existingUvc.ean;
+            object.barcodePath = existingUvc.barcodePath;
+            // Mettre à jour l'UVC existante
+            const updatedUvc = await UvcModel.findByIdAndUpdate(existingUvc._id, object, { new: true });
+            return res.status(OK).json(updatedUvc);
+        }
+
+        // Si c'est une nouvelle UVC
         const eanGenerator = new EANGenerator(
             "02000",     // Préfixe
-            "0",   // Talon
-            6         // Longueur du compteur
+            "0",         // Talon
+            6           // Longueur du compteur
         );
 
-        // Si pas d'EAN, en générer un
+        // Générer un nouvel EAN uniquement si aucun n'est fourni
         if (!object.ean) {
             try {
                 const { ean, barcodePath } = await eanGenerator.generateEAN();
                 object.ean = ean;
-                object.barcodePath = barcodePath; // Stockage du chemin de l'image
+                object.barcodePath = barcodePath;
             } catch (error) {
                 console.error("Erreur lors de la génération de l'EAN:", error);
                 throw error;
             }
         } else {
-            // Vérifie si l'EAN existe déjà
-            const foundEan: Uvc | null = await UvcModel.findOne({ ean: object.ean });
+            // Vérifier si l'EAN fourni existe déjà
+            const foundEan = await UvcModel.findOne({ ean: object.ean });
             if (foundEan) {
                 throw new Error(req.originalUrl + " msg: Ean already exists: " + JSON.stringify(object));
             }
@@ -44,35 +56,28 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
             object.barcodePath = barcodePath;
         }
 
-        // Si l'array eans n'existe pas, le créer
+        // Gestion de l'array eans
         if (!object.eans) {
             object.eans = [];
         }
-        
-        // Ajouter le nouvel EAN à l'array eans s'il n'y est pas déjà
         if (object.ean && !object.eans.includes(object.ean)) {
             object.eans.push(object.ean);
         }
 
-        const newObject: Document | null | undefined = await new UvcModel({ ...object });
+        // Créer une nouvelle UVC
+        const newObject = new UvcModel(object);
+        const savedUvc = await newObject.save({ timestamps: true });
 
-        if (!newObject) {
+        if (!savedUvc) {
             throw new Error(req.originalUrl + " msg: uvc save did not work for some reason: " + object);
         }
 
-        const savedUvc: Document | null | undefined = await newObject.save({ timestamps: true });
-
-        const _id = savedUvc._id;
-
-        const result = { ...object, _id };
-
-        res.status(OK).json(result);
+        res.status(OK).json(savedUvc);
     } catch (err) {
         console.error(err);
         res.status(INTERNAL_SERVER_ERROR).json(err);
     }
 });
-
 
 // router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) => {
 //     try {
