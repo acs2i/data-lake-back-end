@@ -53,7 +53,7 @@ router.post(
 
       if (savedObject) {
         const formattedDate = getFormattedDate();
-        const fileName = `PREREF_Y2_TAG_${formattedDate}.csv`;
+        const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
         const fieldsToExport = ["level", "code", "label", "status"];
         const csvFilePath = await exportToCSV(savedObject.toObject(), fileName, fieldsToExport);
 
