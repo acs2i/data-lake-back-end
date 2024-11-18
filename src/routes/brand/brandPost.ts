@@ -24,20 +24,35 @@ router.post(
         });
       }
 
-      const { code } = object;
+      // Recherche du plus grand code existant
+      const maxCodeBrand = await BrandModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            maxCode: { $max: { $toInt: "$code" } }
+          }
+        }
+      ]);
 
-      // Vérifiez si une marque avec le même code existe déjà
-      const doesExist = await BrandModel.findOne({ code });
+      // Détermination du nouveau code
+      const lastCode = maxCodeBrand.length > 0 ? maxCodeBrand[0].maxCode : 0;
+      const newCode = lastCode + 1;
 
-      if (doesExist) {
+      // Vérification si le nouveau code existe déjà
+      const existingBrand = await BrandModel.findOne({ code: newCode });
+      if (existingBrand) {
         return res.status(409).json({
-          msg: `Une marque avec le code "${code}" existe déjà.`,
+          error: `Une marque avec le code "${newCode}" existe déjà.`,
           status: 409,
         });
       }
 
-      // Création de la marque si le code n'existe pas
-      const newObject = new BrandModel({ ...object });
+      // Création de la marque avec le nouveau code
+      const newObject = new BrandModel({
+        ...object,
+        code: newCode,
+      });
+      
       const savedObject = await newObject.save({ timestamps: true });
 
       if (savedObject) {
