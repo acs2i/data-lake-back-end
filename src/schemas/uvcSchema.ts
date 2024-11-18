@@ -2,7 +2,7 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 
 // Interface pour PriceItem
 interface PriceItemSchema {
-  peau: number; // Prix d'achat
+  paeu: number; // Prix d'achat
   tbeu_pb: number; // Taux de base en unité - prix de base
   tbeu_pmeu: number; // Taux de base en unité - prix modifié
   _id: ObjectId;
@@ -23,7 +23,6 @@ export interface Uvc extends Document {
   eans: string[]; // Liste des codes EAN
   prices: PriceSchema[]; // Détails des prix
   status: string; // Statut
-  collection_code: string,
   made_in: string,
   custom_cat: string,
   measurements: string[],
@@ -32,6 +31,7 @@ export interface Uvc extends Document {
   height: number,
   length: number,
   ean: string,
+  collectionUvc: string,
   width: number,
   blocked: string,
   blocked_reason_code: string,
@@ -40,7 +40,7 @@ export interface Uvc extends Document {
   sold_on_internet: string,
   seuil_internet: string,
   en_reassort: string,
-  remisegenerale: string    // jake, is this a string
+  remisegenerale: string
   fixation: string,
   ventemetre: string,
   comment: string,
@@ -49,7 +49,7 @@ export interface Uvc extends Document {
 
 // Schéma pour PriceItem
 const priceItemSchema = new mongoose.Schema<PriceItemSchema>({
-  peau: { type: Number },
+  paeu: { type: Number },
   tbeu_pb: { type: Number },
   tbeu_pmeu: { type: Number },
   _id: { type: mongoose.Types.ObjectId }
@@ -83,6 +83,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   width: {type: Number},
   blocked: {type: String},
   ean: {type: String},
+  collectionUvc: { type: String },
   blocked_reason_code: {type: String},
   coulfour: {type: String},
   visible_on_internet: {type : String},
