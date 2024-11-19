@@ -4,15 +4,12 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 interface PriceItemSchema {
   paeu: number; // Prix d'achat
   tbeu_pb: number; // Taux de base en unité - prix de base
-  tbeu_pmeu: number; // Taux de base en unité - prix modifié
-  _id: ObjectId;
+  tbeu_pmeu: number;
 }
 
 // Interface pour Price
 interface PriceSchema {
-  currency: string; // Devise
-  price: PriceItemSchema[]; // Détails des prix
-  store: string; // Magasin
+  price: PriceItemSchema; // Détails des prix
 }
 
 // Interface pour UVC
@@ -21,7 +18,7 @@ export interface Uvc extends Document {
   code: string; // Code de l'UVC
   dimensions: string[]; // Dimensions de l'UVC
   eans: string[]; // Liste des codes EAN
-  prices: PriceSchema[]; // Détails des prix
+  prices: PriceSchema; // Détails des prix
   status: string; // Statut
   made_in: string,
   custom_cat: string,
@@ -52,14 +49,11 @@ const priceItemSchema = new mongoose.Schema<PriceItemSchema>({
   paeu: { type: Number },
   tbeu_pb: { type: Number },
   tbeu_pmeu: { type: Number },
-  _id: { type: mongoose.Types.ObjectId }
 }, { _id: false });
 
 // Schéma pour Price
 const priceSchema = new mongoose.Schema<PriceSchema>({
-  currency: { type: String, default: "" },
-  price: [priceItemSchema],
-  store: { type: String, default: "" }
+  price: priceItemSchema,
 }, { _id: false });
 
 // Schéma pour UVC
@@ -71,7 +65,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   code: { type: String },
   dimensions: [{ type: String }],
   eans: [{ type: String }],
-  prices: [priceSchema],
+  prices: priceSchema,
   status: { type: String, default: "A" },
   made_in: {type: String},
   custom_cat: {type :String},

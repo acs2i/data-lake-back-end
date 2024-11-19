@@ -1,6 +1,5 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
 
-
 export interface UpdateEntry {
   updated_at: Date;
   updated_by: string;
@@ -19,48 +18,45 @@ interface SupplierSchema {
 
 // Interface pour Product
 export interface Product extends Document {
-    creator_id: ObjectId;
-    reference: string;
-    alias: string;
-    short_label: string;
-    long_label: string;
-    type: string;
-    tag_ids: ObjectId[];
-    paeu: number;
-    tbeu_pb: number;
-    tbeu_pmeu: number;
-    suppliers: SupplierSchema[];
-    dimension_types: string[];
-    uvc_ids: ObjectId[];
-    brand_ids: ObjectId[];
-    collection_ids: ObjectId[];
-    imgPath: string;
-    status: string;
-    weight_measure_unit: string,
-    net_weight: string,
-    dimension_measure_unit: string,
-    height: string,
-    length: string,
-    width: string,
-    taxcode: number
-    blocked: string,
-    blocked_reason_code: string,
-    coulfour: string,
-    visible_on_internet: string,
-    sold_on_internet: string,
-    seuil_internet: string,
-    en_reassort: string,
-    remisegenerale: string    // jake, is this a string
-    fixation: string,
-    ventemetre: string,
-    name: string;
-    long: string;
-    weight: string;
-    weight_brut: string;
-    weight_net: string;
-
+  reference: string;
+  alias: string;
+  short_label: string;
+  long_label: string;
+  type: string;
+  tag_ids: ObjectId[];
+  paeu: number;
+  tbeu_pb: number;
+  tbeu_pmeu: number;
+  suppliers: SupplierSchema[];
+  dimension_types: string[];
+  uvc_ids: ObjectId[];
+  brand_ids: ObjectId[];
+  collection_ids: ObjectId[];
+  imgPath: string;
+  status: string;
+  weight_measure_unit: string;
+  net_weight: string;
+  dimension_measure_unit: string;
+  height: string;
+  length: string;
+  width: string;
+  taxcode: number;
+  blocked: string;
+  blocked_reason_code: string;
+  coulfour: string;
+  visible_on_internet: string;
+  sold_on_internet: string;
+  seuil_internet: string;
+  en_reassort: string;
+  remisegenerale: string; // jake, is this a string
+  fixation: string;
+  ventemetre: string;
+  name: string;
+  long: string;
+  weight: string;
+  weight_brut: string;
+  weight_net: string;
   tax: number;
-
   comment: string;
   size_unit: string;
   weigth_unit: string;
@@ -88,7 +84,6 @@ const supplierSchema = new mongoose.Schema<SupplierSchema>(
 const productSchema = new mongoose.Schema<Product>(
   {
     creation_date: { type: Date || String },
-    creator_id: { type: mongoose.Types.ObjectId, ref: "user" },
     reference: { type: String },
     alias: { type: String },
     short_label: { type: String },
@@ -114,24 +109,24 @@ const productSchema = new mongoose.Schema<Product>(
     collection_ids: [{ type: mongoose.Types.ObjectId, ref: "collection" }],
     imgPath: { type: String },
     status: { type: String, default: "A" },
-    weight_measure_unit: { type: String},
-    dimension_measure_unit: { type: String},
-    taxcode: { type: Number},
-    blocked: {type: String},
-    blocked_reason_code: {type: String},
-    coulfour: {type: String},
-    visible_on_internet: {type : String},
-    sold_on_internet: {type : String},
-    seuil_internet: {type : String},
-    en_reassort: {type : String},
-    remisegenerale: {type : String},
-    fixation: {type : String},
-    ventemetre: {type : String},
+    weight_measure_unit: { type: String },
+    dimension_measure_unit: { type: String },
+    taxcode: { type: Number },
+    blocked: { type: String },
+    blocked_reason_code: { type: String },
+    coulfour: { type: String },
+    visible_on_internet: { type: String },
+    sold_on_internet: { type: String },
+    seuil_internet: { type: String },
+    en_reassort: { type: String },
+    remisegenerale: { type: String },
+    fixation: { type: String },
+    ventemetre: { type: String },
     additional_fields: [
       {
-        label: { type: String},
-        value: { type: String},
-        field_type: { type: String},
+        label: { type: String },
+        value: { type: String },
+        field_type: { type: String },
       },
     ],
     updates: [
@@ -142,8 +137,9 @@ const productSchema = new mongoose.Schema<Product>(
         file_name: { type: String },
       },
     ],
-}, { timestamps: true, collection: "product" });
-
+  },
+  { timestamps: true, collection: "product" }
+);
 
 const ProductModel: Model<Product> = mongoose.model<Product>(
   "product",
