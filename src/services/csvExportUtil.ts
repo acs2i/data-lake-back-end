@@ -40,7 +40,7 @@ export async function exportToCSV(
 ): Promise<string> {
     try {
         // const exportsDir = "/var/sftp/y2tst/out";
-        const exportsDir = "./";
+        const exportsDir = "/var/sftp/y2tst/out";
 
         // Filtrer et nettoyer les données
         const dataToExport = fieldsToExport.length > 0 
