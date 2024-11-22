@@ -69,65 +69,66 @@ router.get(COLLECTION + "/field/:field/value/:value", async (req: Request, res: 
 
 
 
-router.get(COLLECTION + "/search", authorizationMiddlewear, async( req: Request, res: Response) => {
-    try {
+router.get(COLLECTION + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
+  try {
+      const { intLimit, skip } = await generalLimits(req);
 
-        const {intLimit, skip} = await generalLimits(req);
+      let filter: any = {}; // Filtre initial vide.
 
+      const code = req.query.code;
+      const label = req.query.label;
 
-        let filter: any = { $and: [] }  // any to make typescript stop complaining
+      // Si `code` ou `label` sont présents, utilisez `$or` pour les combiner.
+      if (code || label) {
+          const orConditions = [];
+          if (code) {
+              const regEx = new RegExp(code as string, "i");
+              console.log("Code regex:", regEx);
+              orConditions.push({ code: regEx });
+          }
+          if (label) {
+              const regEx = new RegExp(label as string, "i");
+              orConditions.push({ label: regEx });
+          }
+          filter.$or = orConditions; // Ajoutez `$or` au filtre.
+      }
 
-        const code = req.query.code;
+      // Ajoutez d'autres filtres comme `type` ou `status` s'ils existent.
+      const type = req.query.type;
+      if (type) {
+          const regEx = new RegExp(type as string, "i");
+          filter.type = regEx;
+      }
 
-        if(code) {
-            const regEx = new RegExp(code as string, "i");
-            filter.$and.push({ code: regEx })
-        }
-        
-        const label = req.query.label;
+      const status = req.query.status;
+      if (status) {
+          filter.status = status;
+      }
 
-        if(label) {
-            const regEx = new RegExp(label as string, "i");
-            filter.$and.push({ label: regEx })
-        }
+      // Vérifiez qu'au moins un filtre est défini.
+      if (!filter.$or && !type && !status) {
+          throw new Error(req.originalUrl + ", msg: Aucun paramètre valide fourni.");
+      }
 
-        const type = req.query.type;
+      // Exécutez la requête avec les filtres.
+      const data = await CollectionModel.find(filter)
+          .sort({ creation_date: -1 })
+          .skip(skip)
+          .limit(intLimit);
 
-        if(type) {
-            const regEx = new RegExp(type as string, "i");
-            filter.$and.push({ type: regEx })
-        }
+      if (!data) {
+          throw new Error(req.originalUrl + ", msg: Erreur lors de la recherche.");
+      }
 
-        const status = req.query.status;
+      const total = await CollectionModel.countDocuments(filter);
 
-        if(status) {
-            // const regEx = new RegExp(status as string, "i");
-            filter.$and.push({ status })
-        }
-        
-        if(!code && !label && !type && !status) {
-            throw new Error(req.originalUrl + ", msg: All of the parameters were falsy. Probably means they were undefined")
-        }
+      res.status(OK).json({ data, total });
+  } catch (err) {
+      console.error(err);
+      res.status(INTERNAL_SERVER_ERROR).json(err);
+  }
+});
 
-
-        // both the yx code and yx libelle can be very similar, so we should just do an or and a regex in both fields
-        const data: Document[] | null | undefined = await CollectionModel.find(filter).sort({ creation_date: -1 }).skip(skip).limit(intLimit);
-
-
-        if (!data) {
-            throw new Error(req.originalUrl + ", msg: find error")
-        }
-
-        const total = await CollectionModel.countDocuments(filter);
-
-        res.status(OK).json({data, total})
-
-    } catch(err) {
-        console.error(err);
-        res.status(INTERNAL_SERVER_ERROR).json(err)
-    }
-
-})
 
 router.get(COLLECTION, authorizationMiddlewear, async(req: Request, res: Response) => {
     try {
