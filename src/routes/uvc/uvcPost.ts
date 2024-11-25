@@ -30,9 +30,9 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
 
         // Si c'est une nouvelle UVC
         const eanGenerator = new EANGenerator(
-            "02000",     // Préfixe
-            "0",         // Talon
-            6           // Longueur du compteur
+            process.env.EAN_PREFIX || "",     // Préfixe
+            process.env.EAN_TALON || "",         // Talon
+            Number(process.env.EAN_COMPTEUR)
         );
 
         // Générer un nouvel EAN uniquement si aucun n'est fourni

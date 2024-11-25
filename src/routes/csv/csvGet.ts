@@ -25,7 +25,7 @@ router.get(CSV + "/export/supplier/:id", async (req, res) => {
       // Champs à inclure dans le CSV
       const fieldsToExport = [
           "code", "company_name", "phone", "email", "web_url",
-          "siret", "tva", "address_1", "address_2", "address_3",
+          "siret", "tva", "address1", "address2", "address3",
           "city", "postal", "country", "currency"
       ];
 

@@ -24,9 +24,9 @@ export interface Condition extends Document {
   web_url: string;
   email: string;
   phone: string;
-  address_1: string;
-  address_2: string;
-  address_3: string;
+  address1: string;
+  address2: string;
+  address3: string;
   city: string;
   postal: string;
   country: string;
@@ -72,9 +72,9 @@ const conditionSchema = new mongoose.Schema<Condition>(
     web_url: { type: String },
     email: { type: String },
     phone: { type: String },
-    address_1: { type: String },
-    address_2: { type: String },
-    address_3: { type: String },
+    address1: { type: String },
+    address2: { type: String },
+    address3: { type: String },
     city: { type: String },
     postal: { type: String },
     country: { type: String },

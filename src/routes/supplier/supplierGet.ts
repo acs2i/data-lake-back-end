@@ -37,9 +37,9 @@ router.get(
         const $regEx = new RegExp(address as string, "i");
         andConditions.push({
           $or: [
-            { address_1: $regEx },
-            { address_2: $regEx },
-            { address_3: $regEx }
+            { address1: $regEx },
+            { address2: $regEx },
+            { address3: $regEx }
           ],
         });
       }
@@ -148,7 +148,7 @@ router.get(SUPPLIER + "/export/:id", async (req, res) => {
       // Champs à inclure dans le CSV
       const fieldsToExport = [
           "code", "company_name", "phone", "email", "web_url",
-          "siret", "tva", "address_1", "address_2", "address_3",
+          "siret", "tva", "address1", "address2", "address3",
           "city", "postal", "country", "currency"
       ];
 
