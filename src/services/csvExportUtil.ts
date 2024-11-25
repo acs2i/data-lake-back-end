@@ -26,6 +26,14 @@ function sanitizeValue(value: any): string {
     return cleanValue;
 }
 
+function getExportPath(): string {
+    const exportPath = process.env.EXPORT_PATH;
+    if (!exportPath) {
+        throw new Error("Le chemin d'export (EXPORT_PATH) n'est pas configuré dans les variables d'environnement");
+    }
+    return exportPath;
+}
+
 /**
  * Exporte les données fournies en CSV avec des champs spécifiques.
  * @param data - Les données à exporter.
@@ -40,7 +48,7 @@ export async function exportToCSV(
 ): Promise<string> {
     try {
         // const exportsDir = "/var/sftp/y2tst/out";
-        const exportsDir = "/var/sftp/y2tst/out";
+        const exportsDir = getExportPath();
 
         // Filtrer et nettoyer les données
         const dataToExport = fieldsToExport.length > 0 
