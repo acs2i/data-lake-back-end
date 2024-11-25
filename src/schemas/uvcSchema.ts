@@ -16,6 +16,7 @@ interface PriceSchema {
 export interface Uvc extends Document {
   product_id: ObjectId;
   code: string; // Code de l'UVC
+  colombus_sku_code: string;
   dimensions: string[]; // Dimensions de l'UVC
   eans: string[]; // Liste des codes EAN
   prices: PriceSchema; // Détails des prix
@@ -63,6 +64,7 @@ const priceSchema = new mongoose.Schema<PriceSchema>({
 const uvcSchema = new mongoose.Schema<Uvc>({
   product_id: { type: mongoose.Types.ObjectId, ref: "product" },
   code: { type: String },
+  colombus_sku_code: {type: String}, 
   dimensions: [{ type: String }],
   eans: [{ type: String }],
   prices: priceSchema,
