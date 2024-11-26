@@ -70,7 +70,7 @@ const isEqual = (a: any, b: any): boolean => {
   
         // Générer le nom de fichier CSV
         const formattedDate = getFormattedDate();
-        const fileName = `PRODUCT_UPDATE_${formattedDate}.csv`;
+        const fileName = `PREREF_Y2_ART_${formattedDate}.csv`;
         const fieldsToExport = ["reference", "alias", "short_label", "long_label", "status", "uvc_ids", "brand_ids", "collection_ids", "suppliers", "tag_ids"];
         
         // Convertir le produit en objet et générer le fichier CSV
