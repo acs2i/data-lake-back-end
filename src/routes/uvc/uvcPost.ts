@@ -6,6 +6,7 @@ import { OK } from '../../codes/success';
 import authorizationMiddlewear from '../../middlewears/applicationMiddlewear';
 import UvcModel, { Uvc } from '../../schemas/uvcSchema';
 import { EANGenerator } from "../../services/eanGenerator";
+import ProductModel from '../../schemas/productSchema';
 
 const router = express.Router();
 
@@ -79,59 +80,46 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
     }
 });
 
-// router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) => {
-//     try {
-//         const object = req.body;
+router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, res: Response) => {
+    try {
+        const { ean } = req.body;
 
-//         if (!object) {
-//             throw new Error(req.originalUrl + ", msg: uvc was falsy: " + object);
-//         }
+        if (!ean) {
+            return res.status(BAD_REQUEST).json({ error: 'EAN is required in the request body.' });
+        }
 
-//         const existingUvc = await UvcModel.findById(object._id);
+        // Rechercher l'UVC contenant l'EAN
+        const uvc = await UvcModel.findOne({ eans: ean }).lean();
 
-//         // Si l’UVC existe déjà et a un EAN, le garder tel quel
-//         if (existingUvc && existingUvc.ean) {
-//             object.ean = existingUvc.ean;
-//             object.barcodePath = existingUvc.barcodePath;
-//         } else {
-//             // Générer un nouvel EAN uniquement si l’UVC n’a pas encore d’EAN
-//             const eanGenerator = new EANGenerator("02000", "0", 6);
+        if (!uvc) {
+            return res.status(OK).json({
+                message: `The EAN ${ean} does not exist in any UVC.`
+            });
+        }
 
-//             let generatedEan, barcodePath;
-//             do {
-//                 const { ean: newEan, barcodePath: newBarcodePath } = await eanGenerator.generateEAN();
-//                 const eanExists = await UvcModel.exists({ ean: newEan });
+        // Rechercher le produit associé via `product_id`
+        const product = await ProductModel.findById(uvc.product_id).lean();
 
-//                 if (!eanExists) {
-//                     generatedEan = newEan;
-//                     barcodePath = newBarcodePath;
-//                     break;
-//                 }
-//             } while (!generatedEan);
+        if (!product) {
+            return res.status(INTERNAL_SERVER_ERROR).json({
+                error: `No product found for product_id ${uvc.product_id}.`
+            });
+        }
 
-//             object.ean = generatedEan;
-//             object.barcodePath = barcodePath;
-//         }
+        return res.status(OK).json({
+            message: `The EAN ${ean} exists and is associated with a product.`,
+            product
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(INTERNAL_SERVER_ERROR).json({
+            error: 'An error occurred while checking the EAN.',
+            details: "error"
+        });
+    }
+});
 
-//         // Ajouter l'EAN dans l'array eans si ce n’est pas déjà fait
-//         if (!object.eans) {
-//             object.eans = [];
-//         }
-//         if (object.ean && !object.eans.includes(object.ean)) {
-//             object.eans.push(object.ean);
-//         }
 
-//         // Sauvegarder l'UVC mis à jour ou nouveau
-//         const savedUvc = existingUvc
-//             ? await UvcModel.findByIdAndUpdate(existingUvc._id, object, { new: true })
-//             : await new UvcModel(object).save();
-
-//         res.status(OK).json(savedUvc);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(INTERNAL_SERVER_ERROR).json(err);
-//     }
-// });
 
 
 export default router;

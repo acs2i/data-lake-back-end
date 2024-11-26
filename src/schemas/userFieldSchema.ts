@@ -35,6 +35,7 @@ const userFieldSchema = new mongoose.Schema<Field>(
         updated_by: { type: String },
         changes: { type: Map, of: mongoose.Schema.Types.Mixed },
         file_name: { type: String },
+
       },
     ],
     additional_fields: [
@@ -42,6 +43,7 @@ const userFieldSchema = new mongoose.Schema<Field>(
         field_type: { type: String },
         options: { type: [String] },
         value: { type: mongoose.Schema.Types.Mixed },
+        default_value: { type: mongoose.Schema.Types.Mixed },
       },
     ],
     status: { type: String },
