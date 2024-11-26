@@ -39,6 +39,7 @@ export interface Condition extends Document {
   additional_fields?: any;
   admin: string;
   buyers: Buyer[];
+  filePath?: string[];
 }
 
 const contactSchema = new mongoose.Schema(
@@ -96,6 +97,7 @@ const conditionSchema = new mongoose.Schema<Condition>(
     ],
     admin: { type: String },
     buyers: [buyerSchema],
+    filePath: [{ type: String }]
   },
   { timestamps: true, collection: "condition" }
 );
