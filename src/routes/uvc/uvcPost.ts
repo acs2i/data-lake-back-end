@@ -8,6 +8,7 @@ import UvcModel, { Uvc } from '../../schemas/uvcSchema';
 import { EANGenerator } from "../../services/eanGenerator";
 import ProductModel from '../../schemas/productSchema';
 
+
 const router = express.Router();
 
 router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) => {
@@ -82,8 +83,8 @@ router.post(UVC, authorizationMiddlewear, async (req: Request, res: Response) =>
 
 router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
-        const { ean } = req.body;
-
+        const { ean, currentEanIndex, uvcId } = req.body;
+        console.log({ ean, currentEanIndex, uvcId });
         if (!ean) {
             return res.status(BAD_REQUEST).json({ error: 'EAN is required in the request body.' });
         }
@@ -93,28 +94,41 @@ router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, r
 
         if (!uvc) {
             return res.status(OK).json({
-                message: `The EAN ${ean} does not exist in any UVC.`
+                message: `The EAN ${ean} does not exist in any UVC.`,
+                exists: false,
+                product: null,
+                uvcId: null, // Aucun UVC trouvé
             });
+        }
+
+        // Si l'EAN appartient au même UVC mais à un index différent
+        if (uvc._id.toString() === uvcId) {
+            const eanIndex = uvc.eans.findIndex(existingEan => existingEan === ean);
+            if (eanIndex === currentEanIndex) {
+                // L'EAN est déjà présent au même index, pas de doublon
+                return res.status(OK).json({
+                    message: `The EAN ${ean} is valid for the same UVC.`,
+                    exists: false,
+                    product: null,
+                    uvcId: uvc._id,
+                });
+            }
         }
 
         // Rechercher le produit associé via `product_id`
         const product = await ProductModel.findById(uvc.product_id).lean();
 
-        if (!product) {
-            return res.status(INTERNAL_SERVER_ERROR).json({
-                error: `No product found for product_id ${uvc.product_id}.`
-            });
-        }
-
         return res.status(OK).json({
-            message: `The EAN ${ean} exists and is associated with a product.`,
-            product
+            message: `The EAN ${ean} exists in another UVC.`,
+            exists: true,
+            product: product || null,
+            uvcId: uvc._id,
         });
     } catch (err) {
         console.error(err);
         return res.status(INTERNAL_SERVER_ERROR).json({
             error: 'An error occurred while checking the EAN.',
-            details: "error"
+            details: "erreur",
         });
     }
 });
