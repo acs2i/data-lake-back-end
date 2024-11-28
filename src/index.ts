@@ -86,6 +86,8 @@ import conditioGetRoutes from "./routes/condition/conditionGet"
 import unitGetRoutes from "./routes/unit/unitGet"
 import userRoute from "./routes/user/userAuth"
 
+import imageRouter from './routes/cron/imageRouter';
+
 
 dotenv.config();
 
@@ -182,6 +184,8 @@ app.use(v1, blockPutRoutes)
 
 app.use(v1, conditioPostRoutes)
 app.use(v1, conditioGetRoutes)
+
+app.use(v1, imageRouter);
 
 app.listen(port, () => {
   
