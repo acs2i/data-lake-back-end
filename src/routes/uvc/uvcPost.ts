@@ -85,6 +85,7 @@ router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, r
     try {
         const { ean, currentEanIndex, uvcId } = req.body;
         console.log({ ean, currentEanIndex, uvcId });
+
         if (!ean) {
             return res.status(BAD_REQUEST).json({ error: 'EAN is required in the request body.' });
         }
@@ -101,14 +102,22 @@ router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, r
             });
         }
 
-        // Si l'EAN appartient au même UVC mais à un index différent
+        // Vérifier si l'UVC trouvé correspond à l'UVC en cours
         if (uvc._id.toString() === uvcId) {
             const eanIndex = uvc.eans.findIndex(existingEan => existingEan === ean);
             if (eanIndex === currentEanIndex) {
-                // L'EAN est déjà présent au même index, pas de doublon
-                return res.status(OK).json({
-                    message: `The EAN ${ean} is valid for the same UVC.`,
+                // L'EAN est valide (il n'a pas changé)
+                return res.status(200).json({
+                    message: `The EAN ${ean} is valid for the same UVC and index.`,
                     exists: false,
+                    product: null,
+                    uvcId: uvc._id,
+                });
+            } else if (eanIndex !== -1) {
+                // L'EAN est dans le même UVC mais à un autre index
+                return res.status(200).json({
+                    message: `The EAN ${ean} is already used in the same UVC at a different index (${eanIndex}).`,
+                    exists: true,
                     product: null,
                     uvcId: uvc._id,
                 });
@@ -128,10 +137,11 @@ router.post(UVC + '/check-eans', authorizationMiddlewear, async (req: Request, r
         console.error(err);
         return res.status(INTERNAL_SERVER_ERROR).json({
             error: 'An error occurred while checking the EAN.',
-            details: "erreur",
+            details: "error",
         });
     }
 });
+
 
 
 

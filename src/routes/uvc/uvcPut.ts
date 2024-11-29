@@ -58,7 +58,7 @@ router.put(UVC + '/update-ean/:id', authorizationMiddlewear, async (req, res) =>
         const { ean, eanIndex } = req.body; // Récupérer les données depuis le corps
 
         // Vérification des paramètres
-        if (!ean || eanIndex === undefined) {
+        if (!ean) {
             return res.status(400).json({ error: 'EAN and eanIndex are required.' });
         }
 
