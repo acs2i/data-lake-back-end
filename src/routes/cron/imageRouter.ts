@@ -8,7 +8,7 @@ import ProductModel from "../../schemas/productSchema";
 
 const router = express.Router();
 
-const EXPORT = process.env.EXPORT_PATH || "./";
+const EXPORT = process.env.IMPORT_PATH || "./";
 
 interface ImageData {
   reference: string;
