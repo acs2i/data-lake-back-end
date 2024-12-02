@@ -52,42 +52,50 @@ function generateTimestamp() {
     return `${year}${month}${day}${hours}${minutes}${seconds}`;
 }
 
+// Backend
 router.put(UVC + '/update-ean/:id', authorizationMiddlewear, async (req, res) => {
     try {
-        const { id } = req.params; // Récupérer l'ID de l'UVC depuis l'URL
-        const { ean, eanIndex } = req.body; // Récupérer les données depuis le corps
+        const { ean } = req.body;
 
-        // Vérification des paramètres
         if (!ean) {
-            return res.status(400).json({ error: 'EAN and eanIndex are required.' });
+            return res.status(400).json({ error: 'EAN is required.' });
         }
 
-        // Rechercher l'UVC correspondant
-        const uvc = await UvcModel.findById(id);
-
-        if (!uvc) {
-            return res.status(404).json({ error: `UVC with ID ${id} not found.` });
-        }
-
-        // Générer une nouvelle valeur d'EAN
-        const timestamp = generateTimestamp();
-        const newEan = `zzz-${ean}-${timestamp}`;
-
-        // Modifier l'EAN à l'index donné
-        uvc.eans[eanIndex] = newEan;
-
-        // Sauvegarder les modifications
-        await uvc.save();
-
-        return res.status(200).json({
-            message: `EAN updated successfully to ${newEan}.`,
-            newEan,
+        // 1. Chercher l'UVC avec cet EAN
+        const existingUvc = await UvcModel.findOne({
+            eans: ean
         });
+
+        if (!existingUvc) {
+            return res.status(404).json({ 
+                message: 'EAN not found in database',
+                success: false
+            });
+        }
+
+        // 2. Créer le nouvel EAN avec timestamp
+        const timestamp = Date.now();
+        const updatedEan = `zzz-${ean}-${timestamp}`;
+
+        // 3. Mettre à jour l'EAN
+        existingUvc.eans = existingUvc.eans.map(currentEan => 
+            currentEan === ean ? updatedEan : currentEan
+        );
+        const savedUvc = await existingUvc.save();
+
+        // 4. Retourner l'UVC complet mis à jour
+        return res.status(200).json({
+            message: 'EAN updated successfully',
+            success: true,
+            oldEan: ean,
+            updatedEan: updatedEan,
+            updatedUvc: savedUvc
+        });
+
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'An error occurred while updating the EAN.' });
     }
 });
-
 
 export default router;
