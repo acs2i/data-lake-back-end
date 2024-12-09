@@ -7,6 +7,12 @@ interface PriceItemSchema {
   tbeu_pmeu: number;
 }
 
+interface EanItemSchema {
+  code: string; 
+  type: string; 
+}
+
+
 // Interface pour Price
 interface PriceSchema {
   price: PriceItemSchema; // Détails des prix
@@ -19,6 +25,7 @@ export interface Uvc extends Document {
   colombus_sku_code: string;
   dimensions: string[]; // Dimensions de l'UVC
   eans: string[]; // Liste des codes EAN
+  eans_v2: EanItemSchema[]; // Liste des codes EAN
   prices: PriceSchema; // Détails des prix
   status: string; // Statut
   made_in: string,
@@ -57,6 +64,11 @@ const priceSchema = new mongoose.Schema<PriceSchema>({
   price: priceItemSchema,
 }, { _id: false });
 
+const eanItemSchema = new mongoose.Schema<EanItemSchema>({
+  code: { type: String },
+  type: { type: String, default: "ean13" },
+}, { _id: false });
+
 // Schéma pour UVC
 // Ajouter made_in
 // Ajouter custom_cat
@@ -67,6 +79,7 @@ const uvcSchema = new mongoose.Schema<Uvc>({
   colombus_sku_code: {type: String}, 
   dimensions: [{ type: String }],
   eans: [{ type: String }],
+  eans_v2: [eanItemSchema],
   prices: priceSchema,
   status: { type: String, default: "A" },
   made_in: {type: String},
