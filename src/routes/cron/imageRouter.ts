@@ -136,7 +136,7 @@ router.post(PRODUCT + '/process-images', async (req: Request, res: Response) => 
 
 // Initialisation et démarrage du cron
 console.log('Initializing image processing...');
-processImageFiles();
+// processImageFiles();
 
 cron.schedule('*/59 * * * *', async () => {
   console.log('Running scheduled image processing...');
