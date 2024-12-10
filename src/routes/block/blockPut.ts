@@ -37,23 +37,24 @@ router.put(
       // Mettre à jour les champs modifiés
       Object.assign(block, object);
 
+      // Générer le nom du fichier exporté
+      const formattedDate = getFormattedDate();
+      const fileName = `PREREF_Y2_BLOCK_${formattedDate}.csv`;
+      const fieldsToExport = ["code", "label", "status"]; // Ajuster selon les champs de votre modèle Block
+
       // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
       if (updateEntry) {
         block.updates.push({
           updated_at: updateEntry.updated_at,
           updated_by: updateEntry.updated_by,
           changes: updateEntry.changes,
+          file_name: fileName,
         });
       }
 
       const result = await block.save();
 
       if (result) {
-        // Générer le nom du fichier exporté
-        const formattedDate = getFormattedDate();
-        const fileName = `PREREF_Y2_BLOCK_${formattedDate}.csv`;
-        const fieldsToExport = ["code", "label", "status"]; // Ajuster selon les champs de votre modèle Block
-
         // Exportation CSV avec les champs sélectionnés
         const csvFilePath = await exportToCSV(
           block.toObject(),
