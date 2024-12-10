@@ -48,13 +48,17 @@ router.put(COLLECTION + "/:id", async (req: Request, res: Response) => {
     //   fieldsToExport
     // );
 
+    const formattedDate = getFormattedDate();
+    const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
+    const fieldsToExport = ["code", "label", "status"];
+
     // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
     if (updateEntry) {
       collection.updates.push({
         updated_at: updateEntry.updated_at,
         updated_by: updateEntry.updated_by,
         changes: updateEntry.changes,
-        // file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
+        file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
       });
     }
 
@@ -70,9 +74,6 @@ router.put(COLLECTION + "/:id", async (req: Request, res: Response) => {
 
     if (result) {
       // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_COL_${formattedDate}.csv`;
-      const fieldsToExport = ["code", "label", "status"];
 
       // Exportation CSV avec tous les champs du document
       const csvFilePath = await exportToCSV(

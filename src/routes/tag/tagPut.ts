@@ -46,13 +46,17 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
     //   fieldsToExport
     // );
 
+    const formattedDate = getFormattedDate();
+    const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
+    const fieldsToExport = ["level", "code", "name", "status"];
+
     // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
     if (updateEntry) {
       tag.updates.push({
         updated_at: updateEntry.updated_at,
         updated_by: updateEntry.updated_by,
         changes: updateEntry.changes,
-        // file_name: fileName,
+        file_name: fileName,
       });
     }
 
@@ -68,9 +72,6 @@ router.put(TAG + "/:id", async (req: Request, res: Response) => {
 
     if (result) {
       // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_CLASS_${formattedDate}.csv`;
-      const fieldsToExport = ["level", "code", "name", "status"];
 
       // Exportation CSV avec tous les champs du document
       const csvFilePath = await exportToCSV(

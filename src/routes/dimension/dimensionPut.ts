@@ -48,24 +48,23 @@ router.put(DIMENSION + "/:id", async (req: Request, res: Response) => {
     //   fieldsToExport
     // );
 
+    const formattedDate = getFormattedDate();
+    const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
+    const fieldsToExport = ["type", "code", "label", "status"];
+
     // Ajouter `updateEntry` dans le tableau `updates` avec `file_name`
     if (updateEntry) {
       dimension.updates.push({
         updated_at: updateEntry.updated_at,
         updated_by: updateEntry.updated_by,
         changes: updateEntry.changes,
-        // file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
+        file_name: fileName, // Ajout du nom du fichier dans l'entrée d'historique
       });
     }
 
     const result = await dimension.save();
 
     if (result) {
-      // Générer le nom du fichier exporté
-      const formattedDate = getFormattedDate();
-      const fileName = `PREREF_Y2_DIM_${formattedDate}.csv`;
-      const fieldsToExport = ["type", "code", "label", "status"];
-
       // Exportation CSV avec tous les champs du document
       const csvFilePath = await exportToCSV(
         dimension.toObject(), // Convertir le document Mongoose en objet
