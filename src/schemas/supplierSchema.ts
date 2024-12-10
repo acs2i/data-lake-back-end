@@ -11,6 +11,7 @@ interface Contact {
 
 interface Buyer {
   family: string[];
+  suvFamily: string[];
   user: string;
 }
 
@@ -54,6 +55,7 @@ const contactSchema = new mongoose.Schema(
 const buyerSchema = new mongoose.Schema(
   {
     family: [{ type: String }],
+    subFamily: [{ type: String }],
     user: { type: String },
   },
 );

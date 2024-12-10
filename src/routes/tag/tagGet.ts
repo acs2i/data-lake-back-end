@@ -8,7 +8,6 @@ import authorizationMiddlewear from "../../middlewears/applicationMiddlewear"
 
 const router = express.Router()
 
-
 router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: Response) => {
     try {
         const { intLimit, skip } = await generalLimits(req);
@@ -35,11 +34,12 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
             filter.$and.push({ $or: orConditions });
         }
 
+        // Gestion stricte et insensible à la casse pour `level`
         if (level) {
-            const regExLevel = new RegExp(level as string, "i");
-            filter.$and.push({ level: regExLevel });
+            filter.$and.push({ level: { $regex: `^${level}$`, $options: "i" } });
         }
 
+        // Ajoutez le statut si fourni
         if (status) {
             filter.$and.push({ status });
         }
@@ -66,6 +66,7 @@ router.get(TAG + "/search", authorizationMiddlewear, async (req: Request, res: R
         res.status(INTERNAL_SERVER_ERROR).json(err);
     }
 });
+
 
 
 router.get(TAG, authorizationMiddlewear, async(req: Request, res: Response) => {
